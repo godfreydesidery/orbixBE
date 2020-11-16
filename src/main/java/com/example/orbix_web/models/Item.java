@@ -41,18 +41,18 @@ public class Item extends Audit<String>{
 	@Column(unique = true)
     private String itemCode;
 	@Column(unique = true)
-    private String primaryScanCode;
+    private String primaryBarcode;
 	private String longDescription;
 	private String shortDescription;
 	private int packSize;
 	private double unitCostPrice;
-	private double unitRetalPrice;
+	private double unitRetailPrice;
 	private double discount;
 	private double vat;
-	private double margin;
-	private String uom;
-	private String discontinued;
-	private String ingredients;
+	private double profitMargin;
+	private String standardUom;
+	private String status;
+	private String ingredient;
 	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "shops_items", joinColumns = {
@@ -90,14 +90,14 @@ public class Item extends Audit<String>{
 	/**
 	 * @return the primaryScanCode
 	 */
-	public String getPrimaryScanCode() {
-		return primaryScanCode;
+	public String getPrimaryBarcode() {
+		return primaryBarcode;
 	}
 	/**
 	 * @param primaryScanCode the primaryScanCode to set
 	 */
-	public void setPrimaryScanCode(String primaryScanCode) {
-		this.primaryScanCode = primaryScanCode;
+	public void setPrimaryBarcode(String primaryBarcode) {
+		this.primaryBarcode = primaryBarcode;
 	}
 	/**
 	 * @return the longDescription
@@ -150,14 +150,14 @@ public class Item extends Audit<String>{
 	/**
 	 * @return the unitRetalPrice
 	 */
-	public double getUnitRetalPrice() {
-		return unitRetalPrice;
+	public double getUnitRetailPrice() {
+		return unitRetailPrice;
 	}
 	/**
 	 * @param unitRetalPrice the unitRetalPrice to set
 	 */
-	public void setUnitRetalPrice(double unitRetalPrice) {
-		this.unitRetalPrice = unitRetalPrice;
+	public void setUnitRetailPrice(double unitRetailPrice) {
+		this.unitRetailPrice = unitRetailPrice;
 	}
 	/**
 	 * @return the discount
@@ -186,49 +186,49 @@ public class Item extends Audit<String>{
 	/**
 	 * @return the margin
 	 */
-	public double getMargin() {
-		return margin;
+	public double getProfitMargin() {
+		return profitMargin;
 	}
 	/**
 	 * @param margin the margin to set
 	 */
-	public void setMargin(double margin) {
-		this.margin = margin;
+	public void setProfitMargin(double profitMargin) {
+		this.profitMargin = profitMargin;
 	}
 	/**
 	 * @return the uom
 	 */
-	public String getUom() {
-		return uom;
+	public String getStandardUom() {
+		return standardUom;
 	}
 	/**
 	 * @param uom the uom to set
 	 */
-	public void setUom(String uom) {
-		this.uom = uom;
+	public void setStandardUom(String standardUom) {
+		this.standardUom = standardUom;
 	}
 	/**
 	 * @return the discontinued
 	 */
-	public String getDiscontinued() {
-		return discontinued;
+	public String getStatus() {
+		return status;
 	}
 	/**
 	 * @param discontinued the discontinued to set
 	 */
-	public void setDiscontinued(String discontinued) {
-		this.discontinued = discontinued;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	/**
 	 * @return the ingredients
 	 */
-	public String getIngredients() {
-		return ingredients;
+	public String getIngredient() {
+		return ingredient;
 	}
 	/**
 	 * @param ingredients the ingredients to set
 	 */
-	public void setIngredients(String ingredients) {
-		this.ingredients = ingredients;
+	public void setIngredient(String ingredient) {
+		this.ingredient = ingredient;
 	}
 }
