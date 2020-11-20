@@ -34,13 +34,28 @@ public class Supplier extends Audit<String>{
 	@Column(unique=true)
     private String supplierCode;
 	@NotBlank
+	@Column(unique=true)
     private String supplierName;
-	@NotBlank
+	
     private String tin;
-	@NotBlank
     private String vrn;
-	@NotBlank
     private String termsOfPayment;
+	
+	private String address;
+    private String postCode;
+    private String physicalAddress;
+    private String telephone;
+    private String mobile;
+	private String email;
+	private String fax;
+	
+	private String bankAccountName;
+    private String bankAccountAddress;
+    private String bankPostCode;
+    private String bankName;
+    private String bankAccountNo;
+	private String bankStatus;
+	
 	/**
 	 * @return the id
 	 */
@@ -112,6 +127,162 @@ public class Supplier extends Audit<String>{
 	 */
 	public void setTermsOfPayment(String termsOfPayment) {
 		this.termsOfPayment = termsOfPayment;
+	}
+	/**
+	 * @return the address
+	 */
+	public String getAddress() {
+		return address;
+	}
+	/**
+	 * @param address the address to set
+	 */
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	/**
+	 * @return the postCode
+	 */
+	public String getPostCode() {
+		return postCode;
+	}
+	/**
+	 * @param postCode the postCode to set
+	 */
+	public void setPostCode(String postCode) {
+		this.postCode = postCode;
+	}
+	/**
+	 * @return the physicalAddress
+	 */
+	public String getPhysicalAddress() {
+		return physicalAddress;
+	}
+	/**
+	 * @param physicalAddress the physicalAddress to set
+	 */
+	public void setPhysicalAddress(String physicalAddress) {
+		this.physicalAddress = physicalAddress;
+	}
+	/**
+	 * @return the telephone
+	 */
+	public String getTelephone() {
+		return telephone;
+	}
+	/**
+	 * @param telephone the telephone to set
+	 */
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+	/**
+	 * @return the mobile
+	 */
+	public String getMobile() {
+		return mobile;
+	}
+	/**
+	 * @param mobile the mobile to set
+	 */
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	/**
+	 * @return the fax
+	 */
+	public String getFax() {
+		return fax;
+	}
+	/**
+	 * @param fax the fax to set
+	 */
+	public void setFax(String fax) {
+		this.fax = fax;
+	}
+	/**
+	 * @return the bankAccountName
+	 */
+	public String getBankAccountName() {
+		return bankAccountName;
+	}
+	/**
+	 * @param bankAccountName the bankAccountName to set
+	 */
+	public void setBankAccountName(String bankAccountName) {
+		this.bankAccountName = bankAccountName;
+	}
+	/**
+	 * @return the bankAccountAddress
+	 */
+	public String getBankAccountAddress() {
+		return bankAccountAddress;
+	}
+	/**
+	 * @param bankAccountAddress the bankAccountAddress to set
+	 */
+	public void setBankAccountAddress(String bankAccountAddress) {
+		this.bankAccountAddress = bankAccountAddress;
+	}
+	/**
+	 * @return the bankPostCode
+	 */
+	public String getBankPostCode() {
+		return bankPostCode;
+	}
+	/**
+	 * @param bankPostCode the bankPostCode to set
+	 */
+	public void setBankPostCode(String bankPostCode) {
+		this.bankPostCode = bankPostCode;
+	}
+	/**
+	 * @return the bankName
+	 */
+	public String getBankName() {
+		return bankName;
+	}
+	/**
+	 * @param bankName the bankName to set
+	 */
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+	/**
+	 * @return the bankAccountNo
+	 */
+	public String getBankAccountNo() {
+		return bankAccountNo;
+	}
+	/**
+	 * @param bankAccountNo the bankAccountNo to set
+	 */
+	public void setBankAccountNo(String bankAccountNo) {
+		this.bankAccountNo = bankAccountNo;
+	}
+	/**
+	 * @return the bankStatus
+	 */
+	public String getBankStatus() {
+		return bankStatus;
+	}
+	/**
+	 * @param bankStatus the bankStatus to set
+	 */
+	public void setBankStatus(String bankStatus) {
+		this.bankStatus = bankStatus;
 	}
 }
 

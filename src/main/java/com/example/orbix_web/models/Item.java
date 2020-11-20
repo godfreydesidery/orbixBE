@@ -52,7 +52,12 @@ public class Item extends Audit<String>{
 	private double profitMargin;
 	private String standardUom;
 	private String status;
-	private String ingredient;
+	private String ingredients;
+	private double quantity;
+    private double maximumInventory;
+    private double minimumInventory;
+    private double defaultReOrderLevel;
+    private double reOrderQuantity;
 	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "shops_items", joinColumns = {
@@ -222,13 +227,73 @@ public class Item extends Audit<String>{
 	/**
 	 * @return the ingredients
 	 */
-	public String getIngredient() {
-		return ingredient;
+	public String getIngredients() {
+		return ingredients;
 	}
 	/**
 	 * @param ingredients the ingredients to set
 	 */
-	public void setIngredient(String ingredient) {
-		this.ingredient = ingredient;
+	public void setIngredients(String ingredients) {
+		this.ingredients = ingredients;
+	}
+	/**
+	 * @return the quantity
+	 */
+	public double getQuantity() {
+		return quantity;
+	}
+	/**
+	 * @param quantity the quantity to set
+	 */
+	public void setQuantity(double quantity) {
+		this.quantity = quantity;
+	}
+	/**
+	 * @return the maximumInventory
+	 */
+	public double getMaximumInventory() {
+		return maximumInventory;
+	}
+	/**
+	 * @param maximumInventory the maximumInventory to set
+	 */
+	public void setMaximumInventory(double maximumInventory) {
+		this.maximumInventory = maximumInventory;
+	}
+	/**
+	 * @return the minimumInventory
+	 */
+	public double getMinimumInventory() {
+		return minimumInventory;
+	}
+	/**
+	 * @param minimumInventory the minimumInventory to set
+	 */
+	public void setMinimumInventory(double minimumInventory) {
+		this.minimumInventory = minimumInventory;
+	}
+	/**
+	 * @return the defaultReOrderLevel
+	 */
+	public double getDefaultReOrderLevel() {
+		return defaultReOrderLevel;
+	}
+	/**
+	 * @param defaultReOrderLevel the defaultReOrderLevel to set
+	 */
+	public void setDefaultReOrderLevel(double defaultReOrderLevel) {
+		this.defaultReOrderLevel = defaultReOrderLevel;
+	}
+	/**
+	 * @return the reOrderQuantity
+	 */
+	public double getReOrderQuantity() {
+		return reOrderQuantity;
+	}
+	/**
+	 * @param reOrderQuantity the reOrderQuantity to set
+	 */
+	public void setReOrderQuantity(double reOrderQuantity) {
+		this.reOrderQuantity = reOrderQuantity;
 	}
 }

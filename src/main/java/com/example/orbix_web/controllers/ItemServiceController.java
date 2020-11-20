@@ -89,7 +89,34 @@ public class ItemServiceController {
         return itemRepository.findById(itemId)
                 .orElseThrow(() -> new ResourceNotFoundException("Item", "id", itemId));
     }
-
+    
+ // Get a Single Item
+    @GetMapping("/items/primary_barcode={primary_barcode}")
+    public Item getItemByPrimaryBarcode(@PathVariable(value = "primary_barcode") String primaryBarcode) {
+    	
+    	
+        return itemRepository.findByPrimaryBarcode(primaryBarcode)
+                .orElseThrow(() -> new ResourceNotFoundException("Item", "primary_barcode", primaryBarcode));
+    }
+    
+ // Get a Single Item
+    @GetMapping("/items/item_code={item_code}")
+    public Item getItemByItemCode(@PathVariable(value = "item_code") String itemCode) {
+    	
+    	
+        return itemRepository.findByItemCode(itemCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Item", "item_code", itemCode));
+    }
+    
+ // Get a Single Item
+    @GetMapping("/items/long_description={long_description}")
+    public Item getItemByLongDescription(@PathVariable(value = "long_description") String longDescription) {
+    	
+    	
+        return itemRepository.findByLongDescription(longDescription)
+                .orElseThrow(() -> new ResourceNotFoundException("Item", "long_description", longDescription));
+    }
+    
     // Update a Item
     @PutMapping("/items/{id}")
     public Item updateNote(@PathVariable(value = "id") Long itemId,
@@ -98,7 +125,7 @@ public class ItemServiceController {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ResourceNotFoundException("Item", "id", itemId));
 
-        
+        item = itemDetails;
 
         Item updatedItem = itemRepository.save(item);
         return updatedItem;
