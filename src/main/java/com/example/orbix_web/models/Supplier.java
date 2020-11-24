@@ -3,12 +3,16 @@
  */
 package com.example.orbix_web.models;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
@@ -41,7 +45,7 @@ public class Supplier extends Audit<String>{
     private String vrn;
     private String termsOfPayment;
 	
-	private String address;
+	private String postAddress;
     private String postCode;
     private String physicalAddress;
     private String telephone;
@@ -50,11 +54,13 @@ public class Supplier extends Audit<String>{
 	private String fax;
 	
 	private String bankAccountName;
-    private String bankAccountAddress;
+    private String bankPostAddress;
     private String bankPostCode;
     private String bankName;
     private String bankAccountNo;
 	private String bankStatus;
+	
+	
 	
 	/**
 	 * @return the id
@@ -128,18 +134,7 @@ public class Supplier extends Audit<String>{
 	public void setTermsOfPayment(String termsOfPayment) {
 		this.termsOfPayment = termsOfPayment;
 	}
-	/**
-	 * @return the address
-	 */
-	public String getAddress() {
-		return address;
-	}
-	/**
-	 * @param address the address to set
-	 */
-	public void setAddress(String address) {
-		this.address = address;
-	}
+	
 	/**
 	 * @return the postCode
 	 */
@@ -225,18 +220,6 @@ public class Supplier extends Audit<String>{
 		this.bankAccountName = bankAccountName;
 	}
 	/**
-	 * @return the bankAccountAddress
-	 */
-	public String getBankAccountAddress() {
-		return bankAccountAddress;
-	}
-	/**
-	 * @param bankAccountAddress the bankAccountAddress to set
-	 */
-	public void setBankAccountAddress(String bankAccountAddress) {
-		this.bankAccountAddress = bankAccountAddress;
-	}
-	/**
 	 * @return the bankPostCode
 	 */
 	public String getBankPostCode() {
@@ -283,6 +266,30 @@ public class Supplier extends Audit<String>{
 	 */
 	public void setBankStatus(String bankStatus) {
 		this.bankStatus = bankStatus;
+	}
+	/**
+	 * @return the postAddress
+	 */
+	public String getPostAddress() {
+		return postAddress;
+	}
+	/**
+	 * @param postAddress the postAddress to set
+	 */
+	public void setPostAddress(String postAddress) {
+		this.postAddress = postAddress;
+	}
+	/**
+	 * @return the bankPostAddress
+	 */
+	public String getBankPostAddress() {
+		return bankPostAddress;
+	}
+	/**
+	 * @param bankPostAddress the bankPostAddress to set
+	 */
+	public void setBankPostAddress(String bankPostAddress) {
+		this.bankPostAddress = bankPostAddress;
 	}
 }
 

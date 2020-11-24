@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.models;
 
+import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -16,13 +17,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import com.example.orbix_web.database.Audit;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @author GODFREY
@@ -67,6 +72,11 @@ public class Item extends Audit<String>{
         })
 	private Set<Shop> shops;
 	
+	@JsonBackReference(value="supplierName")
+	@ManyToOne(targetEntity = Supplier.class, fetch = FetchType.LAZY,  optional = false)
+    @JoinColumn(name = "supplier_id", nullable = false , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private Supplier supplier;
 	
 	/**
 	 * @return the id
@@ -296,4 +306,19 @@ public class Item extends Audit<String>{
 	public void setReOrderQuantity(double reOrderQuantity) {
 		this.reOrderQuantity = reOrderQuantity;
 	}
+	/**
+	 * @return the supplier
+	 */
+	public Supplier getSupplier() {
+		return supplier;
+	}
+	/**
+	 * @param supplier the supplier to set
+	 */
+	public void setSupplier(Supplier supplier) {
+		this.supplier = supplier;
+	}
+	
+	
+	
 }

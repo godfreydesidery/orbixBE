@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.orbix_web.exceptions.ResourceNotFoundException;
+import com.example.orbix_web.models.Item;
 import com.example.orbix_web.models.Supplier;
 import com.example.orbix_web.repositories.SupplierRepository;
 
@@ -29,8 +31,8 @@ import com.example.orbix_web.repositories.SupplierRepository;
  *
  */
 @RestController
-@RequestMapping(value = "/api")
 @Service
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class SupplierServiceController {
 
     @Autowired
@@ -54,6 +56,14 @@ public class SupplierServiceController {
     public Supplier getSupplierById(@PathVariable(value = "id") Long supplierId) {
         return supplierRepository.findById(supplierId)
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier", "id", supplierId));
+    }
+ // Get a Single Supplier by name
+    @GetMapping("/suppliers/supplier_name={supplier_name}")
+    public Supplier getSupplierBySupplierName(@PathVariable(value = "supplier_name") String supplierName) {
+    	
+    	
+        return supplierRepository.findBySupplierName(supplierName)
+                .orElseThrow(() -> new ResourceNotFoundException("Supplier", "supplier_name", supplierName));
     }
 
     // Update a Supplier

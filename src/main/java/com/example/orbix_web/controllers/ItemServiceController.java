@@ -6,16 +6,22 @@ package com.example.orbix_web.controllers;
 import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.validation.Valid;
 import javax.ws.rs.HttpMethod;
 
 import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,14 +31,18 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.orbix_web.exceptions.ResourceNotFoundException;
 import com.example.orbix_web.models.Item;
+import com.example.orbix_web.models.Supplier;
 import com.example.orbix_web.repositories.ItemRepository;
+import com.example.orbix_web.repositories.SupplierRepository;
 import com.fasterxml.jackson.core.JsonParser;
+
 
 /**
  * @author GODFREY
@@ -57,7 +67,10 @@ public class ItemServiceController {
 
     @Autowired
     ItemRepository itemRepository;
+    @Autowired
+    SupplierRepository supplierRepository;
     RestTemplate restTemplate;
+    EntityManager entityManager;
     
     // Get All Items
     @GetMapping(value="/items",produces=MediaType.APPLICATION_JSON_VALUE)
@@ -75,10 +88,29 @@ public class ItemServiceController {
     // Create a new Item
     @PostMapping(value="/items")
     @ResponseBody
-    public Item createItem(@Valid @RequestBody Item item) {
-    	System.out.println("Success");
+    public Item createItem(@Valid @RequestBody Item item ) {
+    	String supplierName = (item.getSupplier()).getSupplierName();
+    	Supplier supplier = supplierRepository.findBySupplierName(supplierName).get();
+    	supplier.setSupplierName(supplierName);
+    	supplierRepository.save(supplier);
+    	item.setSupplier(supplier);
+    	
+    	
         return itemRepository.save(item);
     }
+ 
+    
+    
+    //@RequestMapping(method = RequestMethod.POST, value="/items")
+  //public ResponseEntity<?> createItem(@Valid @RequestBody Item item, String supplierName) {
+	
+	//System.out.println((ResponseEntity<Item);
+	//Supplier supplier = supplierRepository.findBySupplierName("ANDE");
+	//supplier = supplierRepository.findBySupplierName(item.get)
+    //	return new ResponseEntity<>(itemRepository.save(item), HttpStatus.CREATED);
+    //return itemRepository.save(item);
+  //}
+
 
     // Get a Single Item
     @GetMapping("/items/{id}")
@@ -126,9 +158,15 @@ public class ItemServiceController {
                 .orElseThrow(() -> new ResourceNotFoundException("Item", "id", itemId));
 
         item = itemDetails;
-
-        Item updatedItem = itemRepository.save(item);
-        return updatedItem;
+        
+        String supplierName = (item.getSupplier()).getSupplierName();
+    	Supplier supplier = supplierRepository.findBySupplierName(supplierName).get();
+    	supplier.setSupplierName(supplierName);
+    	supplierRepository.save(supplier);
+    	item.setSupplier(supplier);
+        
+        
+        return itemRepository.save(item);
     }
 
     // Delete a Item
