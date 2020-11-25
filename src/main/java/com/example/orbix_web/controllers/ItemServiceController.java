@@ -69,8 +69,6 @@ public class ItemServiceController {
     ItemRepository itemRepository;
     @Autowired
     SupplierRepository supplierRepository;
-    RestTemplate restTemplate;
-    EntityManager entityManager;
     
     // Get All Items
     @GetMapping(value="/items",produces=MediaType.APPLICATION_JSON_VALUE)
