@@ -43,6 +43,16 @@ public class SupplierServiceController {
     public List<Supplier> getAllSuppliers() {
         return supplierRepository.findAll();
     }
+    
+    /**
+     * 
+     * @return array of suppliers' names
+     */
+    @GetMapping(value="/suppliers/supplier_names")
+    public Iterable<Supplier> getAllSupplierByNames() {
+    	
+        return supplierRepository.getSupplierNames();
+    }
 
     // Create a new Supplier
     @PostMapping(value="/suppliers")

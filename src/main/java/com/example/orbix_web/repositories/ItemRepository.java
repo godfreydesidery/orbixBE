@@ -6,7 +6,9 @@ package com.example.orbix_web.repositories;
 
 import java.util.Optional;
 
+import org.hibernate.mapping.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.example.orbix_web.models.Item;
@@ -36,6 +38,11 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 	 */
 	Optional<Item> findByLongDescription(String longDescription);
 
-	
+	/**
+	 * @return
+	 */
+	@Query("select i.longDescription from Item i")
+	Iterable<Item> getLongDescription();
+
 }
 

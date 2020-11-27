@@ -70,20 +70,31 @@ public class ItemServiceController {
     @Autowired
     SupplierRepository supplierRepository;
     
-    // Get All Items
-    @GetMapping(value="/items",produces=MediaType.APPLICATION_JSON_VALUE)
+    /**
+     * 
+     * @return all items
+     */
+    @GetMapping(value="/items")
     public List<Item> getAllItems() {
     	
-    	List<Item> list = new ArrayList<>();
-        Iterable<Item> items = itemRepository.findAll();
-     
-        items.forEach(list::add);
-        return list;
+        return itemRepository.findAll();
+    }
+    
+    /**
+     * 
+     * @return array of items' long descriptions
+     */
+    @GetMapping(value="/items/long_descriptions")
+    public Iterable<Item> getAllItemsByLongDescription() {
     	
-        //return itemRepository.findAll();
+        return itemRepository.getLongDescription();
     }
 
-    // Create a new Item
+    /**
+     * create a new item
+     * @param item
+     * @return item created
+     */
     @PostMapping(value="/items")
     @ResponseBody
     public Item createItem(@Valid @RequestBody Item item ) {
@@ -98,19 +109,9 @@ public class ItemServiceController {
     }
  
     
-    
-    //@RequestMapping(method = RequestMethod.POST, value="/items")
-  //public ResponseEntity<?> createItem(@Valid @RequestBody Item item, String supplierName) {
-	
-	//System.out.println((ResponseEntity<Item);
-	//Supplier supplier = supplierRepository.findBySupplierName("ANDE");
-	//supplier = supplierRepository.findBySupplierName(item.get)
-    //	return new ResponseEntity<>(itemRepository.save(item), HttpStatus.CREATED);
-    //return itemRepository.save(item);
-  //}
-
-
-    // Get a Single Item
+    /**
+     * get a single item by id
+     */
     @GetMapping("/items/{id}")
     public Item getItemById(@PathVariable(value = "id") Long itemId) {
     	
@@ -120,7 +121,11 @@ public class ItemServiceController {
                 .orElseThrow(() -> new ResourceNotFoundException("Item", "id", itemId));
     }
     
- // Get a Single Item
+    /**
+     * get item by barcode
+     * @param primaryBarcode
+     * @return
+     */
     @GetMapping("/items/primary_barcode={primary_barcode}")
     public Item getItemByPrimaryBarcode(@PathVariable(value = "primary_barcode") String primaryBarcode) {
     	
@@ -129,7 +134,11 @@ public class ItemServiceController {
                 .orElseThrow(() -> new ResourceNotFoundException("Item", "primary_barcode", primaryBarcode));
     }
     
- // Get a Single Item
+    /**
+     * get item by itemcode
+     * @param primaryBarcode
+     * @return
+     */
     @GetMapping("/items/item_code={item_code}")
     public Item getItemByItemCode(@PathVariable(value = "item_code") String itemCode) {
     	
@@ -138,7 +147,11 @@ public class ItemServiceController {
                 .orElseThrow(() -> new ResourceNotFoundException("Item", "item_code", itemCode));
     }
     
- // Get a Single Item
+    /**
+     * get item by long description
+     * @param primaryBarcode
+     * @return
+     */
     @GetMapping("/items/long_description={long_description}")
     public Item getItemByLongDescription(@PathVariable(value = "long_description") String longDescription) {
     	
@@ -147,7 +160,12 @@ public class ItemServiceController {
                 .orElseThrow(() -> new ResourceNotFoundException("Item", "long_description", longDescription));
     }
     
-    // Update a Item
+    /**
+     * 
+     * @param itemId
+     * @param itemDetails
+     * @return
+     */
     @PutMapping("/items/{id}")
     public Item updateNote(@PathVariable(value = "id") Long itemId,
                                             @Valid @RequestBody Item itemDetails) {
@@ -167,7 +185,11 @@ public class ItemServiceController {
         return itemRepository.save(item);
     }
 
-    // Delete a Item
+    /**
+     * 
+     * @param itemId
+     * @return
+     */
     @DeleteMapping("/items/{id}")
     public ResponseEntity<?> deleteItem(@PathVariable(value = "id") Long itemId) {
     	Item item = itemRepository.findById(itemId)

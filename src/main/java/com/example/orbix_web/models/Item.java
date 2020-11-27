@@ -24,7 +24,10 @@ import javax.validation.constraints.NotBlank;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.envers.Audited;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.stereotype.Component;
+
 import com.example.orbix_web.database.Audit;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -33,6 +36,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author GODFREY
  *
  */
+@Component
 @Entity
 @Audited
 @Table(name = "items")
@@ -72,10 +76,11 @@ public class Item extends Audit<String>{
         })
 	private Set<Shop> shops;
 	
-	@JsonBackReference(value="supplierName")
-	@ManyToOne(targetEntity = Supplier.class, fetch = FetchType.LAZY,  optional = false)
+	//@JsonBackReference(value="supplierName")
+	@ManyToOne(targetEntity = Supplier.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "supplier_id", nullable = false , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
+	@Autowired
     private Supplier supplier;
 	
 	/**
