@@ -43,6 +43,7 @@ public class Supplier extends Audit<String>{
 	@Column(unique=true)
     private String supplierName;
 	
+	private String contactName;
     private String tin;
     private String vrn;
     private String termsOfPayment;
@@ -292,6 +293,18 @@ public class Supplier extends Audit<String>{
 	 */
 	public void setBankPostAddress(String bankPostAddress) {
 		this.bankPostAddress = bankPostAddress;
+	}
+	/**
+	 * @return the contactName
+	 */
+	public String getContactName() {
+		return contactName;
+	}
+	/**
+	 * @param contactName the contactName to set
+	 */
+	public void setContactName(String contactName) {
+		this.contactName = contactName;
 	}
 }
 

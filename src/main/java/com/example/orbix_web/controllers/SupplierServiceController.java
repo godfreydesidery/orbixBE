@@ -84,7 +84,7 @@ public class SupplierServiceController {
         Supplier supplier = supplierRepository.findById(supplierId)
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier", "id", supplierId));
 
-        
+        supplier = supplierDetails;
 
         Supplier updatedSupplier = supplierRepository.save(supplier);
         return updatedSupplier;

@@ -29,7 +29,6 @@ public class OrbixWebApplication {
 	
 	protected ConfigurableApplicationContext springContext;
 	
-	@Autowired
 	public static void main(String[] args) throws Throwable {
 		SpringApplication.run(OrbixWebApplication.class, args);
 		//Application.launch(JavaFxApplication.class,args);

@@ -115,7 +115,6 @@ public class ItemServiceController {
     @GetMapping("/items/{id}")
     public Item getItemById(@PathVariable(value = "id") Long itemId) {
     	
-    	System.out.println("Success");
     	
         return itemRepository.findById(itemId)
                 .orElseThrow(() -> new ResourceNotFoundException("Item", "id", itemId));
