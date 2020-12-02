@@ -17,6 +17,7 @@ import javax.validation.constraints.NotBlank;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.envers.Audited;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.example.orbix_web.database.Audit;
@@ -40,9 +41,65 @@ public class Class extends Audit<String>{
 	@NotBlank
     private String classCode;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "department_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
+	@Autowired
     private Department department;
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return the className
+	 */
+	public String getClassName() {
+		return className;
+	}
+
+	/**
+	 * @param className the className to set
+	 */
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	/**
+	 * @return the classCode
+	 */
+	public String getClassCode() {
+		return classCode;
+	}
+
+	/**
+	 * @param classCode the classCode to set
+	 */
+	public void setClassCode(String classCode) {
+		this.classCode = classCode;
+	}
+
+	/**
+	 * @return the department
+	 */
+	public Department getDepartment() {
+		return department;
+	}
+
+	/**
+	 * @param department the department to set
+	 */
+	public void setDepartment(Department department) {
+		this.department = department;
+	}
 }

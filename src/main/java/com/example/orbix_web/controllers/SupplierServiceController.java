@@ -50,7 +50,6 @@ public class SupplierServiceController {
      */
     @GetMapping(value="/suppliers/supplier_names")
     public Iterable<Supplier> getAllSupplierByNames() {
-    	
         return supplierRepository.getSupplierNames();
     }
 
@@ -67,13 +66,20 @@ public class SupplierServiceController {
         return supplierRepository.findById(supplierId)
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier", "id", supplierId));
     }
- // Get a Single Supplier by name
+    // Get a Single Supplier by name
     @GetMapping("/suppliers/supplier_name={supplier_name}")
     public Supplier getSupplierBySupplierName(@PathVariable(value = "supplier_name") String supplierName) {
     	
-    	
         return supplierRepository.findBySupplierName(supplierName)
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier", "supplier_name", supplierName));
+    }
+    
+    // Get a Single Supplier by code
+    @GetMapping("/suppliers/supplier_code={supplier_code}")
+    public Supplier getSupplierBySupplierCode(@PathVariable(value = "supplier_code") String supplierCode) {
+    	
+        return supplierRepository.findBySupplierCode(supplierCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Supplier", "supplier_code", supplierCode));
     }
 
     // Update a Supplier

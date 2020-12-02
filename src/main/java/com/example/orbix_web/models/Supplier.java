@@ -6,9 +6,12 @@ package com.example.orbix_web.models;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,6 +34,7 @@ import com.example.orbix_web.database.Audit;
 @Audited
 @Table(name = "suppliers")
 @EntityListeners(AuditingEntityListener.class)
+@Embeddable
 public class Supplier extends Audit<String>{
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,7 +67,8 @@ public class Supplier extends Audit<String>{
     private String bankAccountNo;
 	private String bankStatus;
 	
-	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "supplier", cascade = CascadeType.ALL)
+	private Set<Item> item = new HashSet<Item>();
 	
 	/**
 	 * @return the id

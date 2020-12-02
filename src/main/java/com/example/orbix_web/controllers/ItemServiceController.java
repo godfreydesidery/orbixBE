@@ -37,8 +37,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.orbix_web.exceptions.ResourceNotFoundException;
+import com.example.orbix_web.models.Department;
 import com.example.orbix_web.models.Item;
 import com.example.orbix_web.models.Supplier;
+import com.example.orbix_web.repositories.DepartmentRepository;
 import com.example.orbix_web.repositories.ItemRepository;
 import com.example.orbix_web.repositories.SupplierRepository;
 import com.fasterxml.jackson.core.JsonParser;
@@ -69,6 +71,8 @@ public class ItemServiceController {
     ItemRepository itemRepository;
     @Autowired
     SupplierRepository supplierRepository;
+    @Autowired
+    DepartmentRepository departmentRepository;
     
     /**
      * 
@@ -98,12 +102,27 @@ public class ItemServiceController {
     @PostMapping(value="/items")
     @ResponseBody
     public Item createItem(@Valid @RequestBody Item item ) {
-    	String supplierName = (item.getSupplier()).getSupplierName();
-    	Supplier supplier = supplierRepository.findBySupplierName(supplierName).get();
-    	supplier.setSupplierName(supplierName);
-    	supplierRepository.save(supplier);
-    	item.setSupplier(supplier);
     	
+    	Supplier supplier;
+    	try {
+    		String supplierName = (item.getSupplier()).getSupplierName();
+    		supplier = supplierRepository.findBySupplierName(supplierName).get();
+    		supplier.setSupplierName(supplierName);
+	    	supplierRepository.save(supplier);
+	    	item.setSupplier(supplier);
+    	}catch(Exception e) {
+    		item.setSupplier(null);
+    	}
+    	Department department;
+    	try {
+    		String departmentName = (item.getDepartment()).getDepartmentName();
+    		department = departmentRepository.findByDepartmentName(departmentName).get();
+    		department.setDepartmentName(departmentName);
+	    	departmentRepository.save(department);
+	    	item.setDepartment(department);
+    	}catch(Exception e) {
+    		item.setDepartment(null);
+    	}
     	
         return itemRepository.save(item);
     }
@@ -166,7 +185,7 @@ public class ItemServiceController {
      * @return
      */
     @PutMapping("/items/{id}")
-    public Item updateNote(@PathVariable(value = "id") Long itemId,
+    public Item updateItem(@PathVariable(value = "id") Long itemId,
                                             @Valid @RequestBody Item itemDetails) {
 
         Item item = itemRepository.findById(itemId)
@@ -174,13 +193,27 @@ public class ItemServiceController {
 
         item = itemDetails;
         
-        String supplierName = (item.getSupplier()).getSupplierName();
-    	Supplier supplier = supplierRepository.findBySupplierName(supplierName).get();
-    	supplier.setSupplierName(supplierName);
-    	supplierRepository.save(supplier);
-    	item.setSupplier(supplier);
-        
-        
+    	Supplier supplier;
+    	try {
+    		String supplierName = (item.getSupplier()).getSupplierName();
+    		supplier = supplierRepository.findBySupplierName(supplierName).get();
+    		supplier.setSupplierName(supplierName);
+	    	supplierRepository.save(supplier);
+	    	item.setSupplier(supplier);
+    	}catch(Exception e) {
+    		item.setSupplier(null);
+    	}
+    	Department department;
+    	try {
+    		String departmentName = (item.getDepartment()).getDepartmentName();
+    		department = departmentRepository.findByDepartmentName(departmentName).get();
+    		department.setDepartmentName(departmentName);
+	    	departmentRepository.save(department);
+	    	item.setDepartment(department);
+    	}catch(Exception e) {
+    		item.setDepartment(null);
+    	}
+	    	
         return itemRepository.save(item);
     }
 

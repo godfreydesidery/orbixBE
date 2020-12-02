@@ -31,6 +31,12 @@ public interface SupplierRepository extends JpaRepository<Supplier, Long> {
 	@Query("select s.supplierName from Supplier s")
 	Iterable<Supplier> getSupplierNames();
 
+	/**
+	 * @param supplierCode
+	 * @return
+	 */
+	Optional<Supplier> findBySupplierCode(String supplierCode);
+
 	
 
 }

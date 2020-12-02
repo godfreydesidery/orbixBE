@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -51,7 +52,10 @@ public class Item extends Audit<String>{
     private String itemCode;
 	@Column(unique = true)
     private String primaryBarcode;
+	@NotBlank
+	@Column(unique = true)
 	private String longDescription;
+	@NotBlank
 	private String shortDescription;
 	private int packSize;
 	private double unitCostPrice;
@@ -76,12 +80,19 @@ public class Item extends Audit<String>{
         })
 	private Set<Shop> shops;
 	
-	//@JsonBackReference(value="supplierName")
-	@ManyToOne(targetEntity = Supplier.class, fetch = FetchType.EAGER,  optional = false)
-    @JoinColumn(name = "supplier_id", nullable = false , updatable = true)
+	@ManyToOne(targetEntity = Supplier.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "supplier_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
 	@Autowired
+	@Embedded
     private Supplier supplier;
+	
+	@ManyToOne(targetEntity = Department.class, fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "department_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+	@Autowired
+	@Embedded
+    private Department department;
 	
 	/**
 	 * @return the id
@@ -322,6 +333,18 @@ public class Item extends Audit<String>{
 	 */
 	public void setSupplier(Supplier supplier) {
 		this.supplier = supplier;
+	}
+	/**
+	 * @return the department
+	 */
+	public Department getDepartment() {
+		return department;
+	}
+	/**
+	 * @param department the department to set
+	 */
+	public void setDepartment(Department department) {
+		this.department = department;
 	}
 	
 	

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.orbix_web.exceptions.ResourceNotFoundException;
 import com.example.orbix_web.models.Department;
+import com.example.orbix_web.models.Supplier;
 import com.example.orbix_web.repositories.DepartmentRepository;
 
 /**
@@ -41,6 +42,30 @@ public class DepartmentServiceController {
     @GetMapping("/departments")
     public List<Department> getAllDepartments() {
         return departmentRepository.findAll();
+    }
+    
+    /**
+     * 
+     * @return array of departments' names
+     */
+    @GetMapping(value="/departments/department_names")
+    public Iterable<Department> getAllDepartmentByNames() {
+        return departmentRepository.getDepartmentNames();
+    }
+    
+    // Get a Single Department by name
+    @GetMapping("/departments/department_name={department_name}")
+    public Department getDepartmentByDepartmentName(@PathVariable(value = "department_name") String departmentName) {
+    	
+        return departmentRepository.findByDepartmentName(departmentName)
+                .orElseThrow(() -> new ResourceNotFoundException("Department", "department_name", departmentName));
+    }
+    // Get a Single Department by code
+    @GetMapping("/departments/department_code={department_code}")
+    public Department getDepartmentByDepartmentCode(@PathVariable(value = "department_code") String departmentCode) {
+    	System.out.println("checked");
+        return departmentRepository.findByDepartmentCode(departmentCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Department", "department_code", departmentCode));
     }
 
     // Create a new Department
@@ -65,7 +90,7 @@ public class DepartmentServiceController {
         Department department = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Department", "id", departmentId));
 
-        
+        department = departmentDetails;
 
         Department updatedDepartment = departmentRepository.save(department);
         return updatedDepartment;
