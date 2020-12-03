@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.models;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -37,8 +38,10 @@ public class Class extends Audit<String>{
     private Long id;
 	
 	@NotBlank
+	@Column(unique = true)
     private String className;
 	@NotBlank
+	@Column(unique = true)
     private String classCode;
 	
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
