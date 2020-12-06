@@ -44,7 +44,6 @@ public class LpoDetail {
 	@NotBlank
     private String description;
 	private double costPrice;
-	@NotBlank
 	private double qtyOrdered;
 	private double qtyReceived;
 	
