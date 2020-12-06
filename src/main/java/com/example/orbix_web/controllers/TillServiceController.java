@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.orbix_web.exceptions.ResourceNotFoundException;
 import com.example.orbix_web.models.Till;
+import com.example.orbix_web.models.User;
 import com.example.orbix_web.repositories.TillRepository;
 
 /**
@@ -29,8 +31,8 @@ import com.example.orbix_web.repositories.TillRepository;
  *
  */
 @RestController
-@RequestMapping(value = "/api")
 @Service
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class TillServiceController {
 
     @Autowired
@@ -56,6 +58,13 @@ public class TillServiceController {
                 .orElseThrow(() -> new ResourceNotFoundException("Till", "id", tillId));
     }
 
+    // Get a Single till by till no
+    @GetMapping("/tills/till_no={till_no}")
+    public Till getTillByTillNo(@PathVariable(value = "till_no") String tillNo) {
+        return tillRepository.findByTillNo(tillNo)
+                .orElseThrow(() -> new ResourceNotFoundException("Till", "till_no", tillNo));
+    }
+    
     // Update a Till
     @PutMapping("/tills/{id}")
     public Till updateNote(@PathVariable(value = "id") Long tillId,
@@ -64,7 +73,7 @@ public class TillServiceController {
         Till till = tillRepository.findById(tillId)
                 .orElseThrow(() -> new ResourceNotFoundException("Till", "id", tillId));
 
-        
+        till = tillDetails;
 
         Till updatedTill = tillRepository.save(till);
         return updatedTill;

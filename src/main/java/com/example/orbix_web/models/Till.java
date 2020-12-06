@@ -40,7 +40,9 @@ public class Till extends Audit<String>{
 	@Column(unique=true)
     private String tillNo;
 	@NotBlank
+	@Column(unique=true)
     private String computerName;
+	private String status;
 	
 	private double cash;
 	private double voucher;
@@ -53,8 +55,8 @@ public class Till extends Audit<String>{
 	private double crNote;
 	private double mobile;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "shop_id", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "shop_id", nullable = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private Shop shop;
@@ -214,5 +216,17 @@ public class Till extends Audit<String>{
 	 */
 	public void setMobile(double mobile) {
 		this.mobile = mobile;
+	}
+	/**
+	 * @return the status
+	 */
+	public String getStatus() {
+		return status;
+	}
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

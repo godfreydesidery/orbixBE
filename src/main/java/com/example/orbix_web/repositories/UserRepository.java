@@ -3,6 +3,8 @@
  */
 package com.example.orbix_web.repositories;
 
+import java.util.Optional;
+
 /**
  * @author GODFREY
  *
@@ -14,5 +16,11 @@ import com.example.orbix_web.models.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+
+	/**
+	 * @param payRollNo
+	 * @return
+	 */
+	Optional<User> findByPayRollNo(String payRollNo);
 
 }
