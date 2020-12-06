@@ -25,6 +25,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.envers.Audited;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.stereotype.Component;
 
 import com.example.orbix_web.database.Audit;
 
@@ -33,7 +34,7 @@ import com.example.orbix_web.database.Audit;
  *
  */
 @Entity
-@Audited
+@Component
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
 public class User extends Audit<String> {

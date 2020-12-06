@@ -3,25 +3,17 @@
  */
 package com.example.orbix_web.repositories;
 
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.orbix_web.models.Day;
 import com.example.orbix_web.models.Lpo;
+import com.example.orbix_web.models.LpoDetail;
 
 /**
  * @author GODFREY
  *
  */
 @Repository
-public interface LpoRepository extends JpaRepository<Lpo, Long> {
-
-	/**
-	 * @param lpoNo
-	 * @return
-	 */
-	Optional<Lpo> findByLpoNo(String lpoNo);
+public interface LpoDetailRepository extends JpaRepository<LpoDetail, Long>{
 
 }

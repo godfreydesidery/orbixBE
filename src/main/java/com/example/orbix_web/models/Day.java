@@ -18,6 +18,7 @@ import javax.validation.constraints.NotBlank;
 
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.stereotype.Component;
 
 import com.example.orbix_web.database.Audit;
 
@@ -26,7 +27,7 @@ import com.example.orbix_web.database.Audit;
  *
  */
 @Entity
-@Audited
+@Component
 @Table(name = "days")
 @EntityListeners(AuditingEntityListener.class)
 public class Day extends Audit<String>{

@@ -3,11 +3,13 @@ package com.example.orbix_web.models;
 import com.example.orbix_web.database.Audit;
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.stereotype.Component;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 @Entity
-@Audited
+@Component
 @Table(name = "customers")
 @EntityListeners(AuditingEntityListener.class)
 public class Customer extends Audit<String> {

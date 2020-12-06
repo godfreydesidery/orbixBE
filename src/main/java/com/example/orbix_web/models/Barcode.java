@@ -26,7 +26,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  *
  */
 @Entity
-@Audited
 @Table(name = "barcodes")
 @EntityListeners(AuditingEntityListener.class)
 public class Barcode extends Audit<String>{

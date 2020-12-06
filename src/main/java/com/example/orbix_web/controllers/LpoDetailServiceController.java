@@ -1,0 +1,53 @@
+/**
+ * 
+ */
+package com.example.orbix_web.controllers;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.orbix_web.models.Lpo;
+import com.example.orbix_web.models.LpoDetail;
+import com.example.orbix_web.models.Supplier;
+import com.example.orbix_web.repositories.LpoDetailRepository;
+import com.example.orbix_web.repositories.LpoRepository;
+
+/**
+ * @author GODFREY
+ *
+ */
+@RestController
+@Service
+@CrossOrigin(origins = "*", allowedHeaders = "*")
+public class LpoDetailServiceController {
+	
+	@Autowired
+    LpoRepository lpoRepository;
+	@Autowired
+	LpoDetailRepository lpoDetailRepository;
+	
+	// Create a new Lpo detail
+    @PostMapping(value="/lpo_details")
+    @ResponseBody
+    public LpoDetail createLpoDetail(@Valid @RequestBody LpoDetail lpoDetail) {
+    	
+    	Lpo lpo;
+    	try {
+    		String lpoNo = (lpoDetail.getLpo()).getLpoNo();
+    		lpo = lpoRepository.findByLpoNo(lpoNo).get();
+    		lpo.setLpoNo(lpoNo);
+	    	lpoRepository.save(lpo);
+	    	lpoDetail.setLpo(lpo);
+    	}catch(Exception e) {
+    		lpoDetail.setLpo(null);
+    	}
+        return lpoDetailRepository.save(lpoDetail);
+    }
+}

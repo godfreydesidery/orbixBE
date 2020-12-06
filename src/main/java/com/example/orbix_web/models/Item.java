@@ -39,7 +39,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Component
 @Entity
-@Audited
 @Table(name = "items")
 @EntityListeners(AuditingEntityListener.class)
 public class Item extends Audit<String>{

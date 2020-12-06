@@ -29,7 +29,6 @@ import com.example.orbix_web.database.Audit;
  */
 @Component
 @Entity
-@Audited
 @Table(name = "roles")
 @EntityListeners(AuditingEntityListener.class)
 public class Role extends Audit<String>{

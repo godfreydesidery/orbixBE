@@ -24,7 +24,6 @@ import com.example.orbix_web.database.Audit;
  */
 @Component
 @Entity
-@Audited
 @Table(name = "company_profile")
 @EntityListeners(AuditingEntityListener.class)
 @Embeddable

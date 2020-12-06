@@ -21,13 +21,14 @@ import javax.validation.constraints.NotBlank;
 
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.stereotype.Component;
 
 /**
  * @author GODFREY
  *
  */
 @Entity
-@Audited
+@Component
 @Table(name = "sale_orders")
 @EntityListeners(AuditingEntityListener.class)
 public class SaleOrder extends Order{
