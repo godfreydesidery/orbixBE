@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.models;
 
+import java.beans.Transient;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -53,6 +54,16 @@ public class LpoDetail {
 	@Autowired
 	@Embedded
     private Lpo lpo;
+	
+	@Transient
+    public Lpo getItem() {
+        return this.getItem();
+    }
+
+    @Transient
+    public Double getTotalCostPrice() {
+        return getCostPrice() * getQtyOrdered();
+    }
 
 	/**
 	 * @return the id

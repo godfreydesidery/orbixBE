@@ -72,6 +72,13 @@ public class LpoServiceController {
         return lpoRepository.findById(localPurchaseOrderId)
                 .orElseThrow(() -> new ResourceNotFoundException("LPO", "id", localPurchaseOrderId));
     }
+    
+ // Get a Single LPO
+    @GetMapping("/lpos/lpo_no={lpo_no}")
+    public Lpo getLpoByLpoNo(@PathVariable(value = "lpo_no") String lpoNo) {
+        return lpoRepository.findByLpoNo(lpoNo)
+                .orElseThrow(() -> new ResourceNotFoundException("LPO", "lpoNo", lpoNo));
+    }
 
     // Update a LPO
     @PutMapping("/local_purchase_orders/{id}")

@@ -3,7 +3,10 @@
  */
 package com.example.orbix_web.models;
 
+import java.beans.Transient;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -18,10 +21,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.OnDelete;
@@ -32,6 +37,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.stereotype.Component;
 
 import com.example.orbix_web.database.Audit;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 /**
  * @author GODFREY
@@ -63,6 +70,27 @@ public class Lpo extends Audit<String>{
 	@Autowired
 	@Embedded
     private Supplier supplier;
+	private double sum;
+	
+    @OneToMany(targetEntity = LpoDetail.class, mappedBy = "lpo", fetch = FetchType.EAGER)
+    @Valid
+    @JsonIgnoreProperties("lpo")
+    private List<LpoDetail> lpoDetail;
+	
+	@Transient
+    public Double getTotalOrderPrice() {
+        double sum = 0D;
+        List<LpoDetail> lpoDetail = getLpoDetail();
+        for (LpoDetail op : lpoDetail) {
+            sum += op.getTotalCostPrice();
+        }
+        return sum;
+    }
+
+    @Transient
+    public int getNumberOfProducts() {
+        return this.lpoDetail.size();
+    }
 	
 	
 	//@ManyToMany(cascade = CascadeType.ALL,mappedBy = "lpos")
@@ -175,6 +203,34 @@ public class Lpo extends Audit<String>{
 	 */
 	public void setSupplier(Supplier supplier) {
 		this.supplier = supplier;
-	}	
+	}
+
+	/**
+	 * @return the lpoDetail
+	 */
+	public List<LpoDetail> getLpoDetail() {
+		return lpoDetail;
+	}
+
+	/**
+	 * @param lpoDetail the lpoDetail to set
+	 */
+	public void setLpoDetail(List<LpoDetail> lpoDetail) {
+		this.lpoDetail = lpoDetail;
+	}
+
+	/**
+	 * @return the sum
+	 */
+	public double getSum() {
+		return sum;
+	}
+
+	/**
+	 * @param sum the sum to set
+	 */
+	public void setSum(double sum) {
+		this.sum = getTotalOrderPrice();
+	}
 }
 
