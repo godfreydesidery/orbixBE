@@ -72,7 +72,7 @@ public class Lpo extends Audit<String>{
     private Supplier supplier;
 	private double sum;
 	
-    @OneToMany(targetEntity = LpoDetail.class, mappedBy = "lpo", fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = LpoDetail.class, mappedBy = "lpo", fetch = FetchType.EAGER, orphanRemoval = true)
     @Valid
     @JsonIgnoreProperties("lpo")
     private List<LpoDetail> lpoDetail;
