@@ -91,7 +91,7 @@ public class LpoServiceController {
     		lpoRepository.save(lpo);
     		return new ResponseEntity<>("LPO updated", HttpStatus.OK);
     	}catch(Exception e) {
-    		return new ResponseEntity<>("Could not update LPO, "+e.getMessage(), HttpStatus.OK);
+    		return new ResponseEntity<>("Could not update LPO, "+e.getMessage(), HttpStatus.EXPECTATION_FAILED);
     	}
     }
     //Approve LPO
@@ -104,7 +104,7 @@ public class LpoServiceController {
 			lpoRepository.save(lpo);
 			return new ResponseEntity<Object>("LPO approved", HttpStatus.OK);
 		}else {
-			return new ResponseEntity<Object>("Could not approve, LPO not a pending LPO", HttpStatus.OK);
+			return new ResponseEntity<Object>("Could not approve, LPO not a pending LPO", HttpStatus.EXPECTATION_FAILED);
 		}
 	}
     //Print LPO
@@ -112,16 +112,17 @@ public class LpoServiceController {
     public ResponseEntity<Object> printLpo(@PathVariable(value = "id") Long lpoId) {
 		Lpo lpo = lpoRepository.findById(lpoId)
 		.orElseThrow(() -> new NotFoundException("LPO not found"));
-		if(lpo.getStatus().equals("APPROVED")) {
+		String status = lpo.getStatus();
+		if(status.equals("APPROVED")) {
 			lpo.setStatus("PRINTED");
 			lpoRepository.save(lpo);
-			return new ResponseEntity<Object>("LPO printed successifully", HttpStatus.OK);
-		}else if(lpo.getStatus().equals("PRINTED") || lpo.getStatus().equals("REPRINTED")) {
+			return new ResponseEntity<Object>("LPO printed successifully.", HttpStatus.OK);
+		}else if(status.equals("PRINTED") || status.equals("REPRINTED")) {
 			lpo.setStatus("REPRINTED");
 			lpoRepository.save(lpo);
-			return new ResponseEntity<Object>("LPO reprinted successifully", HttpStatus.OK);
+			return new ResponseEntity<Object>("LPO reprinted successifully.", HttpStatus.OK);
 		}else {
-			return new ResponseEntity<Object>("Could not print/reprint LPO, LPO not approved", HttpStatus.OK);
+			return new ResponseEntity<Object>("Could not print/reprint LPO, LPO not approved.", HttpStatus.EXPECTATION_FAILED);
 		}
 	}
     //Cancel LPO
@@ -129,16 +130,17 @@ public class LpoServiceController {
     public ResponseEntity<Object> cancelLpo(@PathVariable(value = "id") Long lpoId) {
 		Lpo lpo = lpoRepository.findById(lpoId)
 		.orElseThrow(() -> new NotFoundException("LPO not found"));
-		if(lpo.getStatus().equals("PENDING") || lpo.getStatus().equals("APPROVED")) {
+		String status = lpo.getStatus();
+		if(status.equals("PENDING") || status.equals("APPROVED")) {
 			lpo.setStatus("CANCELLED");
 			lpoRepository.save(lpo);
-			return new ResponseEntity<Object>("LPO cancelled", HttpStatus.OK);
-		}else if(lpo.getStatus().equals("CANCELLED")) {
-			return new ResponseEntity<Object>("Could not cancel, LPO already canceled", HttpStatus.OK);
-		}else if(lpo.getStatus().equals("PRINTED") || lpo.getStatus().equals("REPRINTED")) {
-			return new ResponseEntity<Object>("Can not cancel a printed LPO", HttpStatus.OK);
+			return new ResponseEntity<Object>("LPO cancelled.", HttpStatus.OK);
+		}else if(status.equals("CANCELLED")) {
+			return new ResponseEntity<Object>("Could not cancel, LPO already canceled.", HttpStatus.OK);
+		}else if(status.equals("PRINTED") || status.equals("REPRINTED")) {
+			return new ResponseEntity<Object>("Can not cancel a printed LPO.", HttpStatus.OK);
 		}else {
-			return new ResponseEntity<Object>("Could not cancel, status unknown", HttpStatus.OK);
+			return new ResponseEntity<Object>("Could not cancel, status unknown", HttpStatus.EXPECTATION_FAILED);
 		}
 	}
     // Delete a LPO
@@ -147,8 +149,13 @@ public class LpoServiceController {
     	Lpo lpo = lpoRepository.findById(lpoId)
                 .orElseThrow(() -> new NotFoundException("LPO not found"));
     	try {
-    		lpoRepository.delete(lpo);
-    		return new ResponseEntity<>("LPO deleted successifully", HttpStatus.OK);
+    		String status = lpo.getStatus();
+    		if(status.equals("PRINTED") || status.equals("REPRINTED") || status.equals("COMPLETED")) {
+    			return new ResponseEntity<>("Could not delete, LPO already printed. Only NEW, PENDING, APPROVED  and ARCHIVED LPOs can be deleted.", HttpStatus.EXPECTATION_FAILED);
+    		}else {
+    			lpoRepository.delete(lpo);
+    			return new ResponseEntity<>("LPO deleted successifully.", HttpStatus.OK);
+    		}
     	}catch(Exception ex) {
     		return new ResponseEntity<>("Could not delete LPO: "+ex.getMessage(), HttpStatus.EXPECTATION_FAILED);
     	}    	
