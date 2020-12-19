@@ -62,6 +62,7 @@ public class LpoDetailServiceController {
      * 
      * 
      */
+    //Update lpo detail
     @RequestMapping(method = RequestMethod.PUT, value = "/lpo_details/{id}", produces = "text/html")
     public ResponseEntity<Object> updateLpoDetail(@PathVariable(value = "id") Long lpoDetailId,
                                             @Valid @RequestBody LpoDetail lpoDetailDetails) {
