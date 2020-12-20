@@ -4,6 +4,7 @@
 package com.example.orbix_web.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -21,10 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.orbix_web.exceptions.NotFoundException;
 import com.example.orbix_web.models.Grn;
+import com.example.orbix_web.models.GrnDetail;
 import com.example.orbix_web.models.Lpo;
+import com.example.orbix_web.models.LpoDetail;
 import com.example.orbix_web.models.Supplier;
 import com.example.orbix_web.models.User;
+import com.example.orbix_web.repositories.GrnDetailRepository;
 import com.example.orbix_web.repositories.GrnRepository;
+import com.example.orbix_web.repositories.LpoDetailRepository;
 import com.example.orbix_web.repositories.LpoRepository;
 import com.example.orbix_web.repositories.UserRepository;
 
@@ -40,7 +45,11 @@ public class GrnServiceController {
 	@Autowired
     GrnRepository grnRepository;
 	@Autowired
+    GrnDetailRepository grnDetailRepository;
+	@Autowired
     LpoRepository lpoRepository;
+	@Autowired
+    LpoDetailRepository lpoDetailRepository;
 	@Autowired
     UserRepository userRepository;
 	
@@ -55,13 +64,20 @@ public class GrnServiceController {
     public Grn createGrn(@Valid @RequestBody Grn grn) {
     	Lpo lpo;
     	User user;
-    	try {
-    		String lpoNo = (grn.getLpo().getLpoNo());
+    	String orderType = grn.getOrderType();
+    	String orderNo = "";
+    	
+    	if(orderType.equals("LPO")) {
+    		try {
+    		String lpoNo = (grn.getOrderNo());
+    		System.out.println(lpoNo);
     		lpo = lpoRepository.findByLpoNo(lpoNo).get();
 	    	lpoRepository.save(lpo);
 	    	grn.setLpo(lpo);
-    	}catch(Exception e) {
-    		throw new NotFoundException("Fail to process GRN. LPO not found");
+	    	orderNo = lpoNo;
+	    	}catch(Exception e) {
+	    		throw new NotFoundException("Fail to process GRN. LPO not found");
+	    	}
     	}
     	try {
     		Long userId = (grn.getCreatedBy().getId());
@@ -70,8 +86,38 @@ public class GrnServiceController {
 	    	grn.setCreatedBy(user);
     	}catch(Exception e) {
     		grn.setCreatedBy(null);
-    	}  	
-        return grnRepository.save(grn);
+    	}  
+    	//save grn, get grn no and id, create grn detail with grn id
+    	Grn _grn = grnRepository.save(grn);
+    	// create grn details
+    	if(orderType.equals("LPO")) {
+    		Optional<Lpo> _lpo = lpoRepository.findByLpoNo(orderNo);
+    		List<LpoDetail> _lpoDetails = lpoDetailRepository.findByLpo(_lpo.get()); 
+    		for(LpoDetail _lpoDetail : _lpoDetails) {
+    			String _lpoNo =  _lpoDetail.getLpo().getLpoNo();
+    			String _itemCode = _lpoDetail.getItemCode();
+    			String _description = _lpoDetail.getDescription();
+    			double _supplierCP = _lpoDetail.getSupplierCostPrice();
+    			double _clientCP = _lpoDetail.getClientCostPrice();
+    			double _qtyOrdered = _lpoDetail.getQtyOrdered();
+    			double _qtyReceived = _lpoDetail.getQtyReceived();
+    			if(grnDetailRepository.existsByOrderNoAndItemCode(_lpoNo, _itemCode) == false) {
+    				GrnDetail _grnDetail = new GrnDetail();
+    				_grnDetail.setGrn(_grn);
+    				_grnDetail.setOrderNo(_lpoNo);
+    				_grnDetail.setItemCode(_itemCode);
+    				_grnDetail.setDescription(_description);
+    				_grnDetail.setSupplierCostPrice(_supplierCP);
+    				_grnDetail.setClientCostPrice(_clientCP);
+    				_grnDetail.setQtyOrdered(_qtyOrdered);
+    				System.out.println("Success");
+    				_grnDetail.setQtyReceived(_qtyReceived);
+    				_grnDetail.setStatus("NOT RECEIVED");
+    				grnDetailRepository.save(_grnDetail);
+    			}
+    		}
+    	}
+        return _grn;
     }
     // Get a Single GRN
     @RequestMapping(method = RequestMethod.GET, value = "/grns/{id}")

@@ -23,4 +23,13 @@ public interface LpoDetailRepository extends JpaRepository<LpoDetail, Long>{
 	@Query("SELECT d FROM LpoDetail d where d.lpo = lpo and d.itemCode = itemCode")
 	Optional<LpoDetail> getLpoAndItemCode(@Param("lpo") Object lpo, @Param("itemCode") String itemCode);
 	boolean existsByLpoAndItemCode(Object lpo, String itemCode);
+	/**
+	 * @param orderNo
+	 * @return
+	 */
+	//@Query("SELECT d FROM LpoDetail d where d.lpo = lpo")
+	//List<LpoDetail> findByLpo(@Param("lpo") Object lpo);
+	
+	
+	List<LpoDetail> findByLpo(Object lpo);
 }

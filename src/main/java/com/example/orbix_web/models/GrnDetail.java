@@ -39,13 +39,13 @@ public class GrnDetail {
     private String itemCode;
 	@NotBlank
     private String description;
-	@NotBlank
-    private Long qtyOrdered;
-	@NotBlank
-    private Long qtyReceived;
-    private Long supplierCp;
-    private Long clientCp;
-    @ManyToOne(targetEntity = Lpo.class, fetch = FetchType.EAGER,  optional = true)
+	private double supplierCostPrice;
+    private double clientCostPrice;
+    private double qtyOrdered;
+    private double qtyReceived;
+    private String status;
+    private String orderNo;
+    @ManyToOne(targetEntity = Grn.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "grn_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
 	@Autowired
@@ -90,50 +90,38 @@ public class GrnDetail {
 	/**
 	 * @return the qtyOrdered
 	 */
-	public Long getQtyOrdered() {
+	public double getQtyOrdered() {
 		return qtyOrdered;
 	}
 	/**
 	 * @param qtyOrdered the qtyOrdered to set
 	 */
-	public void setQtyOrdered(Long qtyOrdered) {
+	public void setQtyOrdered(double qtyOrdered) {
 		this.qtyOrdered = qtyOrdered;
 	}
 	/**
 	 * @return the qtyReceived
 	 */
-	public Long getQtyReceived() {
+	public double getQtyReceived() {
 		return qtyReceived;
 	}
 	/**
 	 * @param qtyReceived the qtyReceived to set
 	 */
-	public void setQtyReceived(Long qtyReceived) {
+	public void setQtyReceived(double qtyReceived) {
 		this.qtyReceived = qtyReceived;
 	}
 	/**
-	 * @return the supplierCp
+	 * @return the status
 	 */
-	public Long getSupplierCp() {
-		return supplierCp;
+	public String getStatus() {
+		return status;
 	}
 	/**
-	 * @param supplierCp the supplierCp to set
+	 * @param status the status to set
 	 */
-	public void setSupplierCp(Long supplierCp) {
-		this.supplierCp = supplierCp;
-	}
-	/**
-	 * @return the clientCp
-	 */
-	public Long getClientCp() {
-		return clientCp;
-	}
-	/**
-	 * @param clientCp the clientCp to set
-	 */
-	public void setClientCp(Long clientCp) {
-		this.clientCp = clientCp;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	/**
 	 * @return the grn
@@ -147,5 +135,41 @@ public class GrnDetail {
 	public void setGrn(Grn grn) {
 		this.grn = grn;
 	}
-    
+	/**
+	 * @return the orderNo
+	 */
+	public String getOrderNo() {
+		return orderNo;
+	}
+	/**
+	 * @param orderNo the orderNo to set
+	 */
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
+	}
+	/**
+	 * @return the supplierCostPrice
+	 */
+	public double getSupplierCostPrice() {
+		return supplierCostPrice;
+	}
+	/**
+	 * @param supplierCostPrice the supplierCostPrice to set
+	 */
+	public void setSupplierCostPrice(double supplierCostPrice) {
+		this.supplierCostPrice = supplierCostPrice;
+	}
+	/**
+	 * @return the clientCostPrice
+	 */
+	public double getClientCostPrice() {
+		return clientCostPrice;
+	}
+	/**
+	 * @param clientCostPrice the clientCostPrice to set
+	 */
+	public void setClientCostPrice(double clientCostPrice) {
+		this.clientCostPrice = clientCostPrice;
+	}
+	
 }

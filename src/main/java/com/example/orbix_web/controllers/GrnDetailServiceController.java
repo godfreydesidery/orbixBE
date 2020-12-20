@@ -45,8 +45,8 @@ public class GrnDetailServiceController {
 	// Create a new Grn detail
     @RequestMapping(method = RequestMethod.POST, value="/grn_details", produces = {"text/html","application/json"})
     @ResponseBody
-    public GrnDetail createGrnDetail(@Valid @RequestBody GrnDetail grnDetail) {    	
-    	Grn grn;
+    public void createGrnDetail(@Valid @RequestBody GrnDetail grnDetail) {    	
+    	/*Grn grn;
     	String grnNo = (grnDetail.getGrn()).getGrnNo();
     	grn = grnRepository.findByGrnNo(grnNo).get();
 	    grnRepository.save(grn);	    
@@ -58,8 +58,11 @@ public class GrnDetailServiceController {
     	}catch(Exception e) {
     		grnDetail.setGrn(null);
     	}
-        return grnDetailRepository.save(grnDetail);
+        return grnDetailRepository.save(grnDetail);*/
     }
+    
+    
+    
     //Update grn detail
     @RequestMapping(method = RequestMethod.PUT, value = "/grn_details/{id}", produces = "text/html")
     public ResponseEntity<Object> updateGrnDetail(@PathVariable(value = "id") Long grnDetailId,

@@ -42,6 +42,8 @@ public class Grn {
 	@NotBlank
 	@Column(unique = true)
     private String grnNo;
+	private String orderType;
+	private String orderNo;
 	private String invoiceNo;
 	@Temporal(TemporalType.DATE)
 	private Date grnDate;
@@ -157,6 +159,34 @@ public class Grn {
 	 */
 	public void setLpo(Lpo lpo) {
 		this.lpo = lpo;
+	}
+
+	/**
+	 * @return the orderType
+	 */
+	public String getOrderType() {
+		return orderType;
+	}
+
+	/**
+	 * @param orderType the orderType to set
+	 */
+	public void setOrderType(String orderType) {
+		this.orderType = orderType;
+	}
+
+	/**
+	 * @return the orderNo
+	 */
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	/**
+	 * @param orderNo the orderNo to set
+	 */
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
 	}	
 	
 	

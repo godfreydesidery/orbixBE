@@ -77,15 +77,7 @@ public class Lpo extends Audit<String>{
     @JsonIgnoreProperties("lpo")
     private List<LpoDetail> lpoDetail;
 	
-	@Transient
-    public Double getTotalOrderPrice() {
-        double sum = 0D;
-        List<LpoDetail> lpoDetail = getLpoDetail();
-        for (LpoDetail op : lpoDetail) {
-            sum += op.getTotalCostPrice();
-        }
-        return sum;
-    }
+	
 
     @Transient
     public int getNumberOfProducts() {
@@ -226,11 +218,5 @@ public class Lpo extends Audit<String>{
 		return sum;
 	}
 
-	/**
-	 * @param sum the sum to set
-	 */
-	public void setSum(double sum) {
-		this.sum = getTotalOrderPrice();
-	}
 }
 

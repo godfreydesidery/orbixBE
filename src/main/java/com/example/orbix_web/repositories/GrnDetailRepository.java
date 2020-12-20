@@ -19,6 +19,6 @@ public interface GrnDetailRepository extends JpaRepository<GrnDetail, Long>{
 	 * @param itemCode
 	 * @return
 	 */
-	boolean existsByGrnAndItemCode(Grn grn, String itemCode);
+	boolean existsByOrderNoAndItemCode(String orderNo, String itemCode);
 
 }

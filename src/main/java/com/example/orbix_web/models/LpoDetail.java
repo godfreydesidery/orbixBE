@@ -44,9 +44,11 @@ public class LpoDetail {
     private String itemCode;
 	@NotBlank
     private String description;
-	private double costPrice;
+	private double supplierCostPrice;
+	private double clientCostPrice;
 	private double qtyOrdered;
 	private double qtyReceived;
+	private String status;
 	
 	@ManyToOne(targetEntity = Lpo.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "lpo_id", nullable = true , updatable = true)
@@ -58,11 +60,6 @@ public class LpoDetail {
 	@Transient
     public Lpo getItem() {
         return this.getItem();
-    }
-
-    @Transient
-    public Double getTotalCostPrice() {
-        return getCostPrice() * getQtyOrdered();
     }
 
 	/**
@@ -108,17 +105,31 @@ public class LpoDetail {
 	}
 
 	/**
-	 * @return the costPrice
+	 * @return the supplierCostPrice
 	 */
-	public double getCostPrice() {
-		return costPrice;
+	public double getSupplierCostPrice() {
+		return supplierCostPrice;
 	}
 
 	/**
-	 * @param costPrice the costPrice to set
+	 * @param supplierCostPrice the supplierCostPrice to set
 	 */
-	public void setCostPrice(double costPrice) {
-		this.costPrice = costPrice;
+	public void setSupplierCostPrice(double supplierCostPrice) {
+		this.supplierCostPrice = supplierCostPrice;
+	}
+
+	/**
+	 * @return the clientCostPrice
+	 */
+	public double getClientCostPrice() {
+		return clientCostPrice;
+	}
+
+	/**
+	 * @param clientCostPrice the clientCostPrice to set
+	 */
+	public void setClientCostPrice(double clientCostPrice) {
+		this.clientCostPrice = clientCostPrice;
 	}
 
 	/**
@@ -150,6 +161,20 @@ public class LpoDetail {
 	}
 
 	/**
+	 * @return the status
+	 */
+	public String getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	/**
 	 * @return the lpo
 	 */
 	public Lpo getLpo() {
@@ -162,4 +187,5 @@ public class LpoDetail {
 	public void setLpo(Lpo lpo) {
 		this.lpo = lpo;
 	}
+	
 }
