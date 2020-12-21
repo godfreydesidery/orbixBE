@@ -6,6 +6,7 @@ package com.example.orbix_web.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +21,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.orbix_web.exceptions.InvalidEntryException;
+import com.example.orbix_web.exceptions.InvalidOperationException;
 import com.example.orbix_web.exceptions.NotFoundException;
 import com.example.orbix_web.models.Grn;
 import com.example.orbix_web.models.GrnDetail;
+import com.example.orbix_web.models.Item;
 import com.example.orbix_web.models.Lpo;
 import com.example.orbix_web.models.LpoDetail;
 import com.example.orbix_web.models.Supplier;
 import com.example.orbix_web.models.User;
 import com.example.orbix_web.repositories.GrnDetailRepository;
 import com.example.orbix_web.repositories.GrnRepository;
+import com.example.orbix_web.repositories.ItemRepository;
 import com.example.orbix_web.repositories.LpoDetailRepository;
 import com.example.orbix_web.repositories.LpoRepository;
 import com.example.orbix_web.repositories.UserRepository;
@@ -52,25 +57,29 @@ public class GrnServiceController {
     LpoDetailRepository lpoDetailRepository;
 	@Autowired
     UserRepository userRepository;
+	@Autowired
+    ItemRepository itemRepository;
 	
 	// Get All GRNs
     @RequestMapping(method = RequestMethod.GET, value = "/grns")
     public List<Grn> getAllGrns() {
         return grnRepository.findAll();
     }
-    // Create a new GRN
+    /**
+     *  Create a new GRN from order details if it does not exist
+     *  return grn with grn details
+     */
     @RequestMapping(method = RequestMethod.POST, value = "/grns")
     @ResponseBody
+    @Transactional
     public Grn createGrn(@Valid @RequestBody Grn grn) {
     	Lpo lpo;
     	User user;
     	String orderType = grn.getOrderType();
     	String orderNo = "";
-    	
     	if(orderType.equals("LPO")) {
     		try {
     		String lpoNo = (grn.getOrderNo());
-    		System.out.println(lpoNo);
     		lpo = lpoRepository.findByLpoNo(lpoNo).get();
 	    	lpoRepository.save(lpo);
 	    	grn.setLpo(lpo);
@@ -110,15 +119,71 @@ public class GrnServiceController {
     				_grnDetail.setSupplierCostPrice(_supplierCP);
     				_grnDetail.setClientCostPrice(_clientCP);
     				_grnDetail.setQtyOrdered(_qtyOrdered);
-    				System.out.println("Success");
     				_grnDetail.setQtyReceived(_qtyReceived);
-    				_grnDetail.setStatus("NOT RECEIVED");
+    				_grnDetail.setStatus("PENDING");
     				grnDetailRepository.save(_grnDetail);
     			}
     		}
     	}
         return _grn;
     }
+    /**
+     * Update the grn details upon receipt
+     * @param grnDetails
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.PUT, value = "/grn_details")
+    @ResponseBody
+    @Transactional
+    public List<GrnDetail> receiveGrn(@Valid @RequestBody List<GrnDetail> grnDetails) {
+    	// advice, first check if the items exist, if not throw not found exception if an inexistence item is received:: later to implement this method
+    	Grn grn = null;
+    	for(GrnDetail grnDetail : grnDetails) {
+    		if(grn == null) {
+    			Long grnId = grnDetail.getGrn().getId();
+    			grn = grnRepository.findById(grnId).get();
+    		}
+    		if(grn == null) {
+    			throw new NotFoundException("Could not receive goods. GRN not found");
+    		}
+    		if(grn.getStatus().equals("RECEIVED")) {
+    			throw new InvalidOperationException("Can not receive this order. Order already received.");
+    		}
+    		//validate
+    		double supplierCostPrice = grnDetail.getSupplierCostPrice();
+    		double clientCostPrice = grnDetail.getClientCostPrice();
+    		double qtyOrdered = grnDetail.getQtyOrdered();
+    		double qtyReceived = grnDetail.getQtyReceived();
+    		if(supplierCostPrice > clientCostPrice && qtyReceived > 0) {
+    			throw new InvalidEntryException("Can not receive goods!\nThe supplier cost price is more than client cost price on "+grnDetail.getDescription());
+    		}
+    		if(qtyReceived > qtyOrdered) {
+    			throw new InvalidEntryException("Can not receive goods!\nQuantity received exceeds the quantity ordered on "+grnDetail.getDescription());
+    		}
+    		if(qtyReceived < 0 || supplierCostPrice < 0) {
+    			throw new InvalidEntryException("Invalid entries at "+grnDetail.getDescription());
+    		}
+    	}
+    	if(grn == null) {
+    		throw new NotFoundException("Could not receive goods. GRN not found");
+    	}
+    	// now commit changes
+    	grn.setStatus("RECEIVED");
+    	grnRepository.save(grn);
+    	for( GrnDetail grnDetail : grnDetails) {
+    		if(grnDetail.getQtyReceived() > 0) {
+    			grnDetail.setStatus("RECEIVED");
+    		}
+    		String itemCode = grnDetail.getItemCode();
+    		Item item = itemRepository.findByItemCode(itemCode).get();
+    		double qty = grnDetail.getQtyReceived();    		
+    		grnDetailRepository.save(grnDetail);
+    		// //implement this method later
+    		ItemServiceController.addStock(item, qty);
+    	}
+    	return grnDetails;
+    }
+    
     // Get a Single GRN
     @RequestMapping(method = RequestMethod.GET, value = "/grns/{id}")
     public Grn getGrnById(@PathVariable(value = "id") Long grnId) {
@@ -144,6 +209,5 @@ public class GrnServiceController {
     	}catch(Exception e) {
     		return new ResponseEntity<>("Could not update GRN, "+e.getMessage(), HttpStatus.EXPECTATION_FAILED);
     	}
-    }
-    
+    }    
 }
