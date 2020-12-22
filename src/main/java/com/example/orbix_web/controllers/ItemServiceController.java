@@ -187,7 +187,7 @@ public class ItemServiceController {
      * @param item
      * @param qty
      */
-    public static void addStock(Object item, double qty) {
+    public static void addToStock(Object item, double qty) {
     	//implement this method
     }
     /**
@@ -195,7 +195,7 @@ public class ItemServiceController {
      * @param item
      * @param qty
      */
-    public static void deductStock(Object item, double qty) {
+    public static void deductFromStock(Object item, double qty) {
     	//implement this method
     }
     /**

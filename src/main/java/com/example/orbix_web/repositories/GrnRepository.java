@@ -24,4 +24,16 @@ public interface GrnRepository extends JpaRepository<Grn, Long>{
 	 */
 	Optional<Grn> findByGrnNo(String grnNo);
 
+	/**
+	 * @param orderNo
+	 * @return
+	 */
+	boolean existsByOrderNo(String orderNo);
+
+	/**
+	 * @param orderNo
+	 * @return
+	 */
+	Optional<Grn> findByOrderNo(String orderNo);
+
 }

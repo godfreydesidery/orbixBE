@@ -3,6 +3,8 @@
  */
 package com.example.orbix_web.controllers;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +44,13 @@ public class GrnDetailServiceController {
     GrnRepository grnRepository;
 	@Autowired
     UserRepository userRepository;
+	// Get All GRN details
+    @RequestMapping(method = RequestMethod.GET, value = "/grn_details")
+    public List<GrnDetail> getAllGrnDetails() {
+        return grnDetailRepository.findAll();
+    }
 	// Create a new Grn detail
-    @RequestMapping(method = RequestMethod.POST, value="/grn_details", produces = {"text/html","application/json"})
+    @RequestMapping(method = RequestMethod.POST, value="/grn_detai", produces = {"text/html","application/json"})
     @ResponseBody
     public void createGrnDetail(@Valid @RequestBody GrnDetail grnDetail) {    	
     	/*Grn grn;

@@ -4,6 +4,7 @@
 package com.example.orbix_web.models;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -15,10 +16,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.OnDelete;
@@ -26,6 +29,8 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author GODFREY
@@ -62,7 +67,7 @@ public class Grn {
 	@Autowired
 	@Embedded
     private Lpo lpo;
-
+	
 	/**
 	 * @return the id
 	 */
@@ -187,7 +192,9 @@ public class Grn {
 	 */
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
-	}	
+	}
+
+	
 	
 	
 

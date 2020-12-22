@@ -45,12 +45,14 @@ public class GrnDetail {
     private double qtyReceived;
     private String status;
     private String orderNo;
+    
     @ManyToOne(targetEntity = Grn.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "grn_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
 	@Autowired
 	@Embedded
     private Grn grn;
+    
 	/**
 	 * @return the id
 	 */
