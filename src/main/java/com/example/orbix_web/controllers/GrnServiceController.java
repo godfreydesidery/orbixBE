@@ -110,8 +110,8 @@ public class GrnServiceController {
     	
     	// create grn details
     	if(orderType.equals("LPO")) {
-    		Optional<Lpo> _lpo = lpoRepository.findByLpoNo(orderNo);
-    		List<LpoDetail> _lpoDetails = lpoDetailRepository.findByLpo(_lpo.get()); 
+    		Lpo _lpo = lpoRepository.findByLpoNo(orderNo).get();
+    		List<LpoDetail> _lpoDetails = lpoDetailRepository.findByLpo(_lpo); 
     		for(LpoDetail _lpoDetail : _lpoDetails) {
     			String _lpoNo =  _lpoDetail.getLpo().getLpoNo();
     			String _itemCode = _lpoDetail.getItemCode();
@@ -158,6 +158,7 @@ public class GrnServiceController {
     		if(_grn.getStatus().equals("RECEIVED")) {
     			throw new InvalidOperationException("Can not receive this order. Order already received.");
     		}
+    		
     		//validate
     		double supplierCostPrice = grnDetail.getSupplierCostPrice();
     		double clientCostPrice = grnDetail.getClientCostPrice();
@@ -179,28 +180,35 @@ public class GrnServiceController {
     	// now commit changes
     	_grn.setStatus("RECEIVED");
     	grnRepository.save(_grn);
-    	String _orderNo = "";
-    	if(_grn.getOrderType().equals("LPO")) {
-    		_orderNo = _grn.getOrderNo();  
+    	
+    	String _orderNo = _grn.getOrderNo();
+    	String _orderType = _grn.getOrderType();
+    	
+    	if(_orderType.equals("LPO")) {
     		Lpo _lpo = lpoRepository.findByLpoNo(_orderNo).get();
     		_lpo.setStatus("RECEIVED");
     		lpoRepository.save(_lpo);
-    	}// add other options
+    	}else if(_orderType.equals("any other order type")) {
+    		// add other options
+    	}
+    	
     	for( GrnDetail grnDetail : grnDetails) {
-    		if(_grn.getOrderType().equals("LPO")) {
+    		if(_orderType.equals("LPO")) {
     			Long id = grnDetailRepository.findByItemCodeAndOrderNo(grnDetail.getItemCode(), _orderNo).get().getId();
     			grnDetail.setId(id);
     		}
     		if(grnDetail.getQtyReceived() == 0) {
     			grnDetail.setStatus("RECEIVED");
     		}			
-			grnDetail.setGrn(_grn);
+			grnDetail.setGrn(_grn);			
 			grnDetail.setOrderNo(_orderNo);
+			grnDetailRepository.save(grnDetail);
+			
     		String _itemCode = grnDetail.getItemCode();
     		Item _item = itemRepository.findByItemCode(_itemCode).get();
     		double _qty = grnDetail.getQtyReceived();    		
-    		grnDetailRepository.save(grnDetail);
-    		// //implement this method later
+    		
+    		//implement this method later
     		ItemServiceController.addToStock(_item, _qty);
     	}
     	return grnDetails;
