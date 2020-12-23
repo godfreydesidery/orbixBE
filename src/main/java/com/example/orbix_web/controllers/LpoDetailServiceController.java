@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.orbix_web.exceptions.DuplicateEntryException;
+import com.example.orbix_web.exceptions.InvalidOperationException;
 import com.example.orbix_web.exceptions.NotFoundException;
 import com.example.orbix_web.models.Lpo;
 import com.example.orbix_web.models.LpoDetail;
@@ -72,7 +73,8 @@ public class LpoDetailServiceController {
 
         lpoDetail = lpoDetailDetails;
         
-    	Lpo lpo;
+    	Lpo lpo = null;
+    	
     	try {
     		String lpoNo = lpoDetail.getLpo().getLpoNo();
     		lpo = lpoRepository.findByLpoNo(lpoNo).get();
@@ -82,11 +84,19 @@ public class LpoDetailServiceController {
     	}catch(Exception e) {
     		lpoDetail.setLpo(null);
     	}
+    	String _status = "";
+    	if(lpo != null) {
+    		_status = lpo.getStatus();
+    		if(!_status.equals("PENDING")) {
+    			throw new InvalidOperationException("Can not edit, LPO not a pending order");
+    		}
+    	}
+    	
     	try {
     		lpoDetailRepository.save(lpoDetail);
     		return new ResponseEntity<Object>("LPO detail updated", HttpStatus.OK);
     	}catch(Exception e) {
-    		return new ResponseEntity<Object>("LPO detail update failed", HttpStatus.EXPECTATION_FAILED);
+    		throw new InvalidOperationException("LPO detail update failed");
     	}
     }
     // Get a Single LpoDetail
@@ -104,11 +114,22 @@ public class LpoDetailServiceController {
     public ResponseEntity<?> deleteLpoDetail(@PathVariable(value = "id") Long lpoDetailId) {
     	LpoDetail lpoDetail = lpoDetailRepository.findById(lpoDetailId)
                 .orElseThrow(() -> new NotFoundException("LPO detail not found"));
+    	
+    	String _status = "";
+    	String lpoNo = lpoDetail.getLpo().getLpoNo();
+		Lpo lpo = lpoRepository.findByLpoNo(lpoNo).get();
+    	if(lpo != null) {
+    		_status = lpo.getStatus();
+    		if(!_status.equals("PENDING")) {
+    			throw new InvalidOperationException("Can not edit, LPO not a pending order");
+    		}
+    	}
+    	
     	try {
     		lpoDetailRepository.delete(lpoDetail);
     		return new ResponseEntity<>("LPO detail deleted successifully.", HttpStatus.OK);
     	}catch(Exception e) {
-    		return new ResponseEntity<>("Could not delete. "+e.getMessage(), HttpStatus.EXPECTATION_FAILED);
+    		throw new InvalidOperationException("Could not delete. "+e.getMessage());
     	}
     }
 }

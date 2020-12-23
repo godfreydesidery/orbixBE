@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.controllers;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.thymeleaf.util.ArrayUtils;
 
 import com.example.orbix_web.exceptions.InvalidEntryException;
 import com.example.orbix_web.exceptions.InvalidOperationException;
@@ -78,8 +80,14 @@ public class GrnServiceController {
     	String orderType = grn.getOrderType();
     	String orderNo = "";
     	Grn _grn = null;
-    	
-    	if(orderType.equals("LPO")) {
+    	String[] orderTypes = {
+    			"LOCAL PURCHASE ORDER",
+    			"TRANSFER ORDER"
+    			};
+    	if(ArrayUtils.contains(orderTypes, orderType) == false) {
+    		throw new InvalidEntryException("Invalid order type. Only orders of the type "+Arrays.toString(orderTypes)+" are allowed!");
+    	}
+    	if(orderType.equals("LOCAL PURCHASE ORDER")) {
     		try {
     		String lpoNo = (grn.getOrderNo());
     		lpo = lpoRepository.findByLpoNo(lpoNo).get();
@@ -87,8 +95,19 @@ public class GrnServiceController {
 	    	grn.setLpo(lpo);
 	    	orderNo = lpoNo;
 	    	}catch(Exception e) {
-	    		throw new NotFoundException("Fail to process GRN. LPO not found");
+	    		throw new NotFoundException("Fail to process GRN. Local Purchase Order not found");
 	    	}
+    	}else if(orderType.equals("TRANSFER ORDER")) {
+    		try {
+        		String toNo = (grn.getOrderNo());
+        		//to = toRepository.findByToNo(toNo).get();
+    	    	//toRepository.save(to);
+    	    	//grn.setTo(to);
+    	    	orderNo = toNo;
+    	    	String e = orderTypes[4];
+    	    	}catch(Exception e) {
+    	    		throw new NotFoundException("Fail to process GRN. Transfer Order not found");
+    	    	}
     	}
     	try {
     		Long userId = (grn.getCreatedBy().getId());
@@ -109,7 +128,7 @@ public class GrnServiceController {
     	
     	
     	// create grn details
-    	if(orderType.equals("LPO")) {
+    	if(orderType.equals("LOCAL PURCHASE ORDER")) {
     		Lpo _lpo = lpoRepository.findByLpoNo(orderNo).get();
     		List<LpoDetail> _lpoDetails = lpoDetailRepository.findByLpo(_lpo); 
     		for(LpoDetail _lpoDetail : _lpoDetails) {
@@ -148,29 +167,41 @@ public class GrnServiceController {
     public List<GrnDetail> receiveGrn(@Valid @RequestBody List<GrnDetail> grnDetails, @PathVariable(value = "grn_id") Long grnId) {
     	// advice, first check if the items exist, if not throw not found exception if an inexistence item is received:: later to implement this method
     	Grn _grn = null;
+    	Lpo _lpo = null;
+    	
+    	
     	for(GrnDetail grnDetail : grnDetails) {
     		if(_grn == null) {
     			_grn = grnRepository.findById(grnId).get();
     		}
     		if(_grn == null) {
     			throw new NotFoundException("Could not receive goods. GRN not found");
+    		}    		
+    		if(_grn.getOrderType().equals("LOCAL PURCHASE ORDER")) {
+    			_lpo = lpoRepository.findByLpoNo(_grn.getOrderNo()).get();
     		}
-    		if(_grn.getStatus().equals("RECEIVED")) {
+    		String _status = _lpo.getStatus();
+    		System.out.println(_status);
+    		if(_status.equals("RECEIVED")) {
     			throw new InvalidOperationException("Can not receive this order. Order already received.");
     		}
-    		
+    		if(!_status.equals("PRINTED")) {
+    			if(!_status.equals("REPRINTED")) {
+    				throw new InvalidOperationException("Can not receive this order. Order not printed.");
+    			}
+    		}   		
     		//validate
-    		double supplierCostPrice = grnDetail.getSupplierCostPrice();
-    		double clientCostPrice = grnDetail.getClientCostPrice();
-    		double qtyOrdered = grnDetail.getQtyOrdered();
-    		double qtyReceived = grnDetail.getQtyReceived();
-    		if(supplierCostPrice > clientCostPrice && qtyReceived > 0) {
+    		double _supplierCostPrice = grnDetail.getSupplierCostPrice();
+    		double _clientCostPrice = grnDetail.getClientCostPrice();
+    		double _qtyOrdered = grnDetail.getQtyOrdered();
+    		double _qtyReceived = grnDetail.getQtyReceived();
+    		if(_supplierCostPrice > _clientCostPrice && _qtyReceived > 0) {
     			throw new InvalidEntryException("Can not receive goods!\nThe supplier cost price is more than client cost price on "+grnDetail.getDescription());
     		}
-    		if(qtyReceived > qtyOrdered) {
+    		if(_qtyReceived > _qtyOrdered) {
     			throw new InvalidEntryException("Can not receive goods!\nQuantity received exceeds the quantity ordered on "+grnDetail.getDescription());
     		}
-    		if(qtyReceived < 0 || supplierCostPrice < 0) {
+    		if(_qtyReceived < 0 || _supplierCostPrice < 0) {
     			throw new InvalidEntryException("Invalid entries at "+grnDetail.getDescription());
     		}
     	}
@@ -179,37 +210,35 @@ public class GrnServiceController {
     	}
     	// now commit changes
     	_grn.setStatus("RECEIVED");
-    	grnRepository.save(_grn);
+    	grnRepository.saveAndFlush(_grn);
     	
     	String _orderNo = _grn.getOrderNo();
     	String _orderType = _grn.getOrderType();
     	
-    	if(_orderType.equals("LPO")) {
-    		Lpo _lpo = lpoRepository.findByLpoNo(_orderNo).get();
-    		_lpo.setStatus("RECEIVED");
-    		lpoRepository.save(_lpo);
+    	if(_orderType.equals("LOCAL PURCHASE ORDER")) {
+    		_lpo = lpoRepository.findByLpoNo(_orderNo).get();
+    		_lpo.setStatus("RECEIVED");   		
+    		lpoRepository.saveAndFlush(_lpo);
     	}else if(_orderType.equals("any other order type")) {
     		// add other options
     	}
     	
     	for( GrnDetail grnDetail : grnDetails) {
-    		if(_orderType.equals("LPO")) {
+    		if(_orderType.equals("LOCAL PURCHASE ORDER")) {
     			Long id = grnDetailRepository.findByItemCodeAndOrderNo(grnDetail.getItemCode(), _orderNo).get().getId();
     			grnDetail.setId(id);
     		}
-    		if(grnDetail.getQtyReceived() == 0) {
+    		if(grnDetail.getQtyReceived() > 0) {
     			grnDetail.setStatus("RECEIVED");
     		}			
 			grnDetail.setGrn(_grn);			
 			grnDetail.setOrderNo(_orderNo);
-			grnDetailRepository.save(grnDetail);
+			grnDetailRepository.saveAndFlush(grnDetail);
 			
     		String _itemCode = grnDetail.getItemCode();
     		Item _item = itemRepository.findByItemCode(_itemCode).get();
-    		double _qty = grnDetail.getQtyReceived();    		
-    		
-    		//implement this method later
-    		ItemServiceController.addToStock(_item, _qty);
+    		double _qty = grnDetail.getQtyReceived();
+    		itemRepository.addToStock(_qty, _item);   		
     	}
     	return grnDetails;
     }

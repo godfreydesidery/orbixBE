@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.orbix_web.exceptions.InvalidOperationException;
 import com.example.orbix_web.exceptions.NotFoundException;
 import com.example.orbix_web.exceptions.ResourceNotFoundException;
 import com.example.orbix_web.models.Lpo;
@@ -104,7 +105,7 @@ public class LpoServiceController {
 			lpoRepository.save(lpo);
 			return new ResponseEntity<Object>("LPO approved", HttpStatus.OK);
 		}else {
-			return new ResponseEntity<Object>("Could not approve, LPO not a pending LPO", HttpStatus.EXPECTATION_FAILED);
+			throw new InvalidOperationException("Could not approve, Only pending LPO can be approved");
 		}
 	}
     //Print LPO
@@ -122,7 +123,7 @@ public class LpoServiceController {
 			lpoRepository.save(lpo);
 			return new ResponseEntity<Object>("LPO reprinted successifully.", HttpStatus.OK);
 		}else {
-			return new ResponseEntity<Object>("Could not print/reprint LPO, LPO not approved.", HttpStatus.EXPECTATION_FAILED);
+			throw new InvalidOperationException("Could not approve, Only approved/Printed/Reprinted LPO can be printed");
 		}
 	}
     //Cancel LPO
@@ -136,11 +137,11 @@ public class LpoServiceController {
 			lpoRepository.save(lpo);
 			return new ResponseEntity<Object>("LPO cancelled.", HttpStatus.OK);
 		}else if(status.equals("CANCELLED")) {
-			return new ResponseEntity<Object>("Could not cancel, LPO already canceled.", HttpStatus.OK);
+			throw new InvalidOperationException("Could not cancel, LPO already canceled.");
 		}else if(status.equals("PRINTED") || status.equals("REPRINTED")) {
-			return new ResponseEntity<Object>("Can not cancel a printed LPO.", HttpStatus.OK);
+			throw new InvalidOperationException("Can not cancel a printed LPO.");			
 		}else {
-			return new ResponseEntity<Object>("Could not cancel, status unknown", HttpStatus.EXPECTATION_FAILED);
+			throw new InvalidOperationException("Could not cancel, status unknown");
 		}
 	}
     // Delete a LPO
@@ -151,13 +152,13 @@ public class LpoServiceController {
     	try {
     		String status = lpo.getStatus();
     		if(status.equals("PRINTED") || status.equals("REPRINTED") || status.equals("COMPLETED")) {
-    			return new ResponseEntity<>("Could not delete, LPO already printed. Only NEW, PENDING, APPROVED  and ARCHIVED LPOs can be deleted.", HttpStatus.EXPECTATION_FAILED);
+    			throw new InvalidOperationException("Could not delete, LPO already printed. Only NEW, PENDING, APPROVED  and ARCHIVED LPOs can be deleted.");
     		}else {
     			lpoRepository.delete(lpo);
     			return new ResponseEntity<>("LPO deleted successifully.", HttpStatus.OK);
     		}
     	}catch(Exception ex) {
-    		return new ResponseEntity<>("Could not delete LPO: "+ex.getMessage(), HttpStatus.EXPECTATION_FAILED);
+    		throw new InvalidOperationException("Could not delete LPO: "+ex.getMessage());
     	}    	
     }
 }

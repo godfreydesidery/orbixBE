@@ -182,29 +182,15 @@ public class ItemServiceController {
     		return new ResponseEntity<>("Could not delete item: "+ex.getMessage(),HttpStatus.EXPECTATION_FAILED);
     	}
     }
-    /**
-     * Add items in stock
-     * @param item
-     * @param qty
-     */
-    public static void addToStock(Object item, double qty) {
-    	//implement this method
-    }
-    /**
-     * Deduct items in stock
-     * @param item
-     * @param qty
-     */
-    public static void deductFromStock(Object item, double qty) {
-    	//implement this method
-    }
+    
+    
     /**
      * Change the selling price of an item
      * @param item
      * @param oldPrice
      * @param newPrice
      */
-    public static void changeSellingPrice(Item item, double oldPrice, double newPrice) {
+    public void changeSellingPrice(Item item, double oldPrice, double newPrice) {
     	double priceChange = newPrice - oldPrice;
     	String changeType = "";
     	if(priceChange != 0) {
