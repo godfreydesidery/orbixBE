@@ -30,5 +30,9 @@ public class ExceptionController {
 	   public ResponseEntity<Object> exception(InvalidOperationException exception) {
 	      return new ResponseEntity<>("Invalid operation: "+exception.message, HttpStatus.CONFLICT);
 	   }
+	@ExceptionHandler(value = OperationFailedException.class)
+	   public ResponseEntity<Object> exception(OperationFailedException exception) {
+	      return new ResponseEntity<>("Operation failed: "+exception.message, HttpStatus.EXPECTATION_FAILED);
+	   }
 
 }

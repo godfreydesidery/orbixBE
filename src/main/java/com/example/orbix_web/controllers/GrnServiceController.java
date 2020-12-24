@@ -3,7 +3,9 @@
  */
 package com.example.orbix_web.controllers;
 
+import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,11 +28,13 @@ import org.thymeleaf.util.ArrayUtils;
 import com.example.orbix_web.exceptions.InvalidEntryException;
 import com.example.orbix_web.exceptions.InvalidOperationException;
 import com.example.orbix_web.exceptions.NotFoundException;
+import com.example.orbix_web.exceptions.OperationFailedException;
 import com.example.orbix_web.models.Grn;
 import com.example.orbix_web.models.GrnDetail;
 import com.example.orbix_web.models.Item;
 import com.example.orbix_web.models.Lpo;
 import com.example.orbix_web.models.LpoDetail;
+import com.example.orbix_web.models.StockCard;
 import com.example.orbix_web.models.Supplier;
 import com.example.orbix_web.models.User;
 import com.example.orbix_web.repositories.GrnDetailRepository;
@@ -38,6 +42,7 @@ import com.example.orbix_web.repositories.GrnRepository;
 import com.example.orbix_web.repositories.ItemRepository;
 import com.example.orbix_web.repositories.LpoDetailRepository;
 import com.example.orbix_web.repositories.LpoRepository;
+import com.example.orbix_web.repositories.StockCardRepository;
 import com.example.orbix_web.repositories.UserRepository;
 
 /**
@@ -61,6 +66,8 @@ public class GrnServiceController {
     UserRepository userRepository;
 	@Autowired
     ItemRepository itemRepository;
+	@Autowired
+    StockCardRepository stockCardRepository;
 	
 	// Get All GRNs
     @RequestMapping(method = RequestMethod.GET, value = "/grns")
@@ -169,6 +176,8 @@ public class GrnServiceController {
     	Grn _grn = null;
     	Lpo _lpo = null;
     	
+    	LocalDate _dateOdered = null;   	
+    	LocalDate _dateReceived = LocalDate.now();
     	
     	for(GrnDetail grnDetail : grnDetails) {
     		if(_grn == null) {
@@ -179,14 +188,14 @@ public class GrnServiceController {
     		}    		
     		if(_grn.getOrderType().equals("LOCAL PURCHASE ORDER")) {
     			_lpo = lpoRepository.findByLpoNo(_grn.getOrderNo()).get();
+    			_dateOdered = _lpo.getLpoDate();
     		}
-    		String _status = _lpo.getStatus();
-    		System.out.println(_status);
-    		if(_status.equals("RECEIVED")) {
+    		String status = _lpo.getStatus();
+    		if(status.equals("RECEIVED")) {
     			throw new InvalidOperationException("Can not receive this order. Order already received.");
     		}
-    		if(!_status.equals("PRINTED")) {
-    			if(!_status.equals("REPRINTED")) {
+    		if(!status.equals("PRINTED")) {
+    			if(!status.equals("REPRINTED")) {
     				throw new InvalidOperationException("Can not receive this order. Order not printed.");
     			}
     		}   		
@@ -195,6 +204,8 @@ public class GrnServiceController {
     		double _clientCostPrice = grnDetail.getClientCostPrice();
     		double _qtyOrdered = grnDetail.getQtyOrdered();
     		double _qtyReceived = grnDetail.getQtyReceived();
+    		Date _expiryDate = grnDetail.getExpiryDate();  // will be used to validate   		
+    		String _lotNo = grnDetail.getLotNo();  		
     		if(_supplierCostPrice > _clientCostPrice && _qtyReceived > 0) {
     			throw new InvalidEntryException("Can not receive goods!\nThe supplier cost price is more than client cost price on "+grnDetail.getDescription());
     		}
@@ -210,19 +221,15 @@ public class GrnServiceController {
     	}
     	// now commit changes
     	_grn.setStatus("RECEIVED");
+    	
     	grnRepository.saveAndFlush(_grn);
     	
     	String _orderNo = _grn.getOrderNo();
     	String _orderType = _grn.getOrderType();
     	
-    	if(_orderType.equals("LOCAL PURCHASE ORDER")) {
-    		_lpo = lpoRepository.findByLpoNo(_orderNo).get();
-    		_lpo.setStatus("RECEIVED");   		
-    		lpoRepository.saveAndFlush(_lpo);
-    	}else if(_orderType.equals("any other order type")) {
-    		// add other options
-    	}
     	
+    	
+    	boolean receivedOne = false;
     	for( GrnDetail grnDetail : grnDetails) {
     		if(_orderType.equals("LOCAL PURCHASE ORDER")) {
     			Long id = grnDetailRepository.findByItemCodeAndOrderNo(grnDetail.getItemCode(), _orderNo).get().getId();
@@ -230,16 +237,71 @@ public class GrnServiceController {
     		}
     		if(grnDetail.getQtyReceived() > 0) {
     			grnDetail.setStatus("RECEIVED");
-    		}			
-			grnDetail.setGrn(_grn);			
+    			receivedOne = true;
+    		}else {
+    			continue;
+    		}
+    		
+			grnDetail.setGrn(_grn);	
 			grnDetail.setOrderNo(_orderNo);
+			grnDetailRepository.save(grnDetail);
+			
+			Date _expiryDate = grnDetail.getExpiryDate();
+    		String _status = grnDetail.getStatus();
+    		String _lotNo = grnDetail.getLotNo();
+    		double _supplierCostPrice = grnDetail.getSupplierCostPrice();
+    		double _qtyReceived = grnDetail.getQtyReceived();
+    		
+    		grnDetail.setExpiryDate(_expiryDate);
+    		grnDetail.setStatus(_status);
+    		grnDetail.setLotNo(_lotNo);
+    		grnDetail.setSupplierCostPrice(_supplierCostPrice);
+    		grnDetail.setQtyReceived(_qtyReceived);    			
 			grnDetailRepository.saveAndFlush(grnDetail);
+    		
 			
     		String _itemCode = grnDetail.getItemCode();
-    		Item _item = itemRepository.findByItemCode(_itemCode).get();
+    		
+    		Item _item =itemRepository.findByItemCode(_itemCode).get();    		   			
     		double _qty = grnDetail.getQtyReceived();
-    		itemRepository.addToStock(_qty, _item);   		
+    		itemRepository.addToStock(_qty, _item); 
+    		_item =itemRepository.findByItemCode(_itemCode).get();
+    		double _stockBalance =_item.getQuantity();		
+    		StockCard _stockCard = new StockCard();
+    		_stockCard.setItem(_item);
+    		_stockCard.setDateOrdered(_dateOdered);
+    		_stockCard.setQtyOrdered(grnDetail.getQtyOrdered());
+    		_stockCard.setDateReceived(_dateReceived);
+    		_stockCard.setQtyReceived(grnDetail.getQtyReceived());
+    		_stockCard.setLotNo(_lotNo);
+    		_stockCard.setExpiryDate(_expiryDate);
+    		_stockCard.setStockBalance(_stockBalance);
+    		stockCardRepository.saveAndFlush(_stockCard);
+    		if(_orderType.equals("LOCAL PURCHASE ORDER")) {
+    			LpoDetail _lpoDetail = lpoDetailRepository.findByItemCodeAndOrderNo(_itemCode,_orderNo).get();
+    			_lpoDetail.setExpiryDate(_expiryDate);
+    			_lpoDetail.setStatus(_status);
+    			_lpoDetail.setLotNo(_lotNo);
+    			_lpoDetail.setSupplierCostPrice(_supplierCostPrice);
+    			_lpoDetail.setQtyReceived(_qtyReceived);    			
+    			lpoDetailRepository.saveAndFlush(_lpoDetail);
+    		}
+    		
     	}
+    	if(_orderType.equals("LOCAL PURCHASE ORDER")) {
+    		if(receivedOne == true) {
+    			_lpo = lpoRepository.findByLpoNo(_orderNo).get();
+	    		_lpo.setStatus("RECEIVED");
+	    		lpoRepository.saveAndFlush(_lpo);
+	    		
+    		}else {
+    			throw new OperationFailedException("Could not receive this order.\nTo receive an order, you must receive at least one item");
+    		}
+    		
+    	}else if(_orderType.equals("any other order type")) {
+    		// add other options
+    	}
+    	
     	return grnDetails;
     }
     

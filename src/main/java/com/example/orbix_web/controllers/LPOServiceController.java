@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -55,6 +56,7 @@ public class LpoServiceController {
     @RequestMapping(method = RequestMethod.POST, value = "/lpos")
     @ResponseBody
     public Lpo createLpo(@Valid @RequestBody Lpo lpo) {
+    	LocalDate lpoDate = LocalDate.now();
     	Supplier supplier;
     	try {
     		String supplierName = (lpo.getSupplier()).getSupplierName();
@@ -65,6 +67,7 @@ public class LpoServiceController {
     	}catch(Exception e) {
     		lpo.setSupplier(null);
     	}
+    	lpo.setLpoDate(lpoDate);
     	lpo.setStatus("PENDING");
         return lpoRepository.save(lpo);
     }

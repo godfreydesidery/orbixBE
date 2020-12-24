@@ -48,6 +48,7 @@ public class LpoDetailServiceController {
     	Lpo lpo;
     	String lpoNo = (lpoDetail.getLpo()).getLpoNo();
     	lpo = lpoRepository.findByLpoNo(lpoNo).get();
+    	//String
 	    lpoRepository.save(lpo);	    
     	if(lpoDetailRepository.existsByLpoAndItemCode(lpo, lpoDetail.getItemCode()) == true){
     		throw new DuplicateEntryException("\nCould not add order item\nDuplicate entry in "+lpoDetail.getDescription()+"\nConsider updating the existing entry.");
@@ -57,7 +58,8 @@ public class LpoDetailServiceController {
     	}catch(Exception e) {
     		lpoDetail.setLpo(null);
     	}
-        return lpoDetailRepository.save(lpoDetail);
+    	lpoDetail.setOrderNo(lpo.getLpoNo());
+        return lpoDetailRepository.saveAndFlush(lpoDetail);
     }
     /**
      * 
@@ -93,6 +95,7 @@ public class LpoDetailServiceController {
     	}
     	
     	try {
+    		//lpoDetail.setOrderNo(lpo.getLpoNo());
     		lpoDetailRepository.save(lpoDetail);
     		return new ResponseEntity<Object>("LPO detail updated", HttpStatus.OK);
     	}catch(Exception e) {
@@ -102,6 +105,7 @@ public class LpoDetailServiceController {
     // Get a Single LpoDetail
     @RequestMapping(method = RequestMethod.GET, value = "/lpo_details/{id}")
     public LpoDetail getLpoDetailById(@PathVariable(value = "id") Long lpoDetailId) {
+    	
         return lpoDetailRepository.findById(lpoDetailId)
                 .orElseThrow(() -> new NotFoundException("LPO detail not found"));
     }

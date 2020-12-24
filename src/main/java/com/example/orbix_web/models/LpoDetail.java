@@ -46,9 +46,14 @@ public class LpoDetail {
     private String description;
 	private double supplierCostPrice;
 	private double clientCostPrice;
+	private double sellingPrice;
 	private double qtyOrdered;
 	private double qtyReceived;
 	private String status;
+	@Temporal(TemporalType.DATE)
+	private Date expiryDate;
+    private String lotNo;
+    private String orderNo;
 	
 	@ManyToOne(targetEntity = Lpo.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "lpo_id", nullable = true , updatable = true)
@@ -186,6 +191,62 @@ public class LpoDetail {
 	 */
 	public void setLpo(Lpo lpo) {
 		this.lpo = lpo;
+	}
+
+	/**
+	 * @return the sellingPrice
+	 */
+	public double getSellingPrice() {
+		return sellingPrice;
+	}
+
+	/**
+	 * @param sellingPrice the sellingPrice to set
+	 */
+	public void setSellingPrice(double sellingPrice) {
+		this.sellingPrice = sellingPrice;
+	}
+
+	/**
+	 * @return the expiryDate
+	 */
+	public Date getExpiryDate() {
+		return expiryDate;
+	}
+
+	/**
+	 * @param expiryDate the expiryDate to set
+	 */
+	public void setExpiryDate(Date expiryDate) {
+		this.expiryDate = expiryDate;
+	}
+
+	/**
+	 * @return the lotNo
+	 */
+	public String getLotNo() {
+		return lotNo;
+	}
+
+	/**
+	 * @param lotNo the lotNo to set
+	 */
+	public void setLotNo(String lotNo) {
+		this.lotNo = lotNo;
+	}
+
+	/**
+	 * @return the orderNo
+	 */
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	/**
+	 * @param orderNo the orderNo to set
+	 */
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
 	}
 	
 }

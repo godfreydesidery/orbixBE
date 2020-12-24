@@ -3,6 +3,8 @@
  */
 package com.example.orbix_web.models;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -15,6 +17,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.OnDelete;
@@ -43,7 +47,10 @@ public class GrnDetail {
     private double clientCostPrice;
     private double qtyOrdered;
     private double qtyReceived;
+    @Temporal(TemporalType.DATE)
+	private Date expiryDate;
     private String status;
+    private String lotNo;
     private String orderNo;
     
     @ManyToOne(targetEntity = Grn.class, fetch = FetchType.EAGER,  optional = true)
@@ -172,6 +179,30 @@ public class GrnDetail {
 	 */
 	public void setClientCostPrice(double clientCostPrice) {
 		this.clientCostPrice = clientCostPrice;
+	}
+	/**
+	 * @return the expiryDate
+	 */
+	public Date getExpiryDate() {
+		return expiryDate;
+	}
+	/**
+	 * @param expiryDate the expiryDate to set
+	 */
+	public void setExpiryDate(Date expiryDate) {
+		this.expiryDate = expiryDate;
+	}
+	/**
+	 * @return the lotNo
+	 */
+	public String getLotNo() {
+		return lotNo;
+	}
+	/**
+	 * @param lotNo the lotNo to set
+	 */
+	public void setLotNo(String lotNo) {
+		this.lotNo = lotNo;
 	}
 	
 }

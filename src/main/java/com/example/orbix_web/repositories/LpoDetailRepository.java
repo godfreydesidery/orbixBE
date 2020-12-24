@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.example.orbix_web.models.GrnDetail;
 import com.example.orbix_web.models.Lpo;
 import com.example.orbix_web.models.LpoDetail;
 
@@ -32,4 +33,6 @@ public interface LpoDetailRepository extends JpaRepository<LpoDetail, Long>{
 	
 	
 	List<LpoDetail> findByLpo(Object lpo);
+	
+	Optional<LpoDetail> findByItemCodeAndOrderNo(String itemCode, String orderNo);
 }

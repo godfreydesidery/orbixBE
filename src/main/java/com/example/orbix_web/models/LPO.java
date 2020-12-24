@@ -4,6 +4,7 @@
 package com.example.orbix_web.models;
 
 import java.beans.Transient;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,8 +59,7 @@ public class Lpo extends Audit<String>{
     private String lpoNo;
 	private String createdBy;
 	private String approvedBy;
-	@Temporal(TemporalType.DATE)
-	private Date lpoDate;
+	private LocalDate lpoDate;
     private int validityPeriod;
 	@Temporal(TemporalType.DATE)
 	private Date validUntil;
@@ -175,14 +175,14 @@ public class Lpo extends Audit<String>{
 	/**
 	 * @return the lpoDate
 	 */
-	public Date getLpoDate() {
+	public LocalDate getLpoDate() {
 		return lpoDate;
 	}
 	/**
-	 * @param lpoDate the lpoDate to set
+	 * @param lpoDate2 the lpoDate to set
 	 */
-	public void setLpoDate(Date lpoDate) {
-		this.lpoDate = lpoDate;
+	public void setLpoDate(LocalDate lpoDate2) {
+		this.lpoDate = lpoDate2;
 	}
 	/**
 	 * @return the supplier
