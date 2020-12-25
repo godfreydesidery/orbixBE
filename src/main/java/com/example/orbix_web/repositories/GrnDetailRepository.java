@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,6 +37,8 @@ public interface GrnDetailRepository extends JpaRepository<GrnDetail, Long>{
 	//Optional<GrnDetail> findByItemCodeAndOrderNo_(@Param("itemCode") String itemCode, @Param("orderNo") String orderNo);
 	Optional<GrnDetail> findByItemCodeAndOrderNo(String itemCode, String orderNo);
 	
+	
+	List<GrnDetail> findByGrn(Grn grn);
 	
 
 }

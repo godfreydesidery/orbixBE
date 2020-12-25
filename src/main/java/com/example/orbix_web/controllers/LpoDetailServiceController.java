@@ -3,6 +3,8 @@
  */
 package com.example.orbix_web.controllers;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.validation.Valid;
 
@@ -108,6 +110,17 @@ public class LpoDetailServiceController {
     	
         return lpoDetailRepository.findById(lpoDetailId)
                 .orElseThrow(() -> new NotFoundException("LPO detail not found"));
+    }
+ // Get a a list of LpoDetails
+    @RequestMapping(method = RequestMethod.GET, value = "/lpo_details/lpo_id={lpo_id}")
+    public List<LpoDetail> getLpoDetails(@PathVariable(value = "lpo_id") Long lpoId) {
+    	Lpo lpo = null;
+    	try {
+    		lpo = lpoRepository.findById(lpoId).get();
+    	}catch(Exception e) {
+    		throw new NotFoundException("LPO not found");
+    	}
+        return lpoDetailRepository.findByLpo(lpo);
     }
     /**
      * 

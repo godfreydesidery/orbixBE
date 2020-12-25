@@ -133,7 +133,6 @@ public class GrnServiceController {
     		_grn = grnRepository.findByOrderNo(orderNo).get();
     	}
     	
-    	
     	// create grn details
     	if(orderType.equals("LOCAL PURCHASE ORDER")) {
     		Lpo _lpo = lpoRepository.findByLpoNo(orderNo).get();
@@ -261,6 +260,8 @@ public class GrnServiceController {
     		
 			
     		String _itemCode = grnDetail.getItemCode();
+    		System.out.println(_itemCode);
+    		System.out.println(grnDetail.getOrderNo());
     		
     		Item _item =itemRepository.findByItemCode(_itemCode).get();    		   			
     		double _qty = grnDetail.getQtyReceived();

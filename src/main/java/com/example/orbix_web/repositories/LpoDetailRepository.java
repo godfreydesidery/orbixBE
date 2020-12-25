@@ -32,7 +32,7 @@ public interface LpoDetailRepository extends JpaRepository<LpoDetail, Long>{
 	//List<LpoDetail> findByLpo(@Param("lpo") Object lpo);
 	
 	
-	List<LpoDetail> findByLpo(Object lpo);
+	List<LpoDetail> findByLpo(Lpo lpo);
 	
 	Optional<LpoDetail> findByItemCodeAndOrderNo(String itemCode, String orderNo);
 }

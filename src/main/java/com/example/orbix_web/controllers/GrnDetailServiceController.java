@@ -49,6 +49,19 @@ public class GrnDetailServiceController {
     public List<GrnDetail> getAllGrnDetails() {
         return grnDetailRepository.findAll();
     }
+ // Get A list GRN details
+    @RequestMapping(method = RequestMethod.GET, value = "/grn_details/grn_id={grn_id}")
+    public List<GrnDetail> getListGrnDetails(@PathVariable(value = "grn_id") Long grnId) {
+    	
+    	Grn grn = null;
+    	try {
+    		grn = grnRepository.findById(grnId).get();
+    	}catch(Exception e) {
+    		throw new NotFoundException("GRN not found");
+    	}
+        return grnDetailRepository.findByGrn(grn);
+    	
+    }
 	// Create a new Grn detail
     @RequestMapping(method = RequestMethod.POST, value="/grn_detai", produces = {"text/html","application/json"})
     @ResponseBody
