@@ -174,10 +174,12 @@ public class GrnServiceController {
     	// advice, first check if the items exist, if not throw not found exception if an inexistence item is received:: later to implement this method
     	Grn _grn = null;
     	Lpo _lpo = null;
+    	Date _dateOrdered = null;   	
+    	Date _dateReceived = null;
+    	String _orderNo = null;
+    	String _orderType = null;
     	
-    	LocalDate _dateOdered = null;   	
-    	LocalDate _dateReceived = LocalDate.now();
-    	
+    	//
     	for(GrnDetail grnDetail : grnDetails) {
     		if(_grn == null) {
     			_grn = grnRepository.findById(grnId).get();
@@ -187,9 +189,12 @@ public class GrnServiceController {
     		}    		
     		if(_grn.getOrderType().equals("LOCAL PURCHASE ORDER")) {
     			_lpo = lpoRepository.findByLpoNo(_grn.getOrderNo()).get();
-    			_dateOdered = _lpo.getLpoDate();
+    			_dateOrdered = _lpo.getLpoDate();
+    			_dateReceived = _grn.getGrnDate();
     		}
+    		
     		String status = _lpo.getStatus();
+    		
     		if(status.equals("RECEIVED")) {
     			throw new InvalidOperationException("Can not receive this order. Order already received.");
     		}
@@ -198,7 +203,7 @@ public class GrnServiceController {
     				throw new InvalidOperationException("Can not receive this order. Order not printed.");
     			}
     		}   		
-    		//validate
+    		//validate entries
     		double _supplierCostPrice = grnDetail.getSupplierCostPrice();
     		double _clientCostPrice = grnDetail.getClientCostPrice();
     		double _qtyOrdered = grnDetail.getQtyOrdered();
@@ -220,16 +225,16 @@ public class GrnServiceController {
     	}
     	// now commit changes
     	_grn.setStatus("RECEIVED");
-    	
     	grnRepository.saveAndFlush(_grn);
     	
-    	String _orderNo = _grn.getOrderNo();
-    	String _orderType = _grn.getOrderType();
+    	_orderNo = _grn.getOrderNo();
+    	_orderType = _grn.getOrderType();
     	
-    	
-    	
-    	boolean receivedOne = false;
+    	boolean receivedOne = false;// to mark whether at least one item has been received
     	for( GrnDetail grnDetail : grnDetails) {
+    		String _itemCode = grnDetail.getItemCode();
+    		double _qtyReceived = grnDetail.getQtyReceived();
+    		
     		if(_orderType.equals("LOCAL PURCHASE ORDER")) {
     			Long id = grnDetailRepository.findByItemCodeAndOrderNo(grnDetail.getItemCode(), _orderNo).get().getId();
     			grnDetail.setId(id);
@@ -240,45 +245,37 @@ public class GrnServiceController {
     		}else {
     			continue;
     		}
-    		
 			grnDetail.setGrn(_grn);	
 			grnDetail.setOrderNo(_orderNo);
-			grnDetailRepository.save(grnDetail);
-			
-			Date _expiryDate = grnDetail.getExpiryDate();
-    		String _status = grnDetail.getStatus();
-    		String _lotNo = grnDetail.getLotNo();
-    		double _supplierCostPrice = grnDetail.getSupplierCostPrice();
-    		double _qtyReceived = grnDetail.getQtyReceived();
-    		
-    		grnDetail.setExpiryDate(_expiryDate);
-    		grnDetail.setStatus(_status);
-    		grnDetail.setLotNo(_lotNo);
-    		grnDetail.setSupplierCostPrice(_supplierCostPrice);
-    		grnDetail.setQtyReceived(_qtyReceived);    			
 			grnDetailRepository.saveAndFlush(grnDetail);
-    		
 			
-    		String _itemCode = grnDetail.getItemCode();
-    		System.out.println(_itemCode);
-    		System.out.println(grnDetail.getOrderNo());
+    		Item _item =itemRepository.findByItemCode(_itemCode).get(); 
     		
-    		Item _item =itemRepository.findByItemCode(_itemCode).get();    		   			
-    		double _qty = grnDetail.getQtyReceived();
-    		itemRepository.addToStock(_qty, _item); 
-    		_item =itemRepository.findByItemCode(_itemCode).get();
-    		double _stockBalance =_item.getQuantity();		
-    		StockCard _stockCard = new StockCard();
-    		_stockCard.setItem(_item);
-    		_stockCard.setDateOrdered(_dateOdered);
-    		_stockCard.setQtyOrdered(grnDetail.getQtyOrdered());
-    		_stockCard.setDateReceived(_dateReceived);
-    		_stockCard.setQtyReceived(grnDetail.getQtyReceived());
-    		_stockCard.setLotNo(_lotNo);
-    		_stockCard.setExpiryDate(_expiryDate);
-    		_stockCard.setStockBalance(_stockBalance);
-    		stockCardRepository.saveAndFlush(_stockCard);
+    		itemRepository.saveAndFlush(
+    				new ItemServiceController()
+    				.addToStock(_item, _qtyReceived));
+    		
+    		_item = itemRepository.findByItemCode(_itemCode).get();
+    		double _stockBalance =_item.getQuantity();
+    		stockCardRepository.saveAndFlush(
+    				new StockCardServiceController()
+    				.receiveItem(
+    						_item, 
+    						grnDetail.getQtyOrdered(), 
+    						_dateOrdered, 
+    						_qtyReceived, 
+    						_dateReceived, 
+    						_stockBalance, 
+    						grnDetail.getLotNo(),
+    						grnDetail.getExpiryDate()));
+    		
     		if(_orderType.equals("LOCAL PURCHASE ORDER")) {
+    			
+    			Date _expiryDate = grnDetail.getExpiryDate();
+	    		String _status = grnDetail.getStatus();
+	    		String _lotNo = grnDetail.getLotNo();
+	    		double _supplierCostPrice = grnDetail.getSupplierCostPrice();
+    			
     			LpoDetail _lpoDetail = lpoDetailRepository.findByItemCodeAndOrderNo(_itemCode,_orderNo).get();
     			_lpoDetail.setExpiryDate(_expiryDate);
     			_lpoDetail.setStatus(_status);
@@ -287,7 +284,6 @@ public class GrnServiceController {
     			_lpoDetail.setQtyReceived(_qtyReceived);    			
     			lpoDetailRepository.saveAndFlush(_lpoDetail);
     		}
-    		
     	}
     	if(_orderType.equals("LOCAL PURCHASE ORDER")) {
     		if(receivedOne == true) {

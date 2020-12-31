@@ -26,6 +26,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.envers.Audited;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.stereotype.Component;
 
@@ -70,6 +71,7 @@ public class Item extends Audit<String>{
     private double minimumInventory;
     private double defaultReOrderLevel;
     private double reOrderQuantity;
+    
 	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "shops_items", joinColumns = {
@@ -93,18 +95,7 @@ public class Item extends Audit<String>{
 	@Embedded
     private Department department;
 	
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
+	
 	/**
 	 * @return the itemCode
 	 */
@@ -345,6 +336,19 @@ public class Item extends Audit<String>{
 	public void setDepartment(Department department) {
 		this.department = department;
 	}
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
 	
 	
 	

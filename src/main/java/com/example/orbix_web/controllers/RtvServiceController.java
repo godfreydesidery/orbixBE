@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +24,9 @@ import com.example.orbix_web.exceptions.InvalidOperationException;
 import com.example.orbix_web.exceptions.NotFoundException;
 import com.example.orbix_web.models.Lpo;
 import com.example.orbix_web.models.Rtv;
+import com.example.orbix_web.models.RtvDetail;
 import com.example.orbix_web.models.Supplier;
+import com.example.orbix_web.repositories.RtvDetailRepository;
 import com.example.orbix_web.repositories.RtvRepository;
 import com.example.orbix_web.repositories.SupplierRepository;
 
@@ -40,14 +43,18 @@ public class RtvServiceController {
     SupplierRepository supplierRepository;
 	@Autowired
     RtvRepository rtvRepository;
+	@Autowired
+    RtvDetailRepository rtvDetailRepository;
 	
 	// Get All RTVs
+	@Transactional
     @RequestMapping(method = RequestMethod.GET, value = "/rtvs")
     public List<Rtv> getAllRtvs() {
         return rtvRepository.findAll();
     }
 	
 	// Create a new RTV
+	@Transactional
     @RequestMapping(method = RequestMethod.POST, value = "/rtvs")
     @ResponseBody
 	public Rtv createRtv(@Valid @RequestBody Rtv rtv) {	
@@ -65,6 +72,7 @@ public class RtvServiceController {
 	}
     
     // Update a RTV
+	@Transactional
     @RequestMapping(method = RequestMethod.PUT, value = "/rtvs/{id}", produces = "text/html")
     public ResponseEntity<Object> updateRtv(@PathVariable(value = "id") Long rtvId, @Valid @RequestBody Rtv rtvDetails){
     	Rtv rtv = rtvRepository.findById(rtvId)
@@ -79,6 +87,7 @@ public class RtvServiceController {
     }
     
     //Approve RTV
+	@Transactional
     @RequestMapping(method = RequestMethod.PUT, value = "/rtvs/approve/{id}")
     public Rtv approveRtv(@PathVariable(value = "id") Long rtvId){
     	Rtv rtv = rtvRepository.findById(rtvId)
@@ -99,12 +108,18 @@ public class RtvServiceController {
     }
     
     //Complete RTV
+	@Transactional
     @RequestMapping(method = RequestMethod.PUT, value = "/rtvs/complete/{id}")
     public Rtv completeRtv(@PathVariable(value = "id") Long rtvId){
     	Rtv rtv = rtvRepository.findById(rtvId)
     			.orElseThrow(() -> new NotFoundException("RTV not found"));
 		String status = rtv.getStatus();
 		if(status.equals("APPROVED")) {
+			//now complete details
+			List<RtvDetail> _rtvDetails = rtvDetailRepository.findByRtv(rtv);
+			for(RtvDetail _rtvDetail : _rtvDetails) {
+				//remove item from stock
+			}
 			rtv.setStatus("COMPLETED");
 			return rtvRepository.saveAndFlush(rtv);
 		}else if(status.equals("PENDING")) {
@@ -118,6 +133,7 @@ public class RtvServiceController {
 		}
     }
     //Cancel RTV
+	@Transactional
     @RequestMapping(method = RequestMethod.PUT, value = "/rtvs/cancel/{id}")
     public Rtv cancelRtv(@PathVariable(value = "id") Long rtvId){
     	Rtv rtv = rtvRepository.findById(rtvId)
@@ -134,6 +150,7 @@ public class RtvServiceController {
     }
     
     // Delete RTV
+	@Transactional
     @RequestMapping(method = RequestMethod.DELETE, value = "/rtvs/{id}", produces = "text/html")
     public ResponseEntity<?> deleteRtv(@PathVariable(value = "id") Long rtvId) {
     	Rtv rtv = rtvRepository.findById(rtvId)

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,6 +46,7 @@ public class LpoDetailServiceController {
 	// Create a new Lpo detail
     @RequestMapping(method = RequestMethod.POST, value="/lpo_details", produces = {"text/html","application/json"})
     @ResponseBody
+    @Transactional
     public LpoDetail createLpoDetail(@Valid @RequestBody LpoDetail lpoDetail) {
     	
     	Lpo lpo;
@@ -68,6 +70,7 @@ public class LpoDetailServiceController {
      * 
      */
     //Update lpo detail
+    @Transactional
     @RequestMapping(method = RequestMethod.PUT, value = "/lpo_details/{id}", produces = "text/html")
     public ResponseEntity<Object> updateLpoDetail(@PathVariable(value = "id") Long lpoDetailId,
                                             @Valid @RequestBody LpoDetail lpoDetailDetails) {
@@ -105,6 +108,7 @@ public class LpoDetailServiceController {
     	}
     }
     // Get a Single LpoDetail
+    @Transactional
     @RequestMapping(method = RequestMethod.GET, value = "/lpo_details/{id}")
     public LpoDetail getLpoDetailById(@PathVariable(value = "id") Long lpoDetailId) {
     	
@@ -112,6 +116,7 @@ public class LpoDetailServiceController {
                 .orElseThrow(() -> new NotFoundException("LPO detail not found"));
     }
  // Get a a list of LpoDetails
+    @Transactional
     @RequestMapping(method = RequestMethod.GET, value = "/lpo_details/lpo_id={lpo_id}")
     public List<LpoDetail> getLpoDetails(@PathVariable(value = "lpo_id") Long lpoId) {
     	Lpo lpo = null;
@@ -127,6 +132,7 @@ public class LpoDetailServiceController {
      * @param lpoDetailId
      * @return
      */
+    @Transactional
     @RequestMapping(method = RequestMethod.DELETE, value = "/lpo_details/{id}", produces = "text/html")
     public ResponseEntity<?> deleteLpoDetail(@PathVariable(value = "id") Long lpoDetailId) {
     	LpoDetail lpoDetail = lpoDetailRepository.findById(lpoDetailId)

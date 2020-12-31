@@ -9,6 +9,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +40,7 @@ public class RtvDetailServiceController {
 	RtvDetailRepository rtvDetailRepository;
 	
 	// Create Rtv Detail
+	@Transactional
 	@RequestMapping(method = RequestMethod.GET, value = "/rtv_details/rtv_id= {rtv_id}")
 	public List<RtvDetail> getRtvDetails(@PathVariable(value = "rtv_id") Long rtvId) {
 		Rtv rtv = null;
@@ -52,6 +54,7 @@ public class RtvDetailServiceController {
 	// Create Rtv Detail
 	@RequestMapping(method = RequestMethod.POST, value = "/rtv_details")
     @ResponseBody
+    @Transactional
 	public boolean createRtvDetail(@Valid @RequestBody RtvDetail rtvDetail) {
 		boolean created = false;
 		Rtv rtv;
@@ -70,6 +73,7 @@ public class RtvDetailServiceController {
 	// Update Rtv Detail
 	@RequestMapping(method = RequestMethod.PUT, value = "/rtv_details/{id}")
     @ResponseBody
+    @Transactional
 	public boolean updateRtvDetail(@PathVariable(value = "id") Long rtvDetailId, @Valid @RequestBody RtvDetail rtvDetail) {
 		boolean updated = false;
 		try {
@@ -80,6 +84,7 @@ public class RtvDetailServiceController {
 		}
 		return updated;
 	}
+	@Transactional
 	@RequestMapping(method = RequestMethod.DELETE, value = "/rtv_details/{id}")
 	public boolean deleteRtvDetail(@PathVariable(value = "id") Long rtvDetailId) {
 		boolean deleted = false;

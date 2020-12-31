@@ -59,7 +59,8 @@ public class Lpo extends Audit<String>{
     private String lpoNo;
 	private String createdBy;
 	private String approvedBy;
-	private LocalDate lpoDate;
+	@Temporal(TemporalType.DATE)
+	private Date lpoDate;
     private int validityPeriod;
 	@Temporal(TemporalType.DATE)
 	private Date validUntil;
@@ -173,18 +174,6 @@ public class Lpo extends Audit<String>{
 		this.approvedBy = approvedBy;
 	}
 	/**
-	 * @return the lpoDate
-	 */
-	public LocalDate getLpoDate() {
-		return lpoDate;
-	}
-	/**
-	 * @param lpoDate2 the lpoDate to set
-	 */
-	public void setLpoDate(LocalDate lpoDate2) {
-		this.lpoDate = lpoDate2;
-	}
-	/**
 	 * @return the supplier
 	 */
 	public Supplier getSupplier() {
@@ -216,6 +205,22 @@ public class Lpo extends Audit<String>{
 	 */
 	public double getSum() {
 		return sum;
+	}
+
+
+	/**
+	 * @return the lpoDate
+	 */
+	public Date getLpoDate() {
+		return lpoDate;
+	}
+
+
+	/**
+	 * @param lpoDate the lpoDate to set
+	 */
+	public void setLpoDate(Date lpoDate) {
+		this.lpoDate = lpoDate;
 	}
 
 }

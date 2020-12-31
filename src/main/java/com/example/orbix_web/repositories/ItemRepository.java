@@ -6,8 +6,11 @@ package com.example.orbix_web.repositories;
 
 import java.util.Optional;
 
+import javax.persistence.LockModeType;
+
 import org.hibernate.mapping.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,6 +25,8 @@ import com.example.orbix_web.models.Item;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
+	@Lock(value = LockModeType.PESSIMISTIC_WRITE)
+	Optional<Item> findById(Long id);
 	/**
 	 * @param primaryBarcode
 	 * @return
@@ -32,6 +37,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 	 * @param itemCode
 	 * @return
 	 */
+	@Lock(value = LockModeType.PESSIMISTIC_WRITE)
 	Optional<Item> findByItemCode(String itemCode);
 
 	/**
@@ -48,6 +54,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 	
 	//add items to stock
 	@Modifying(clearAutomatically = true)
+	@Lock(value = LockModeType.OPTIMISTIC_FORCE_INCREMENT)
     @Query("UPDATE Item i SET i.quantity = i.quantity + ?1 WHERE i =?2")
     int addToStock(double qty, Item item);
 	//deduct items from stock

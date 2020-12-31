@@ -15,7 +15,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.example.orbix_web.application.JavaFxApplication;
+import com.example.orbix_web.models.Item;
 import com.example.orbix_web.repositories.CustomerRepository;
+import com.example.orbix_web.repositories.ItemRepository;
 
 import javafx.application.Application;
 
@@ -27,11 +29,15 @@ import javafx.application.Application;
 @EnableJpaRepositories(basePackageClasses = {CustomerRepository.class})
 public class OrbixWebApplication {
 	
+	
 	protected ConfigurableApplicationContext springContext;
 	
 	public static void main(String[] args) throws Throwable {
 		SpringApplication.run(OrbixWebApplication.class, args);
+		
 		//Application.launch(JavaFxApplication.class,args);
+		
+		
 	}
 	
 	

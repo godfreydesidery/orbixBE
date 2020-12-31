@@ -3,12 +3,16 @@
  */
 package com.example.orbix_web.controllers;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.validation.Valid;
+
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,6 +58,8 @@ public class ItemServiceController {
      * 
      * @return array of items' long descriptions
      */
+    
+    @Transactional
     @RequestMapping(method = RequestMethod.GET, value="/items/long_descriptions")
     public Iterable<Item> getAllItemsByLongDescription() {
         return itemRepository.getLongDescription();
@@ -181,6 +187,14 @@ public class ItemServiceController {
     	}catch(Exception ex) {
     		return new ResponseEntity<>("Could not delete item: "+ex.getMessage(),HttpStatus.EXPECTATION_FAILED);
     	}
+    }
+    public Item addToStock(Item item, double qty) {
+    	item.setQuantity(item.getQuantity() + qty);
+    	return item;
+    }
+    public void deductFromStock(Item item, double qty) {
+    	item.setQuantity(item.getQuantity() - qty);
+    	itemRepository.saveAndFlush(item);
     }
     
     

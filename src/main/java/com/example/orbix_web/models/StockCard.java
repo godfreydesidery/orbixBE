@@ -4,6 +4,7 @@
 package com.example.orbix_web.models;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.persistence.Embedded;
@@ -37,14 +38,28 @@ public class StockCard {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-	private LocalDate dateOrdered;
-	double qtyOrdered;
-	private LocalDate dateReceived;
-	double qtyReceived;
+	private double qtyOrdered;
+	@Temporal(TemporalType.DATE)
+	private Date dateOrdered;
+	private double qtyReceived;
+	@Temporal(TemporalType.DATE)
+	private Date dateReceived;
 	String lotNo;
 	@Temporal(TemporalType.DATE)
 	private Date expiryDate;
-	double stockBalance;	
+	private double qtyReturnToVendor;
+	@Temporal(TemporalType.DATE)
+	private Date dateReturnToVendor;
+	private double qtyReturnByCustomer;
+	@Temporal(TemporalType.DATE)
+	private Date dateReturnByCustomer;
+	private double qtyRemoveFromStock;
+	private LocalDateTime dateRemoveFromStock;
+	private String reasonRemoveFromStock;
+	private double qtySold;
+	private LocalDateTime dateSold;
+	private double stockBalance;
+	
 	@ManyToOne(targetEntity = Item.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "item_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
@@ -62,31 +77,6 @@ public class StockCard {
 	 */
 	public void setId(Long id) {
 		this.id = id;
-	}
-	/**
-	 * @return the dateOrdered
-	 */
-	public LocalDate getDateOrdered() {
-		return dateOrdered;
-	}
-	/**
-	 * @param _dateOdered the dateOrdered to set
-	 */
-	public void setDateOrdered(LocalDate _dateOdered) {
-		this.dateOrdered = _dateOdered;
-	}
-	
-	/**
-	 * @return the dateReceived
-	 */
-	public LocalDate getDateReceived() {
-		return dateReceived;
-	}
-	/**
-	 * @param dateReceived the dateReceived to set
-	 */
-	public void setDateReceived(LocalDate dateReceived) {
-		this.dateReceived = dateReceived;
 	}
 	/**
 	 * @return the qtyReceived
@@ -160,5 +150,143 @@ public class StockCard {
 	public void setQtyOrdered(double qtyOrdered) {
 		this.qtyOrdered = qtyOrdered;
 	}
+	/**
+	 * @return the qtyReturnToVendor
+	 */
+	public double getQtyReturnToVendor() {
+		return qtyReturnToVendor;
+	}
+	/**
+	 * @param qtyReturnToVendor the qtyReturnToVendor to set
+	 */
+	public void setQtyReturnToVendor(double qtyReturnToVendor) {
+		this.qtyReturnToVendor = qtyReturnToVendor;
+	}
+	
+	/**
+	 * @return the qtyReturnByCustomer
+	 */
+	public double getQtyReturnByCustomer() {
+		return qtyReturnByCustomer;
+	}
+	/**
+	 * @param qtyReturnByCustomer the qtyReturnByCustomer to set
+	 */
+	public void setQtyReturnByCustomer(double qtyReturnByCustomer) {
+		this.qtyReturnByCustomer = qtyReturnByCustomer;
+	}
+	
+	
+	/**
+	 * @return the qtyRemoveFromStock
+	 */
+	public double getQtyRemoveFromStock() {
+		return qtyRemoveFromStock;
+	}
+	/**
+	 * @param qtyRemoveFromStock the qtyRemoveFromStock to set
+	 */
+	public void setQtyRemoveFromStock(double qtyRemoveFromStock) {
+		this.qtyRemoveFromStock = qtyRemoveFromStock;
+	}
+	
+	
+	/**
+	 * @return the reasonRemoveFromStock
+	 */
+	public String getReasonRemoveFromStock() {
+		return reasonRemoveFromStock;
+	}
+	/**
+	 * @param reasonRemoveFromStock the reasonRemoveFromStock to set
+	 */
+	public void setReasonRemoveFromStock(String reasonRemoveFromStock) {
+		this.reasonRemoveFromStock = reasonRemoveFromStock;
+	}
+	/**
+	 * @return the qtySold
+	 */
+	public double getQtySold() {
+		return qtySold;
+	}
+	/**
+	 * @param qtySold the qtySold to set
+	 */
+	public void setQtySold(double qtySold) {
+		this.qtySold = qtySold;
+	}
+	/**
+	 * @return the dateOrdered
+	 */
+	public Date getDateOrdered() {
+		return dateOrdered;
+	}
+	/**
+	 * @param dateOrdered the dateOrdered to set
+	 */
+	public void setDateOrdered(Date dateOrdered) {
+		this.dateOrdered = dateOrdered;
+	}
+	/**
+	 * @return the dateReceived
+	 */
+	public Date getDateReceived() {
+		return dateReceived;
+	}
+	/**
+	 * @param dateReceived the dateReceived to set
+	 */
+	public void setDateReceived(Date dateReceived) {
+		this.dateReceived = dateReceived;
+	}
+	/**
+	 * @return the dateReturnToVendor
+	 */
+	public Date getDateReturnToVendor() {
+		return dateReturnToVendor;
+	}
+	/**
+	 * @param dateReturnToVendor the dateReturnToVendor to set
+	 */
+	public void setDateReturnToVendor(Date dateReturnToVendor) {
+		this.dateReturnToVendor = dateReturnToVendor;
+	}
+	/**
+	 * @return the dateReturnByCustomer
+	 */
+	public Date getDateReturnByCustomer() {
+		return dateReturnByCustomer;
+	}
+	/**
+	 * @param dateReturnByCustomer the dateReturnByCustomer to set
+	 */
+	public void setDateReturnByCustomer(Date dateReturnByCustomer) {
+		this.dateReturnByCustomer = dateReturnByCustomer;
+	}
+	/**
+	 * @return the dateRemoveFromStock
+	 */
+	public LocalDateTime getDateRemoveFromStock() {
+		return dateRemoveFromStock;
+	}
+	/**
+	 * @param dateRemoveFromStock the dateRemoveFromStock to set
+	 */
+	public void setDateRemoveFromStock(LocalDateTime dateRemoveFromStock) {
+		this.dateRemoveFromStock = dateRemoveFromStock;
+	}
+	/**
+	 * @return the dateSold
+	 */
+	public LocalDateTime getDateSold() {
+		return dateSold;
+	}
+	/**
+	 * @param dateSold the dateSold to set
+	 */
+	public void setDateSold(LocalDateTime dateSold) {
+		this.dateSold = dateSold;
+	}
+	
 	
 }

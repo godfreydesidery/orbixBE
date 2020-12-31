@@ -4,6 +4,7 @@
 package com.example.orbix_web.controllers;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,8 +57,10 @@ public class LpoServiceController {
     // Create a new LPO
     @RequestMapping(method = RequestMethod.POST, value = "/lpos")
     @ResponseBody
+    @Transactional
     public Lpo createLpo(@Valid @RequestBody Lpo lpo) {
-    	LocalDate lpoDate = LocalDate.now();
+    	Date lpoDate = lpo.getLpoDate();
+    	
     	Supplier supplier;
     	try {
     		String supplierName = (lpo.getSupplier()).getSupplierName();
@@ -72,6 +76,7 @@ public class LpoServiceController {
         return lpoRepository.save(lpo);
     }
     // Get a Single LPO
+    @Transactional
     @RequestMapping(method = RequestMethod.GET, value = "/lpos/{id}")
     public Lpo getLpoById(@PathVariable(value = "id") Long lpoId) {
         return lpoRepository.findById(lpoId)
@@ -79,12 +84,14 @@ public class LpoServiceController {
     }
     
     // Get a Single LPO by lpo no
+    @Transactional
     @RequestMapping(method = RequestMethod.GET, value = "/lpos/lpo_no={lpo_no}")
     public Lpo getLpoByLpoNo(@PathVariable(value = "lpo_no") String lpoNo) {
         return lpoRepository.findByLpoNo(lpoNo)
                 .orElseThrow(() -> new NotFoundException("LPO not found"));
     }
     // Update a LPO
+    @Transactional
     @RequestMapping(method = RequestMethod.PUT, value = "/lpos/{id}", produces = "text/html")
     public ResponseEntity<Object> updateLpo(@PathVariable(value = "id") Long lpoId,
                                             @Valid @RequestBody Lpo lpoDetails) {
@@ -99,6 +106,7 @@ public class LpoServiceController {
     	}
     }
     //Approve LPO
+    @Transactional
     @RequestMapping(method = RequestMethod.PUT, value = "/lpos/approve/{id}", produces = "text/html")
     public ResponseEntity<Object> approveLpo(@PathVariable(value = "id") Long lpoId) {
 		Lpo lpo = lpoRepository.findById(lpoId)
@@ -112,6 +120,7 @@ public class LpoServiceController {
 		}
 	}
     //Print LPO
+    @Transactional
     @RequestMapping(method = RequestMethod.PUT, value = "/lpos/print/{id}", produces = "text/html")
     public ResponseEntity<Object> printLpo(@PathVariable(value = "id") Long lpoId) {
 		Lpo lpo = lpoRepository.findById(lpoId)
@@ -130,6 +139,7 @@ public class LpoServiceController {
 		}
 	}
     //Cancel LPO
+    @Transactional
     @RequestMapping(method = RequestMethod.PUT, value = "/lpos/cancel/{id}", produces = "text/html")
     public ResponseEntity<Object> cancelLpo(@PathVariable(value = "id") Long lpoId) {
 		Lpo lpo = lpoRepository.findById(lpoId)
@@ -148,6 +158,7 @@ public class LpoServiceController {
 		}
 	}
     // Delete a LPO
+    @Transactional
     @RequestMapping(method = RequestMethod.DELETE, value = "/lpos/{id}", produces = "text/html")
     public ResponseEntity<?> deleteLPO(@PathVariable(value = "id") Long lpoId) {
     	Lpo lpo = lpoRepository.findById(lpoId)
