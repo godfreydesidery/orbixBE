@@ -192,9 +192,9 @@ public class ItemServiceController {
     	item.setQuantity(item.getQuantity() + qty);
     	return item;
     }
-    public void deductFromStock(Item item, double qty) {
+    public Item deductFromStock(Item item, double qty) {
     	item.setQuantity(item.getQuantity() - qty);
-    	itemRepository.saveAndFlush(item);
+    	return item;
     }
     
     

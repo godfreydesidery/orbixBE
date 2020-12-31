@@ -22,12 +22,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.orbix_web.exceptions.InvalidOperationException;
 import com.example.orbix_web.exceptions.NotFoundException;
+import com.example.orbix_web.models.Item;
 import com.example.orbix_web.models.Lpo;
 import com.example.orbix_web.models.Rtv;
 import com.example.orbix_web.models.RtvDetail;
+import com.example.orbix_web.models.StockCard;
 import com.example.orbix_web.models.Supplier;
+import com.example.orbix_web.repositories.ItemRepository;
 import com.example.orbix_web.repositories.RtvDetailRepository;
 import com.example.orbix_web.repositories.RtvRepository;
+import com.example.orbix_web.repositories.StockCardRepository;
 import com.example.orbix_web.repositories.SupplierRepository;
 
 /**
@@ -45,6 +49,10 @@ public class RtvServiceController {
     RtvRepository rtvRepository;
 	@Autowired
     RtvDetailRepository rtvDetailRepository;
+	@Autowired
+    ItemRepository itemRepository;
+	@Autowired
+    StockCardRepository stockCardRepository;
 	
 	// Get All RTVs
 	@Transactional
@@ -52,7 +60,20 @@ public class RtvServiceController {
     public List<Rtv> getAllRtvs() {
         return rtvRepository.findAll();
     }
-	
+	// Get a Single RTV
+    @Transactional
+    @RequestMapping(method = RequestMethod.GET, value = "/rtvs/{id}")
+    public Rtv getRtvById(@PathVariable(value = "id") Long rtvId) {
+        return rtvRepository.findById(rtvId)
+                .orElseThrow(() -> new NotFoundException("RTV not found"));
+    }
+    // Get a Single RTV by rtv no
+    @Transactional
+    @RequestMapping(method = RequestMethod.GET, value = "/rtvs/rtv_no={rtv_no}")
+    public Rtv getLpoById(@PathVariable(value = "rtv_no") String rtvNo) {
+        return rtvRepository.findByRtvNo(rtvNo)
+                .orElseThrow(() -> new NotFoundException("RTV not found"));
+    }
 	// Create a new RTV
 	@Transactional
     @RequestMapping(method = RequestMethod.POST, value = "/rtvs")
@@ -89,13 +110,14 @@ public class RtvServiceController {
     //Approve RTV
 	@Transactional
     @RequestMapping(method = RequestMethod.PUT, value = "/rtvs/approve/{id}")
-    public Rtv approveRtv(@PathVariable(value = "id") Long rtvId){
+    public ResponseEntity<Object> approveRtv(@PathVariable(value = "id") Long rtvId){
     	Rtv rtv = rtvRepository.findById(rtvId)
     			.orElseThrow(() -> new NotFoundException("RTV not found"));
 		String status = rtv.getStatus();
 		if(status.equals("PENDING")) {
 			rtv.setStatus("APPROVED");
-			return rtvRepository.saveAndFlush(rtv);
+			rtvRepository.saveAndFlush(rtv);
+			return new ResponseEntity<>("RTV approved", HttpStatus.OK);
 		}else if(status.equals("APPROVED")) {
 			throw new InvalidOperationException("Could not approve RTV. RTV already approved.");
 		}else if(status.equals("CANCELED")) {
@@ -110,7 +132,8 @@ public class RtvServiceController {
     //Complete RTV
 	@Transactional
     @RequestMapping(method = RequestMethod.PUT, value = "/rtvs/complete/{id}")
-    public Rtv completeRtv(@PathVariable(value = "id") Long rtvId){
+    public ResponseEntity<Object> completeRtv(@PathVariable(value = "id") Long rtvId){
+		System.out.println("Success");
     	Rtv rtv = rtvRepository.findById(rtvId)
     			.orElseThrow(() -> new NotFoundException("RTV not found"));
 		String status = rtv.getStatus();
@@ -118,10 +141,25 @@ public class RtvServiceController {
 			//now complete details
 			List<RtvDetail> _rtvDetails = rtvDetailRepository.findByRtv(rtv);
 			for(RtvDetail _rtvDetail : _rtvDetails) {
+				Item _item = itemRepository.findByItemCode(_rtvDetail.getItemCode()).get();
+				double _qty = _rtvDetail.getQty();
 				//remove item from stock
+				itemRepository.saveAndFlush(
+	    				new ItemServiceController()
+	    				.deductFromStock(_item, _qty));
+				//register in stock card
+				_item = itemRepository.findByItemCode(_rtvDetail.getItemCode()).get();
+				stockCardRepository.saveAndFlush(
+						new StockCardServiceController()
+						.returnToVendor(
+								_item, 
+								_rtvDetail.getQty(), 
+								rtv.getRtvDate(), 
+								_item.getQuantity()));
 			}
 			rtv.setStatus("COMPLETED");
-			return rtvRepository.saveAndFlush(rtv);
+			rtvRepository.saveAndFlush(rtv);
+			return new ResponseEntity<>("RTV completed", HttpStatus.OK);
 		}else if(status.equals("PENDING")) {
 			throw new InvalidOperationException("Could not approve RTV. RTV not approved.");
 		}else if(status.equals("CANCELED")) {
@@ -143,9 +181,9 @@ public class RtvServiceController {
 			rtv.setStatus("CANCELED");
 			return rtvRepository.saveAndFlush(rtv);
 		}else if(status.equals("COMPLETED")) {
-			throw new InvalidOperationException("Could not approve RTV. RTV already completed.");
+			throw new InvalidOperationException("Could not cancel RTV. RTV already completed.");
 		}else {
-			throw new InvalidOperationException("Could not approve RTV. RTV status unknown."); 
+			throw new InvalidOperationException("Could not cancel RTV. RTV status unknown."); 
 		}
     }
     

@@ -38,9 +38,7 @@ public class RtvDetail {
     private String itemCode;
 	@NotBlank
     private String description;
-	@NotBlank
     private double qty;
-	@NotBlank
     private double price;
 	private String reason;
 

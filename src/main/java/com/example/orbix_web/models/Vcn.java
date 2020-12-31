@@ -4,7 +4,6 @@
 package com.example.orbix_web.models;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -16,11 +15,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.OnDelete;
@@ -29,121 +26,141 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 /**
  * @author GODFREY
  *
  */
 @Component
 @Entity
-@Table(name = "rtvs")
+@Table(name = "vcns")
 @EntityListeners(AuditingEntityListener.class)
-public class Rtv {
+public class Vcn {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;	
+    private Long id;
 	@NotBlank
 	@Column(unique = true)
-    private String rtvNo;
+    private String vcnNo;
+	private String createdBy;
+	private String approvedBy;
 	@Temporal(TemporalType.DATE)
-	private Date rtvDate;
+	private Date vcnDate;
+	private double amount;
+	@Temporal(TemporalType.DATE)
+	private Date expiryDate;
 	private String status;
-
 	@ManyToOne(targetEntity = Supplier.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "supplier_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
 	@Autowired
 	@Embedded
     private Supplier supplier;
-	
-	@OneToMany(targetEntity = RtvDetail.class, mappedBy = "rtv", fetch = FetchType.EAGER, orphanRemoval = true)
-    @Valid
-    @JsonIgnoreProperties("rtv")
-    private List<RtvDetail> rtvDetail;
-
 	/**
 	 * @return the id
 	 */
 	public Long getId() {
 		return id;
 	}
-
 	/**
 	 * @param id the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
-
 	/**
-	 * @return the rtvNo
+	 * @return the vcnNo
 	 */
-	public String getRtvNo() {
-		return rtvNo;
+	public String getVcnNo() {
+		return vcnNo;
 	}
-
 	/**
-	 * @param rtvNo the rtvNo to set
+	 * @param vcnNo the vcnNo to set
 	 */
-	public void setRtvNo(String rtvNo) {
-		this.rtvNo = rtvNo;
+	public void setVcnNo(String vcnNo) {
+		this.vcnNo = vcnNo;
 	}
-
 	/**
-	 * @return the rtvDate
+	 * @return the createdBy
 	 */
-	public Date getRtvDate() {
-		return rtvDate;
+	public String getCreatedBy() {
+		return createdBy;
 	}
-
 	/**
-	 * @param rtvDate the rtvDate to set
+	 * @param createdBy the createdBy to set
 	 */
-	public void setRtvDate(Date rtvDate) {
-		this.rtvDate = rtvDate;
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
 	}
-
+	/**
+	 * @return the approvedBy
+	 */
+	public String getApprovedBy() {
+		return approvedBy;
+	}
+	/**
+	 * @param approvedBy the approvedBy to set
+	 */
+	public void setApprovedBy(String approvedBy) {
+		this.approvedBy = approvedBy;
+	}
+	/**
+	 * @return the vcnDate
+	 */
+	public Date getVcnDate() {
+		return vcnDate;
+	}
+	/**
+	 * @param vcnDate the vcnDate to set
+	 */
+	public void setVcnDate(Date vcnDate) {
+		this.vcnDate = vcnDate;
+	}
+	/**
+	 * @return the amount
+	 */
+	public double getAmount() {
+		return amount;
+	}
+	/**
+	 * @param amount the amount to set
+	 */
+	public void setAmount(double amount) {
+		this.amount = amount;
+	}
+	/**
+	 * @return the expiryDate
+	 */
+	public Date getExpiryDate() {
+		return expiryDate;
+	}
+	/**
+	 * @param expiryDate the expiryDate to set
+	 */
+	public void setExpiryDate(Date expiryDate) {
+		this.expiryDate = expiryDate;
+	}
 	/**
 	 * @return the status
 	 */
 	public String getStatus() {
 		return status;
 	}
-
 	/**
 	 * @param status the status to set
 	 */
 	public void setStatus(String status) {
 		this.status = status;
 	}
-
 	/**
 	 * @return the supplier
 	 */
 	public Supplier getSupplier() {
 		return supplier;
 	}
-
 	/**
 	 * @param supplier the supplier to set
 	 */
 	public void setSupplier(Supplier supplier) {
 		this.supplier = supplier;
 	}
-
-	/**
-	 * @return the rtvDetail
-	 */
-	public List<RtvDetail> getRtvDetail() {
-		return rtvDetail;
-	}
-
-	/**
-	 * @param rtvDetail the rtvDetail to set
-	 */
-	public void setRtvDetail(List<RtvDetail> rtvDetail) {
-		this.rtvDetail = rtvDetail;
-	}
-	
 }

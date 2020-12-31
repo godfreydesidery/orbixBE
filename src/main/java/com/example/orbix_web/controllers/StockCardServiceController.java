@@ -35,10 +35,17 @@ public class StockCardServiceController {
 		return stockCard;
 	}
 	public void removeFromStock() {
+		StockCard stockCard = new StockCard();
 		
 	}
-	public void returnToVendor() {
+	public StockCard returnToVendor(Item item, double qty, Date date, double stockBalance) {
+		StockCard stockCard = new StockCard();
+		stockCard.setItem(item);
+		stockCard.setQtyReturnToVendor(qty);
+		stockCard.setDateReturnToVendor(date);
+		stockCard.setStockBalance(stockBalance);
 		
+		return stockCard;
 	}
 	public void returnByCustomer() {
 		
