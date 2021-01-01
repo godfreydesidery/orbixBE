@@ -3,12 +3,14 @@
  */
 package com.example.orbix_web.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import com.example.orbix_web.models.Class;
+
+import com.example.orbix_web.models.Clas;
 import com.example.orbix_web.models.Department;
 
 /**
@@ -16,26 +18,30 @@ import com.example.orbix_web.models.Department;
  *
  */
 @Repository
-public interface ClassRepository extends JpaRepository<Class, Long> {
+public interface ClasRepository extends JpaRepository<Clas, Long> {
 
 	/**
 	 * @return
 	 */
-	@Query("select c.className from Class c")
-	Iterable<Class> getClassNames();
+	@Query("select c.clasName from Clas c")
+	Iterable<Clas> getClasNames();
 
 	/**
 	 * @param className
 	 * @return
 	 */
-	Optional<Class> findByClassName(String className);
+	Optional<Clas> findByClasName(String clasName);
 
 	/**
 	 * @param classCode
 	 * @return
 	 */
-	Optional<Class> findByClassCode(String classCode);
+	Optional<Clas> findByClasCode(String clasCode);
 
-	
-	
+	/**
+	 * @param dept
+	 * @return
+	 */
+	List<Clas> findByDepartment(Department dept);
+
 }

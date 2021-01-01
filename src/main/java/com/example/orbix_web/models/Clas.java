@@ -4,6 +4,7 @@
 package com.example.orbix_web.models;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -31,24 +32,26 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 @Component
-@Table(name = "classes")
+@Table(name = "clases")
 @EntityListeners(AuditingEntityListener.class)
-public class Class extends Audit<String>{
+public class Clas extends Audit<String>{
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	
 	@NotBlank
 	@Column(unique = true)
-    private String className;
+    private String clasName;
 	@NotBlank
 	@Column(unique = true)
-    private String classCode;
+    private String clasCode;
 	
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "department_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+	
+	@ManyToOne(targetEntity = Department.class, fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "department_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
 	@Autowired
+	@Embedded
     private Department department;
 
 	/**
@@ -57,40 +60,11 @@ public class Class extends Audit<String>{
 	public Long getId() {
 		return id;
 	}
-
 	/**
 	 * @param id the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	/**
-	 * @return the className
-	 */
-	public String getClassName() {
-		return className;
-	}
-
-	/**
-	 * @param className the className to set
-	 */
-	public void setClassName(String className) {
-		this.className = className;
-	}
-
-	/**
-	 * @return the classCode
-	 */
-	public String getClassCode() {
-		return classCode;
-	}
-
-	/**
-	 * @param classCode the classCode to set
-	 */
-	public void setClassCode(String classCode) {
-		this.classCode = classCode;
 	}
 
 	/**
@@ -105,5 +79,29 @@ public class Class extends Audit<String>{
 	 */
 	public void setDepartment(Department department) {
 		this.department = department;
+	}
+	/**
+	 * @return the clasName
+	 */
+	public String getClasName() {
+		return clasName;
+	}
+	/**
+	 * @param clasName the clasName to set
+	 */
+	public void setClasName(String clasName) {
+		this.clasName = clasName;
+	}
+	/**
+	 * @return the clasCode
+	 */
+	public String getClasCode() {
+		return clasCode;
+	}
+	/**
+	 * @param clasCode the clasCode to set
+	 */
+	public void setClasCode(String clasCode) {
+		this.clasCode = clasCode;
 	}
 }

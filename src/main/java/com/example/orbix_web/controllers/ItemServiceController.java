@@ -74,8 +74,10 @@ public class ItemServiceController {
     @ResponseBody
     public Item createItem(@Valid @RequestBody Item item ) {
     	Supplier supplier;
+    	
     	try {
     		String supplierName = (item.getSupplier()).getSupplierName();
+    		
     		supplier = supplierRepository.findBySupplierName(supplierName).get();
     		supplier.setSupplierName(supplierName);
 	    	supplierRepository.save(supplier);
@@ -99,6 +101,7 @@ public class ItemServiceController {
      * get a single item by id
      */
     @RequestMapping(method = RequestMethod.GET, value = "/items/{id}")
+    @Transactional
     public Item getItemById(@PathVariable(value = "id") Long itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
@@ -109,6 +112,7 @@ public class ItemServiceController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET, value = "/items/primary_barcode={primary_barcode}")
+    @Transactional
     public Item getItemByPrimaryBarcode(@PathVariable(value = "primary_barcode") String primaryBarcode) {
         return itemRepository.findByPrimaryBarcode(primaryBarcode)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
@@ -119,6 +123,7 @@ public class ItemServiceController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET, value = "/items/item_code={item_code}")
+    @Transactional
     public Item getItemByItemCode(@PathVariable(value = "item_code") String itemCode) {
         return itemRepository.findByItemCode(itemCode)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
@@ -129,6 +134,7 @@ public class ItemServiceController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET, value = "/items/long_description={long_description}")
+    @Transactional
     public Item getItemByLongDescription(@PathVariable(value = "long_description") String longDescription) {
         return itemRepository.findByLongDescription(longDescription)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
