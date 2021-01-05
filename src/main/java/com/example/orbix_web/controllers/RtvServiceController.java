@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.orbix_web.exceptions.InvalidOperationException;
+import com.example.orbix_web.exceptions.MissingInformationException;
 import com.example.orbix_web.exceptions.NotFoundException;
 import com.example.orbix_web.models.Item;
 import com.example.orbix_web.models.Lpo;
@@ -86,9 +87,13 @@ public class RtvServiceController {
 	    	supplierRepository.save(supplier);
 	    	rtv.setSupplier(supplier);
     	}catch(Exception e) {
-    		rtv.setSupplier(null);
+    		throw new MissingInformationException("Could not process RTV. Supplier required");
     	}
     	rtv.setStatus("PENDING");
+    	//validate inputs
+    	if(rtv.getRtvDate() == null) {
+    		throw new MissingInformationException("Could not process RTV. RTV Date required");
+    	}
     	return rtvRepository.saveAndFlush(rtv);
 	}
     
@@ -98,6 +103,14 @@ public class RtvServiceController {
     public ResponseEntity<Object> updateRtv(@PathVariable(value = "id") Long rtvId, @Valid @RequestBody Rtv rtvDetails){
     	Rtv rtv = rtvRepository.findById(rtvId)
                 .orElseThrow(() -> new NotFoundException("RTV not found"));
+    	Supplier _supplier = supplierRepository.findBySupplierName(
+    			rtvDetails
+    			.getSupplier()
+    			.getSupplierName())
+    			.get();
+    	if(!rtv.getSupplier().equals(_supplier)) {
+    		throw new InvalidOperationException("Editing supplier information on a pending RTV is not allowed");
+    	}
     	rtv = rtvDetails;
     	try {
     		rtvRepository.save(rtv);

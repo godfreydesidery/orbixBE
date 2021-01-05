@@ -1,5 +1,7 @@
 package com.example.orbix_web;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -37,7 +39,7 @@ public class OrbixWebApplication {
 		
 		//Application.launch(JavaFxApplication.class,args);
 		
-		
+		System.out.println((new Date()).toString());
 	}
 	
 	

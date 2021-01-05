@@ -126,7 +126,7 @@ public class GrnServiceController {
     	}  
     	
     	//save grn, get grn no and id, create grn detail with grn id
-    	grn.setStatus("NOT RECEIVED");
+    	grn.setStatus("PENDING");
     	if(grnRepository.existsByOrderNo(orderNo) == false) {
     		_grn = grnRepository.save(grn);
     	}else {
@@ -155,7 +155,7 @@ public class GrnServiceController {
     				_grnDetail.setClientCostPrice(_clientCP);
     				_grnDetail.setQtyOrdered(_qtyOrdered);
     				_grnDetail.setQtyReceived(_qtyReceived);
-    				_grnDetail.setStatus("NOT RECEIVED");
+    				_grnDetail.setStatus("PENDING");
     				grnDetailRepository.save(_grnDetail);
     			}
     		}
@@ -208,17 +208,26 @@ public class GrnServiceController {
     		double _clientCostPrice = grnDetail.getClientCostPrice();
     		double _qtyOrdered = grnDetail.getQtyOrdered();
     		double _qtyReceived = grnDetail.getQtyReceived();
-    		Date _expiryDate = grnDetail.getExpiryDate();  // will be used to validate   		
+    		Date _expiryDate = grnDetail.getExpiryDate();  // will be used to validate  
+    		Date _currentDate = new Date();
+    		if(_expiryDate != null && _expiryDate.compareTo(_currentDate) < 0) {
+    			throw new InvalidEntryException("Can not receive goods!\n"+"("+grnDetail.getItemCode()+") "+grnDetail.getDescription()+" has expired");
+    		}
+    		
     		String _lotNo = grnDetail.getLotNo();  		
-    		if(_supplierCostPrice > _clientCostPrice && _qtyReceived > 0) {
-    			throw new InvalidEntryException("Can not receive goods!\nThe supplier cost price is more than client cost price on "+grnDetail.getDescription());
+    		if(_supplierCostPrice != _clientCostPrice && _qtyReceived > 0) {
+    			throw new InvalidEntryException("Can not receive goods!\nThe supplier cost price does not match client cost price on "+"("+grnDetail.getItemCode()+") "+grnDetail.getDescription());
     		}
     		if(_qtyReceived > _qtyOrdered) {
-    			throw new InvalidEntryException("Can not receive goods!\nQuantity received exceeds the quantity ordered on "+grnDetail.getDescription());
+    			throw new InvalidEntryException("Can not receive goods!\nQuantity received exceeds the quantity ordered on "+"("+grnDetail.getItemCode()+") "+grnDetail.getDescription());
     		}
     		if(_qtyReceived < 0 || _supplierCostPrice < 0) {
-    			throw new InvalidEntryException("Invalid entries at "+grnDetail.getDescription());
+    			throw new InvalidEntryException("Invalid entries at "+"("+grnDetail.getItemCode()+") "+grnDetail.getDescription());
     		}
+    		if(_qtyReceived > 0 && _supplierCostPrice <= 0) {
+    			throw new InvalidEntryException("No cost entered at "+"("+grnDetail.getItemCode()+") "+grnDetail.getDescription());
+    		}
+    		
     	}
     	if(_grn == null) {
     		throw new NotFoundException("Could not receive goods. GRN not found");

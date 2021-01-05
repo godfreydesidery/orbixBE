@@ -223,4 +223,23 @@ public class ItemServiceController {
     	}
     	
     }
+    /**
+     * validate a supplier against an item
+     * returns true if match
+     * @param item
+     * @param supplier
+     * @return
+     */
+    public boolean validateSupplier(Item item, Supplier supplier) {
+    	boolean _valid = false;
+    	try {
+    		Supplier _supplier = item.getSupplier();
+    		if(supplier.equals(_supplier)) {
+    			_valid = true;
+    		}
+    	}catch(Exception e) {
+    		_valid = false;
+    	}
+    	return _valid;		
+    }
 }
