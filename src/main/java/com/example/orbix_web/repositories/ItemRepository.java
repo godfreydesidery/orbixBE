@@ -61,6 +61,11 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 	@Modifying(clearAutomatically = true)
     @Query("UPDATE Item i SET i.quantity = i.quantity - ?1 WHERE i =?2")
     int deductFromStock(double qty, Item item);
+	
+	
+	boolean existsByPrimaryBarcode(String barcode);
+	boolean existsByItemCode(String itemCode);
+	boolean existsByLongDescription(String description);
 
 }
 

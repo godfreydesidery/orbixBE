@@ -47,6 +47,12 @@ public class StockCardServiceController {
 		
 		return stockCard;
 	}
+	public StockCard initialStock(Item item, double stockBalance) {
+		StockCard stockCard = new StockCard();
+		stockCard.setItem(item);
+		stockCard.setStockBalance(stockBalance);
+		return stockCard;
+	}
 	public void returnByCustomer() {
 		
 	}
