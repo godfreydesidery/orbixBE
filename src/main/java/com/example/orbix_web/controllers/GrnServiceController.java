@@ -215,7 +215,7 @@ public class GrnServiceController {
     		}
     		
     		String _lotNo = grnDetail.getLotNo();  		
-    		if(_supplierCostPrice != _clientCostPrice && _qtyReceived > 0) {
+    		if((_clientCostPrice - _supplierCostPrice  >= 0.01) || (_clientCostPrice - _supplierCostPrice  <= -0.1) && _qtyReceived > 0) {
     			throw new InvalidEntryException("Can not receive goods!\nThe supplier cost price does not match client cost price on "+"("+grnDetail.getItemCode()+") "+grnDetail.getDescription());
     		}
     		if(_qtyReceived > _qtyOrdered) {

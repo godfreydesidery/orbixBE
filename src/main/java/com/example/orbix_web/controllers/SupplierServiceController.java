@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.orbix_web.exceptions.InvalidOperationException;
 import com.example.orbix_web.exceptions.ResourceNotFoundException;
 import com.example.orbix_web.models.Item;
 import com.example.orbix_web.models.Supplier;
@@ -54,10 +56,11 @@ public class SupplierServiceController {
     }
 
     // Create a new Supplier
-    @PostMapping(value="/suppliers")
+    @RequestMapping(method = RequestMethod.POST,value="/suppliers")
     @ResponseBody
     public Supplier createSupplier(@Valid @RequestBody Supplier supplier) {
         return supplierRepository.save(supplier);
+        
     }
 
     // Get a Single Supplier
@@ -95,12 +98,43 @@ public class SupplierServiceController {
         Supplier updatedSupplier = supplierRepository.save(supplier);
         return updatedSupplier;
     }
+    @PutMapping("/suppliers/supplier_code={supplier_code}")
+    public Supplier updateSupplierBySupplierCode(@PathVariable(value = "supplier_code") String supplierCode,
+                                            @Valid @RequestBody Supplier supplierDetails) {
 
+        Supplier supplier = supplierRepository.findBySupplierCode(supplierCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Supplier", "id", supplierCode));
+        Long id = supplier.getId();
+        supplierDetails.setId(id);
+
+        supplier = supplierDetails;
+
+        Supplier updatedSupplier = supplierRepository.save(supplier);
+        return updatedSupplier;
+    }
+
+    private boolean checkUsageBeforeDelete(Supplier supplier) {
+    	/**
+    	 * Checks whether an supplier has been used any where
+    	 * returns false if it has not been used
+    	 * throw invalid operation exception if it has been used
+    	 * to prevent deletion
+    	 */
+    	boolean used = false;
+    	//assume it has been used, to be implemented later
+    	used = true;
+    	//throw exception
+    	if(used == true) {
+    		throw new InvalidOperationException("Could not delete. Supplier already in use within the system.");
+    	}
+    	return used;
+    }
     // Delete a Supplier
     @DeleteMapping("/suppliers/{id}")
     public ResponseEntity<?> deleteSupplier(@PathVariable(value = "id") Long supplierId) {
     	Supplier supplier = supplierRepository.findById(supplierId)
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier", "id", supplierId));
+    	this.checkUsageBeforeDelete(supplier);
 
     	supplierRepository.delete(supplier);
 

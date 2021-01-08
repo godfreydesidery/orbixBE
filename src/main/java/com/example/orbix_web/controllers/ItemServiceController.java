@@ -4,6 +4,7 @@
 package com.example.orbix_web.controllers;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -29,12 +30,16 @@ import com.example.orbix_web.exceptions.InvalidEntryException;
 import com.example.orbix_web.exceptions.InvalidOperationException;
 import com.example.orbix_web.exceptions.MissingInformationException;
 import com.example.orbix_web.exceptions.NotFoundException;
+import com.example.orbix_web.models.CostPriceChange;
 import com.example.orbix_web.models.Department;
 import com.example.orbix_web.models.Item;
+import com.example.orbix_web.models.SellingPriceChange;
 import com.example.orbix_web.models.StockCard;
 import com.example.orbix_web.models.Supplier;
+import com.example.orbix_web.repositories.CostPriceChangeRepository;
 import com.example.orbix_web.repositories.DepartmentRepository;
 import com.example.orbix_web.repositories.ItemRepository;
+import com.example.orbix_web.repositories.SellingPriceChangeRepository;
 import com.example.orbix_web.repositories.StockCardRepository;
 import com.example.orbix_web.repositories.SupplierRepository;
 
@@ -56,6 +61,10 @@ public class ItemServiceController {
     DepartmentRepository departmentRepository;
     @Autowired
     StockCardRepository stockCardRepository;
+    @Autowired
+    SellingPriceChangeRepository sellingPriceChangeRepository;
+    @Autowired
+    CostPriceChangeRepository costPriceChangeRepository;
     
     /**
      * 
@@ -81,10 +90,11 @@ public class ItemServiceController {
      * create a new item
      * @param item
      * @return item created
+     * @throws Exception 
      */
     @RequestMapping(method = RequestMethod.POST, value="/items")
     @ResponseBody
-    public Item createItem(@Valid @RequestBody Item item ) {
+    public Item createItem(@Valid @RequestBody Item item ) throws Exception {
     	Supplier supplier;
     	
     	try {
@@ -167,12 +177,15 @@ public class ItemServiceController {
      * @param itemId
      * @param itemDetails
      * @return
+     * @throws Exception 
      */
     @RequestMapping(method = RequestMethod.PUT, value = "/items/{id}", produces = "text/html")
     public ResponseEntity<Object> updateItem(@PathVariable(value = "id") Long itemId,
-                                            @Valid @RequestBody Item itemDetails) {
+                                            @Valid @RequestBody Item itemDetails) throws Exception {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
+        double oldSellingPrice =item.getUnitRetailPrice();
+        double oldCostPrice =item.getUnitCostPrice();
         
         this.checkItemCode(itemDetails.getItemCode(), item);
         
@@ -201,6 +214,8 @@ public class ItemServiceController {
     	try {
     		
     		itemRepository.save(item);
+    		this.registerSellingPriceChange(item, oldSellingPrice, "Item update");
+    		this.registerCostPriceChange(item, oldCostPrice, "Item update");
     		return new ResponseEntity<>("Item Updated successifully", HttpStatus.OK);
     	}catch(Exception e) {
     		return new ResponseEntity<>("Could not update item, "+e.getMessage(), HttpStatus.EXPECTATION_FAILED);
@@ -215,7 +230,7 @@ public class ItemServiceController {
     public ResponseEntity<?> deleteItem(@PathVariable(value = "id") Long itemId) {
     	Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
-    	this.checkUsage(item);
+    	this.checkUsageBeforeDelete(item);
     	try {
     		itemRepository.delete(item);
     		return ResponseEntity.ok().build();
@@ -276,7 +291,7 @@ public class ItemServiceController {
     	 * Validate barcode;
     	 * Check for duplicate entries etc
     	 */
-    	if(itemRepository.existsByPrimaryBarcode(barcode)) {
+    	if(itemRepository.existsByPrimaryBarcode(barcode) && barcode !=null) {
     		throw new DuplicateEntryException("Operation failed.\nDuplicate entry in barcode");
     	}
     }
@@ -310,7 +325,7 @@ public class ItemServiceController {
     	valid = true;
     	return valid;
     }
-    private boolean validateInputs(Item item) {
+    private boolean validateInputs(Item item) throws Exception {
     	boolean valid = true;
     	
         String itemCode = item.getItemCode();
@@ -331,38 +346,49 @@ public class ItemServiceController {
         double minimumInventory = item.getMinimumInventory();
         double defaultReOrderLevel = item.getDefaultReOrderLevel();
         double reOrderQuantity = item.getReOrderQuantity();
-        
-        if(!primaryBarcode.matches("^\\S*$")) {
-        	throw new InvalidEntryException("Operation failed. Barcode should not contain space");
+        String supplierName;
+        try {
+        	supplierName = item.getSupplier().getSupplierName();
+        }catch(Exception e) {
+        	supplierName = "";
         }
-        if(!itemCode.matches("^\\S*$")) {
-        	throw new InvalidEntryException("Operation failed. Item code should not contain space");
+        try {
+        	if(!primaryBarcode.matches("^\\S*$")) {
+        		throw new InvalidEntryException("Operation failed. Barcode should not contain space");
+	        }
+	        if(!itemCode.matches("^\\S*$")) {
+	        	throw new InvalidEntryException("Operation failed. Item code should not contain space");
+	        }
+	        if(packSize%1 != 0 || packSize <=0) {
+	        	throw new InvalidEntryException("Operation failed. Pack size should be a whole number and more than 0");
+	        }
+	        if(unitCostPrice < 0) {
+	        	throw new InvalidEntryException("Operation failed. Unit cost price must be more than 0");
+	        }
+	        if(unitRetailPrice < 0) {
+	        	throw new InvalidEntryException("Operation failed. Unit retail price must be more than 0");
+	        }
+	        if(discount < 0 || discount > 100) {
+	        	throw new InvalidEntryException("Operation failed. Discount must be between 0 and 100 inclusive");
+	        }
+	        if(vat < 0 || vat > 100) {
+	        	throw new InvalidEntryException("Operation failed. VAT must be between 0 and 100 inclusive");
+	        }
+	        if(profitMargin < 0) {
+	        	throw new InvalidEntryException("Operation failed. Profit margin must be more than 0 inclusive");
+	        }
+	        if(maximumInventory < minimumInventory) {
+	        	throw new InvalidEntryException("Operation failed. Maximum inventory value must be more than minimum inventory value");
+	        }
+	        if(defaultReOrderLevel > maximumInventory) {
+	        	throw new InvalidEntryException("Operation failed. Default re order level value must be less than minimum inventory value");
+	        }
+	        if(supplierName.equals("") || supplierName == null) {
+	        	throw new MissingInformationException("Could not save. An item must hava a valid supplier");
+	        }
+        }catch(Exception e) {
+        	valid = false;
         }
-        if(packSize%1 != 0 || packSize <=0) {
-        	throw new InvalidEntryException("Operation failed. Pack size should be a whole number and more than 0");
-        }
-        if(unitCostPrice < 0) {
-        	throw new InvalidEntryException("Operation failed. Unit cost price must be more than 0");
-        }
-        if(unitRetailPrice < 0) {
-        	throw new InvalidEntryException("Operation failed. Unit retail price must be more than 0");
-        }
-        if(discount < 0 || discount > 100) {
-        	throw new InvalidEntryException("Operation failed. Discount must be between 0 and 100 inclusive");
-        }
-        if(vat < 0 || vat > 100) {
-        	throw new InvalidEntryException("Operation failed. VAT must be between 0 and 100 inclusive");
-        }
-        if(profitMargin < 0) {
-        	throw new InvalidEntryException("Operation failed. Profit margin must be more than 0 inclusive");
-        }
-        if(maximumInventory < minimumInventory) {
-        	throw new InvalidEntryException("Operation failed. Maximum inventory value must be more than minimum inventory value");
-        }
-        if(defaultReOrderLevel > maximumInventory) {
-        	throw new InvalidEntryException("Operation failed. Default re order level value must be less than minimum inventory value");
-        }
-    	
     	return valid;		
     }
     private boolean checkItemCode(String itemCode, Item item) {
@@ -379,7 +405,7 @@ public class ItemServiceController {
     	}
     	return check;
     }
-    private boolean checkUsage(Item item) {
+    private boolean checkUsageBeforeDelete(Item item) {
     	/**
     	 * Checks whether an item has been used any where
     	 * returns false if it has not been used
@@ -405,6 +431,52 @@ public class ItemServiceController {
     		change = false;
     	}
     	return change;
+    }
+    private void registerSellingPriceChange(Item item, double oldPrice, String reason) {
+    	SellingPriceChange priceChange = new SellingPriceChange();
+    	double newPrice =item.getUnitRetailPrice();
+    	double change = newPrice - oldPrice;
+    	String changeType;
+    	if(change > 0) {
+    		changeType = "INCREMENT";
+    	}else if(change < 0) {
+    		changeType = "DECREMENT";
+    	}else {
+    		changeType = "NO CHANGE";
+    	}
+    	priceChange.setItem(item);
+    	priceChange.setOldPrice(oldPrice);
+    	priceChange.setNewPrice(newPrice);
+    	priceChange.setPriceChange(change);
+    	priceChange.setChangeType(changeType);
+    	priceChange.setReason(reason);
+    	priceChange.setDateTime(new Date());
+    	if(change != 0) {
+    		sellingPriceChangeRepository.saveAndFlush(priceChange);
+    	}
+    }
+    private void registerCostPriceChange(Item item, double oldPrice, String reason) {
+    	CostPriceChange priceChange = new CostPriceChange();
+    	double newPrice =item.getUnitCostPrice();
+    	double change = newPrice - oldPrice;
+    	String changeType;
+    	if(change > 0) {
+    		changeType = "INCREMENT";
+    	}else if(change < 0) {
+    		changeType = "DECREMENT";
+    	}else {
+    		changeType = "NO CHANGE";
+    	}
+    	priceChange.setItem(item);
+    	priceChange.setOldPrice(oldPrice);
+    	priceChange.setNewPrice(newPrice);
+    	priceChange.setPriceChange(change);
+    	priceChange.setChangeType(changeType);
+    	priceChange.setReason(reason);
+    	priceChange.setDateTime(new Date());
+    	if(change != 0) {
+    		costPriceChangeRepository.saveAndFlush(priceChange);
+    	}
     }
     
 }
