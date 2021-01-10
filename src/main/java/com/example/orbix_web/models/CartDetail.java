@@ -36,154 +36,118 @@ public class CartDetail extends Audit<String>{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private double price;
+    private double discount;
+    private double quantity;
+    private boolean voided;
+	
+	
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "cart_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
     private Cart cart;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "item_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
     private Item item;
-		
-    private String barcode;
-	@NotBlank
-    private String description;
-	@NotBlank
-    private double price;
-	@NotBlank
-    private double vat;
-	@NotBlank
-    private double discount;
-	@NotBlank
-    private double quantity;
-	@NotBlank
-    private double amount;
-	@NotBlank
-    private boolean voided;
-	@NotBlank
-    private String shortDescription;
+
 	/**
 	 * @return the id
 	 */
 	public Long getId() {
 		return id;
 	}
+
 	/**
 	 * @param id the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
-	/**
-	 * @return the barcode
-	 */
-	public String getBarcode() {
-		return barcode;
-	}
-	/**
-	 * @param barcode the barcode to set
-	 */
-	public void setBarcode(String barcode) {
-		this.barcode = barcode;
-	}
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
+
 	/**
 	 * @return the price
 	 */
 	public double getPrice() {
 		return price;
 	}
+
 	/**
 	 * @param price the price to set
 	 */
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	/**
-	 * @return the vat
-	 */
-	public double getVat() {
-		return vat;
-	}
-	/**
-	 * @param vat the vat to set
-	 */
-	public void setVat(double vat) {
-		this.vat = vat;
-	}
+
 	/**
 	 * @return the discount
 	 */
 	public double getDiscount() {
 		return discount;
 	}
+
 	/**
 	 * @param discount the discount to set
 	 */
 	public void setDiscount(double discount) {
 		this.discount = discount;
 	}
+
 	/**
 	 * @return the quantity
 	 */
 	public double getQuantity() {
 		return quantity;
 	}
+
 	/**
 	 * @param quantity the quantity to set
 	 */
 	public void setQuantity(double quantity) {
 		this.quantity = quantity;
 	}
-	/**
-	 * @return the amount
-	 */
-	public double getAmount() {
-		return amount;
-	}
-	/**
-	 * @param amount the amount to set
-	 */
-	public void setAmount(double amount) {
-		this.amount = amount;
-	}
+
 	/**
 	 * @return the voided
 	 */
 	public boolean isVoided() {
 		return voided;
 	}
+
 	/**
 	 * @param voided the voided to set
 	 */
 	public void setVoided(boolean voided) {
 		this.voided = voided;
 	}
-	/**
-	 * @return the shortDescription
-	 */
-	public String getShortDescription() {
-		return shortDescription;
-	}
-	/**
-	 * @param shortDescription the shortDescription to set
-	 */
-	public void setShortDescription(String shortDescription) {
-		this.shortDescription = shortDescription;
-	}	
 
+	/**
+	 * @return the cart
+	 */
+	public Cart getCart() {
+		return cart;
+	}
+
+	/**
+	 * @param cart the cart to set
+	 */
+	public void setCart(Cart cart) {
+		this.cart = cart;
+	}
+
+	/**
+	 * @return the item
+	 */
+	public Item getItem() {
+		return item;
+	}
+
+	/**
+	 * @param item the item to set
+	 */
+	public void setItem(Item item) {
+		this.item = item;
+	}
+	
 }
