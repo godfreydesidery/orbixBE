@@ -43,7 +43,7 @@ public class Cart extends Audit<String>{
 	
 	@ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "till_id", nullable = true)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Till till;
 
 	/**
