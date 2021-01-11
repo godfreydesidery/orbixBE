@@ -9,6 +9,8 @@ import java.util.Optional;
 import javax.persistence.LockModeType;
 
 import org.hibernate.mapping.List;
+import org.hibernate.mapping.Set;
+import org.hibernate.mapping.Table;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
