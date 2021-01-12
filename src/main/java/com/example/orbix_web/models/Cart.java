@@ -4,6 +4,7 @@
 package com.example.orbix_web.models;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -13,9 +14,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.Valid;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -23,6 +26,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.stereotype.Component;
 
 import com.example.orbix_web.database.Audit;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author GODFREY
@@ -45,6 +49,11 @@ public class Cart extends Audit<String>{
     @JoinColumn(name = "till_id", nullable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Till till;
+	
+	@OneToMany(targetEntity = CartDetail.class, mappedBy = "cart", fetch = FetchType.EAGER, orphanRemoval = true)
+    @Valid
+    @JsonIgnoreProperties("cart")
+    private List<CartDetail> cartDetail;
 
 	/**
 	 * @return the id

@@ -40,9 +40,8 @@ public class Till extends Audit<String>{
 	@NotBlank
 	@Column(unique=true)
     private String tillNo;
-	@NotBlank
-	@Column(unique=true)
     private String tillName;
+	private String computerName;
 	private String status;
 	
 	private double cash;
@@ -270,6 +269,20 @@ public class Till extends Audit<String>{
 	 */
 	public void setShop(Shop shop) {
 		this.shop = shop;
+	}
+
+	/**
+	 * @return the computerName
+	 */
+	public String getComputerName() {
+		return computerName;
+	}
+
+	/**
+	 * @param computerName the computerName to set
+	 */
+	public void setComputerName(String computerName) {
+		this.computerName = computerName;
 	}
 	
 	

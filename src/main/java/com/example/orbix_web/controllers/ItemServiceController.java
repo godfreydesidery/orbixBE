@@ -80,7 +80,7 @@ public class ItemServiceController {
      * @return array of items' long descriptions
      */
     
-    @Transactional
+    //@Transactional
     @RequestMapping(method = RequestMethod.GET, value="/items/long_descriptions")
     public Iterable<Item> getAllItemsByLongDescription() {
         return itemRepository.getLongDescription();

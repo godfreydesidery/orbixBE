@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.orbix_web.exceptions.NotFoundException;
 import com.example.orbix_web.exceptions.ResourceNotFoundException;
 import com.example.orbix_web.models.Till;
 import com.example.orbix_web.models.User;
@@ -63,6 +64,12 @@ public class TillServiceController {
     public Till getTillByTillNo(@PathVariable(value = "till_no") String tillNo) {
         return tillRepository.findByTillNo(tillNo)
                 .orElseThrow(() -> new ResourceNotFoundException("Till", "till_no", tillNo));
+    }
+ // Get a Single till by till no
+    @GetMapping("/tills/till_name={till_name}")
+    public Till getTillByTillName(@PathVariable(value = "till_name") String tillName) {
+        return tillRepository.findByTillName(tillName)
+                .orElseThrow(() -> new NotFoundException("Till not found"));
     }
     
     // Update a Till

@@ -24,4 +24,10 @@ public interface TillRepository extends JpaRepository<Till, Long> {
 	 */
 	Optional<Till> findByTillNo(String tillNo);
 
+	/**
+	 * @param tillName
+	 * @return
+	 */
+	Optional<Till> findByTillName(String tillName);
+
 }
