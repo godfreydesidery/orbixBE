@@ -70,7 +70,17 @@ public class CartDetailServiceController {
     	itemRepository.save(item);
     	cartDetail.setItem(item);
     	
-        return cartDetailRepository.save(cartDetail);
+    	Cart cart = cartDetail.getCart();
+    	CartDetail oldDetail = cartDetailRepository.findByCartAndItemCode(cart, itemCode);
+    	if(oldDetail == null) {
+    		
+    	}else {
+    		double qtyEntered = cartDetail.getQuantity();
+    		double qtyAvailable =oldDetail.getQuantity();
+    		cartDetail = oldDetail;
+    		cartDetail.setQuantity(qtyAvailable + qtyEntered);
+    	}
+        return cartDetailRepository.saveAndFlush(cartDetail);
     }
 
     // Get a Single CartDetail
