@@ -59,6 +59,7 @@ public class CartServiceController {
     public Cart createCart(@Valid @RequestBody Till till) {
     	Cart cart = new Cart();
     	cart.setTill(till);
+    	cart.setStatus("OPEN");
         return cartRepository.save(cart);
     }
 

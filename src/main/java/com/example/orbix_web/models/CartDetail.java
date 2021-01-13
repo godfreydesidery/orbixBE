@@ -36,7 +36,11 @@ public class CartDetail extends Audit<String>{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	
+	private String barcode;
+	private String itemCode;
+	private String description;
     private double price;
+    private double vat;
     private double discount;
     private double quantity;
     private boolean voided;
@@ -148,6 +152,62 @@ public class CartDetail extends Audit<String>{
 	 */
 	public void setItem(Item item) {
 		this.item = item;
+	}
+
+	/**
+	 * @return the barcode
+	 */
+	public String getBarcode() {
+		return barcode;
+	}
+
+	/**
+	 * @param barcode the barcode to set
+	 */
+	public void setBarcode(String barcode) {
+		this.barcode = barcode;
+	}
+
+	/**
+	 * @return the itemCode
+	 */
+	public String getItemCode() {
+		return itemCode;
+	}
+
+	/**
+	 * @param itemCode the itemCode to set
+	 */
+	public void setItemCode(String itemCode) {
+		this.itemCode = itemCode;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * @return the vat
+	 */
+	public double getVat() {
+		return vat;
+	}
+
+	/**
+	 * @param vat the vat to set
+	 */
+	public void setVat(double vat) {
+		this.vat = vat;
 	}
 	
 }

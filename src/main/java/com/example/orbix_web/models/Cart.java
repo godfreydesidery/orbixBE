@@ -124,4 +124,18 @@ public class Cart extends Audit<String>{
 	public void setTill(Till till) {
 		this.till = till;
 	}
+
+	/**
+	 * @return the cartDetail
+	 */
+	public List<CartDetail> getCartDetail() {
+		return cartDetail;
+	}
+
+	/**
+	 * @param cartDetail the cartDetail to set
+	 */
+	public void setCartDetail(List<CartDetail> cartDetail) {
+		this.cartDetail = cartDetail;
+	}
 }

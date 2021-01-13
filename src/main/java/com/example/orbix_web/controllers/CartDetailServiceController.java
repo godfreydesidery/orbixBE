@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,8 +23,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.orbix_web.exceptions.ResourceNotFoundException;
+import com.example.orbix_web.models.Cart;
 import com.example.orbix_web.models.CartDetail;
+import com.example.orbix_web.models.Item;
 import com.example.orbix_web.repositories.CartDetailRepository;
+import com.example.orbix_web.repositories.CartRepository;
+import com.example.orbix_web.repositories.ItemRepository;
 
 /**
  * @author GODFREY
@@ -36,21 +41,40 @@ public class CartDetailServiceController {
 
     @Autowired
     CartDetailRepository cartDetailRepository;
+    @Autowired
+    CartRepository cartRepository;
+    @Autowired
+    ItemRepository itemRepository;
     
     // Get All CartDetails
+    @Transactional
     @GetMapping("/cart_details")
     public List<CartDetail> getAllCartDetails() {
         return cartDetailRepository.findAll();
     }
+ // Get Details of a specific cart
+    @Transactional
+    @GetMapping("/cart_details/cart_id={cart_id}")
+    public List<CartDetail> getAllCartDetails(@PathVariable(value = "cart_id") Long cartId) {
+    	Cart cart = cartRepository.findById(cartId).get();
+        return cartDetailRepository.findByCart(cart);
+    }
 
     // Create a new CartDetail
+    @Transactional
     @PostMapping(value="/cart_details")
     @ResponseBody
     public CartDetail createCartDetail(@Valid @RequestBody CartDetail cartDetail) {
+    	String itemCode = cartDetail.getItemCode();
+    	Item item = itemRepository.findByItemCode(itemCode).get();
+    	itemRepository.save(item);
+    	cartDetail.setItem(item);
+    	
         return cartDetailRepository.save(cartDetail);
     }
 
     // Get a Single CartDetail
+    @Transactional
     @GetMapping("/cart_details/{id}")
     public CartDetail getCartDetailById(@PathVariable(value = "id") Long cartDetailId) {
         return cartDetailRepository.findById(cartDetailId)
