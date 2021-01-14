@@ -138,4 +138,6 @@ public class Cart extends Audit<String>{
 	public void setCartDetail(List<CartDetail> cartDetail) {
 		this.cartDetail = cartDetail;
 	}
+
+	
 }

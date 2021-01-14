@@ -43,6 +43,7 @@ public class Till extends Audit<String>{
     private String tillName;
 	private String computerName;
 	private String status;
+	private boolean multipleInput = false;
 	
 	private double cash;
 	private double voucher;
@@ -283,6 +284,20 @@ public class Till extends Audit<String>{
 	 */
 	public void setComputerName(String computerName) {
 		this.computerName = computerName;
+	}
+
+	/**
+	 * @return the multipleInput
+	 */
+	public boolean isMultipleInput() {
+		return multipleInput;
+	}
+
+	/**
+	 * @param multipleInput the multipleInput to set
+	 */
+	public void setMultipleInput(boolean multipleInput) {
+		this.multipleInput = multipleInput;
 	}
 	
 	

@@ -51,6 +51,15 @@ public class TillServiceController {
     public Till createTill(@Valid @RequestBody Till till) {
         return tillRepository.save(till);
     }
+    
+ // Change input method
+    @PostMapping(value="/tills/multiple_input/till_name= {till_name}")
+    @ResponseBody
+    public void changeInputmethod(@Valid @RequestBody boolean method, @PathVariable(value = "till_name") String tillName) {
+    	Till till = tillRepository.findByTillName(tillName).get();
+    	till.setMultipleInput(method);
+        tillRepository.save(till);
+    }
 
     // Get a Single Till
     @GetMapping("/tills/{id}")
