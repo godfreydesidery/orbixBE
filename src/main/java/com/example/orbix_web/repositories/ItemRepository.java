@@ -19,6 +19,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.orbix_web.models.Item;
+import com.example.orbix_web.models.Supplier;
 
 /**
  * @author GODFREY
@@ -68,6 +69,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 	boolean existsByPrimaryBarcode(String barcode);
 	boolean existsByItemCode(String itemCode);
 	boolean existsByLongDescription(String description);
+	
 
 }
 

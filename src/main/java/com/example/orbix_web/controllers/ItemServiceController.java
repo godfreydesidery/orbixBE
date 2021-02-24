@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,23 +26,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.HandlerMapping;
 
 import com.example.orbix_web.exceptions.DuplicateEntryException;
 import com.example.orbix_web.exceptions.InvalidEntryException;
 import com.example.orbix_web.exceptions.InvalidOperationException;
 import com.example.orbix_web.exceptions.MissingInformationException;
 import com.example.orbix_web.exceptions.NotFoundException;
+import com.example.orbix_web.models.Clas;
 import com.example.orbix_web.models.CostPriceChange;
 import com.example.orbix_web.models.Department;
 import com.example.orbix_web.models.Item;
 import com.example.orbix_web.models.SellingPriceChange;
 import com.example.orbix_web.models.StockCard;
+import com.example.orbix_web.models.SubClass;
 import com.example.orbix_web.models.Supplier;
+import com.example.orbix_web.repositories.ClasRepository;
 import com.example.orbix_web.repositories.CostPriceChangeRepository;
 import com.example.orbix_web.repositories.DepartmentRepository;
 import com.example.orbix_web.repositories.ItemRepository;
 import com.example.orbix_web.repositories.SellingPriceChangeRepository;
 import com.example.orbix_web.repositories.StockCardRepository;
+import com.example.orbix_web.repositories.SubClassRepository;
 import com.example.orbix_web.repositories.SupplierRepository;
 
 
@@ -59,6 +66,10 @@ public class ItemServiceController {
     SupplierRepository supplierRepository;
     @Autowired
     DepartmentRepository departmentRepository;
+    @Autowired
+    ClasRepository clasRepository;
+    @Autowired
+    SubClassRepository subClassRepository;
     @Autowired
     StockCardRepository stockCardRepository;
     @Autowired
@@ -117,10 +128,32 @@ public class ItemServiceController {
     	}catch(Exception e) {
     		item.setDepartment(null);
     	}
+    	Clas clas;
+    	try {
+    		String clasName = (item.getClas()).getClasName();
+    		clas = clasRepository.findByClasName(clasName).get();
+    		clas.setClasName(clasName);
+	    	clasRepository.save(clas);
+	    	item.setClas(clas);
+    	}catch(Exception e) {
+    		item.setClas(null);
+    	}
+    	SubClass subClass;
+    	try {
+    		String subClassName = (item.getSubClass()).getSubClassName();
+    		subClass = subClassRepository.findBySubClassName(subClassName).get();
+    		subClass.setSubClassName(subClassName);
+    		subClassRepository.save(subClass);
+	    	item.setSubClass(subClass);
+    	}catch(Exception e) {
+    		item.setSubClass(null);
+    	}
     	this.validateBarcode(item.getPrimaryBarcode());
     	this.validateItemCode(item.getItemCode());
     	this.validateLongDescription(item.getLongDescription());
     	this.validateInputs(item);
+    	item.setUnitCostPrice((long)Math.round((double)item.getUnitCostPrice()*100)/100.00);
+    	item.setUnitRetailPrice((long)Math.round((double)item.getUnitRetailPrice()*100)/100.00);
     	
     	itemRepository.save(item);
     	
@@ -166,12 +199,33 @@ public class ItemServiceController {
      * @param primaryBarcode
      * @return
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/items/long_description={long_description}")
+    @RequestMapping(method = RequestMethod.GET, value = "/items/**/long_description")
     @Transactional
-    public Item getItemByLongDescription(@PathVariable(value = "long_description") String longDescription) {
+    public Item getItemByLongDescription(HttpServletRequest request) {
+    	
+    	String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+        String apiPath = new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, path);
+        String longDescription = apiPath.substring(0, apiPath.length() - "/long_description".length());
+
+    	
         return itemRepository.findByLongDescription(longDescription)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
-    } 
+    }
+    
+    
+    //this is a template to allow slash in item description
+    @RequestMapping(value = "items/**/receipt", method = RequestMethod.GET)
+    @ResponseBody
+    public String generateReceipt(HttpServletRequest request) {
+        String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+        String apiPath = new AntPathMatcher().extractPathWithinPattern(bestMatchPattern, path);
+        String neededPathVariableValue = apiPath.substring(0, apiPath.length() - "/receipt".length());
+
+        return neededPathVariableValue;
+    }
+    
     /**
      * 
      * @param itemId
@@ -211,6 +265,29 @@ public class ItemServiceController {
     	}catch(Exception e) {
     		item.setDepartment(null);
     	}
+    	Clas clas;
+    	try {
+    		String clasName = (item.getClas()).getClasName();
+    		clas = clasRepository.findByClasName(clasName).get();
+    		clas.setClasName(clasName);
+	    	clasRepository.save(clas);
+	    	item.setClas(clas);
+    	}catch(Exception e) {
+    		item.setClas(null);
+    	}
+    	SubClass subClass;
+    	try {
+    		String subClassName = (item.getSubClass()).getSubClassName();
+    		subClass = subClassRepository.findBySubClassName(subClassName).get();
+    		subClass.setSubClassName(subClassName);
+    		subClassRepository.save(subClass);
+	    	item.setSubClass(subClass);
+    	}catch(Exception e) {
+    		item.setSubClass(null);
+    	}
+    	this.validateInputs(item);
+    	item.setUnitCostPrice((long)Math.round((double)item.getUnitCostPrice()*100)/100.00);
+    	item.setUnitRetailPrice((long)Math.round((double)item.getUnitRetailPrice()*100)/100.00);
     	try {
     		
     		itemRepository.save(item);
@@ -294,6 +371,9 @@ public class ItemServiceController {
     	if(itemRepository.existsByPrimaryBarcode(barcode) && barcode !=null) {
     		throw new DuplicateEntryException("Operation failed.\nDuplicate entry in barcode");
     	}
+    	if(barcode.contains("/")) {
+    		throw new InvalidEntryException("Operation failed.\n slash is not allowed in barcode");
+    	}
     }
     private boolean validateItemCode(String itemCode) {
     	boolean valid = false;
@@ -306,6 +386,9 @@ public class ItemServiceController {
     	}
     	if(itemCode.equals("")) {
     		throw new MissingInformationException("Operation failed.\nItem code is required");
+    	}
+    	if(itemCode.contains("/")) {
+    		throw new InvalidEntryException("Operation failed.\n slash is not allowed in item code");
     	}
     	valid = true;
     	return valid;

@@ -40,8 +40,9 @@ public class CorporateCustomer extends Audit<String> {
 	@NotBlank
 	@Column(unique = true)
     private String customerName;
+	//@NotBlank
+    private String contactName;
 	@NotBlank
-	@Column(unique = true)
     private String address;
     private String telephone;
     private String vatNo;
@@ -156,5 +157,18 @@ public class CorporateCustomer extends Audit<String> {
 	public void setCreditDays(int creditDays) {
 		this.creditDays = creditDays;
 	}
+	/**
+	 * @return the contactName
+	 */
+	public String getContactName() {
+		return contactName;
+	}
+	/**
+	 * @param contactName the contactName to set
+	 */
+	public void setContactName(String contactName) {
+		this.contactName = contactName;
+	}
+	
 	
 }

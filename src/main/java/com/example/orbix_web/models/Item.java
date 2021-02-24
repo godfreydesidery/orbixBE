@@ -95,6 +95,20 @@ public class Item extends Audit<String>{
 	@Embedded
     private Department department;
 	
+	@ManyToOne(targetEntity = Clas.class, fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "class_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+	@Autowired
+	@Embedded
+    private Clas clas;
+	
+	@ManyToOne(targetEntity = SubClass.class, fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "sub_class_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+	@Autowired
+	@Embedded
+    private SubClass subClass;
+	
 	
 	/**
 	 * @return the itemCode
@@ -347,6 +361,42 @@ public class Item extends Audit<String>{
 	 */
 	public void setId(Long id) {
 		this.id = id;
+	}
+	/**
+	 * @return the shops
+	 */
+	public Set<Shop> getShops() {
+		return shops;
+	}
+	/**
+	 * @param shops the shops to set
+	 */
+	public void setShops(Set<Shop> shops) {
+		this.shops = shops;
+	}
+	/**
+	 * @return the clas
+	 */
+	public Clas getClas() {
+		return clas;
+	}
+	/**
+	 * @param clas the clas to set
+	 */
+	public void setClas(Clas clas) {
+		this.clas = clas;
+	}
+	/**
+	 * @return the subClass
+	 */
+	public SubClass getSubClass() {
+		return subClass;
+	}
+	/**
+	 * @param subClass the subClass to set
+	 */
+	public void setSubClass(SubClass subClass) {
+		this.subClass = subClass;
 	}
 	
 	

@@ -145,7 +145,7 @@ public class LpoServiceController {
 		Lpo lpo = lpoRepository.findById(lpoId)
 		.orElseThrow(() -> new NotFoundException("LPO not found"));
 		String status = lpo.getStatus();
-		if(status.equals("PENDING") || status.equals("APPROVED")) {
+		if(status.equals("PENDING") || status.equals("APPROVED") || status.equals("NEW")) {
 			lpo.setStatus("CANCELLED");
 			lpoRepository.save(lpo);
 			return new ResponseEntity<Object>("LPO cancelled.", HttpStatus.OK);

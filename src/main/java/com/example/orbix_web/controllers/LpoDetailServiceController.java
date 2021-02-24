@@ -52,8 +52,11 @@ public class LpoDetailServiceController {
     	Lpo lpo;
     	String lpoNo = (lpoDetail.getLpo()).getLpoNo();
     	lpo = lpoRepository.findByLpoNo(lpoNo).get();
-    	//String
-	    lpoRepository.save(lpo);	    
+	    lpoRepository.save(lpo);
+	    String status = lpo.getStatus();
+	    if(!status.equals("PENDING")) {
+	    	throw new InvalidOperationException("Can not add item, LPO not a pending order");
+	    }
     	if(lpoDetailRepository.existsByLpoAndItemCode(lpo, lpoDetail.getItemCode()) == true){
     		throw new DuplicateEntryException("\nCould not add order item\nDuplicate entry in "+lpoDetail.getDescription()+"\nConsider updating the existing entry.");
     	}
@@ -62,6 +65,7 @@ public class LpoDetailServiceController {
     	}catch(Exception e) {
     		lpoDetail.setLpo(null);
     	}
+    	
     	lpoDetail.setOrderNo(lpo.getLpoNo());
         return lpoDetailRepository.saveAndFlush(lpoDetail);
     }
