@@ -9,6 +9,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
@@ -34,7 +35,9 @@ public class CompanyProfile extends Audit<String> {
     private Long id;
 	@NotBlank
     private String companyName;
-    private String companyLogo;
+	private String companyKey;
+	@Lob
+    private Byte[] companyLogo;
     private String tin;
     private String vrn;
     private String postAddress;
@@ -73,18 +76,7 @@ public class CompanyProfile extends Audit<String> {
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
 	}
-	/**
-	 * @return the companyLogo
-	 */
-	public String getCompanyLogo() {
-		return companyLogo;
-	}
-	/**
-	 * @param companyLogo the companyLogo to set
-	 */
-	public void setCompanyLogo(String companyLogo) {
-		this.companyLogo = companyLogo;
-	}
+	
 	/**
 	 * @return the tin
 	 */
@@ -252,6 +244,30 @@ public class CompanyProfile extends Audit<String> {
 	 */
 	public void setBankAccountNo(String bankAccountNo) {
 		this.bankAccountNo = bankAccountNo;
+	}
+	/**
+	 * @return the companyKey
+	 */
+	public String getCompanyKey() {
+		return companyKey;
+	}
+	/**
+	 * @param companyKey the companyKey to set
+	 */
+	public void setCompanyKey(String companyKey) {
+		this.companyKey = companyKey;
+	}
+	/**
+	 * @return the companyLogo
+	 */
+	public Byte[] getCompanyLogo() {
+		return companyLogo;
+	}
+	/**
+	 * @param companyLogo the companyLogo to set
+	 */
+	public void setCompanyLogo(Byte[] companyLogo) {
+		this.companyLogo = companyLogo;
 	}
 	
 }

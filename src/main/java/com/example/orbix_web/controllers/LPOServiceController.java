@@ -72,7 +72,7 @@ public class LpoServiceController {
     		lpo.setSupplier(null);
     	}
     	lpo.setLpoDate(lpoDate);
-    	lpo.setStatus("PENDING");
+    	lpo.setStatus("BLANK");
         return lpoRepository.save(lpo);
     }
     // Get a Single LPO
@@ -145,7 +145,7 @@ public class LpoServiceController {
 		Lpo lpo = lpoRepository.findById(lpoId)
 		.orElseThrow(() -> new NotFoundException("LPO not found"));
 		String status = lpo.getStatus();
-		if(status.equals("PENDING") || status.equals("APPROVED") || status.equals("NEW")) {
+		if(status.equals("PENDING") || status.equals("APPROVED") || status.equals("BLANK")) {
 			lpo.setStatus("CANCELLED");
 			lpoRepository.save(lpo);
 			return new ResponseEntity<Object>("LPO cancelled.", HttpStatus.OK);
@@ -166,7 +166,7 @@ public class LpoServiceController {
     	try {
     		String status = lpo.getStatus();
     		if(status.equals("PRINTED") || status.equals("REPRINTED") || status.equals("COMPLETED")) {
-    			throw new InvalidOperationException("Could not delete, LPO already printed. Only NEW, PENDING, APPROVED  and ARCHIVED LPOs can be deleted.");
+    			throw new InvalidOperationException("Could not delete, LPO already printed. Only BLANK, PENDING, APPROVED  and ARCHIVED LPOs can be deleted.");
     		}else {
     			lpoRepository.delete(lpo);
     			return new ResponseEntity<>("LPO deleted successifully.", HttpStatus.OK);

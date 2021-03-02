@@ -24,8 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.orbix_web.exceptions.DuplicateEntryException;
 import com.example.orbix_web.exceptions.InvalidOperationException;
 import com.example.orbix_web.exceptions.NotFoundException;
+import com.example.orbix_web.models.Item;
 import com.example.orbix_web.models.Lpo;
 import com.example.orbix_web.models.LpoDetail;
+import com.example.orbix_web.models.Supplier;
+import com.example.orbix_web.repositories.ItemRepository;
 import com.example.orbix_web.repositories.LpoDetailRepository;
 import com.example.orbix_web.repositories.LpoRepository;
 
@@ -42,6 +45,8 @@ public class LpoDetailServiceController {
     LpoRepository lpoRepository;
 	@Autowired
 	LpoDetailRepository lpoDetailRepository;
+	@Autowired
+	ItemRepository itemRepository;
 	
 	// Create a new Lpo detail
     @RequestMapping(method = RequestMethod.POST, value="/lpo_details", produces = {"text/html","application/json"})
@@ -53,19 +58,31 @@ public class LpoDetailServiceController {
     	String lpoNo = (lpoDetail.getLpo()).getLpoNo();
     	lpo = lpoRepository.findByLpoNo(lpoNo).get();
 	    lpoRepository.save(lpo);
+	    
 	    String status = lpo.getStatus();
-	    if(!status.equals("PENDING")) {
+	    if(!(status.equals("BLANK") || status.equals("PENDING"))) {
 	    	throw new InvalidOperationException("Can not add item, LPO not a pending order");
 	    }
+	    Supplier supplier = lpo.getSupplier();
+	    String itemCode = lpoDetail.getItemCode();
+	    
+	    Item item = itemRepository.findByItemCode(itemCode).get();
+	    if(item.getSupplier().getId()!=supplier.getId()) {
+	    	throw new InvalidOperationException("Can not add item, Item not available for this supplier");
+	    }
+	    
     	if(lpoDetailRepository.existsByLpoAndItemCode(lpo, lpoDetail.getItemCode()) == true){
     		throw new DuplicateEntryException("\nCould not add order item\nDuplicate entry in "+lpoDetail.getDescription()+"\nConsider updating the existing entry.");
+    	}
+    	if(lpo.getStatus().equals("BLANK")) {
+    		lpo.setStatus("PENDING");
+    		lpoRepository.saveAndFlush(lpo);
     	}
     	try {
 	    	lpoDetail.setLpo(lpo);
     	}catch(Exception e) {
     		lpoDetail.setLpo(null);
     	}
-    	
     	lpoDetail.setOrderNo(lpo.getLpoNo());
         return lpoDetailRepository.saveAndFlush(lpoDetail);
     }

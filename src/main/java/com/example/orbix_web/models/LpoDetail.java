@@ -62,10 +62,10 @@ public class LpoDetail {
 	@Embedded
     private Lpo lpo;
 	
-	@Transient
-    public Lpo getItem() {
-        return this.getItem();
-    }
+	//@Transient
+    //public Lpo getItem() {
+       // return this.getItem();
+   // }
 
 	/**
 	 * @return the id
