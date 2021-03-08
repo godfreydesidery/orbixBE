@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.example.orbix_web.models.CompanyProfile;
-import com.example.orbix_web.models.CorporateCustomer;
 
 /**
  * @author GODFREY

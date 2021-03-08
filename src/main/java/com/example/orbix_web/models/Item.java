@@ -109,7 +109,6 @@ public class Item extends Audit<String>{
 	@Embedded
     private SubClass subClass;
 	
-	
 	/**
 	 * @return the itemCode
 	 */

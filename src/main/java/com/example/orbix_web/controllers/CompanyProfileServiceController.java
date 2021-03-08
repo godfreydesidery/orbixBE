@@ -23,10 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.orbix_web.exceptions.NotFoundException;
 import com.example.orbix_web.exceptions.ResourceNotFoundException;
 import com.example.orbix_web.models.CompanyProfile;
-import com.example.orbix_web.models.CorporateCustomer;
+import com.example.orbix_web.models.Customer;
 import com.example.orbix_web.models.Item;
 import com.example.orbix_web.repositories.CompanyProfileRepository;
-import com.example.orbix_web.repositories.CorporateCustomerRepository;
 
 /**
  * @author GODFREY
