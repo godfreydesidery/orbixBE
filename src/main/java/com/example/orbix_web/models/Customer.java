@@ -3,6 +3,8 @@
  */
 package com.example.orbix_web.models;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
@@ -11,6 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.envers.Audited;
@@ -46,9 +50,20 @@ public class Customer extends Audit<String> {
     private String address;
     private String telephone;
     private String vatNo;
-    private Long creditLimit;
+    private double creditLimit;
+    private double invoiceLimit;
     private int creditDays;
-    private Long amountDue;
+    private double amountDue;
+    private double discountRate;
+    @Temporal(TemporalType.DATE)
+	private Date discountStartDate;
+    @Temporal(TemporalType.DATE)
+	private Date discountEndDate;
+    private double priceMargin;
+    @Temporal(TemporalType.DATE)
+	private Date priceMarginStartDate;
+    @Temporal(TemporalType.DATE)
+	private Date priceMarginEndDate;
 	/**
 	 * @return the id
 	 */
@@ -121,24 +136,7 @@ public class Customer extends Audit<String> {
 	public void setVatNo(String vatNo) {
 		this.vatNo = vatNo;
 	}
-	/**
-	 * @return the creditLimit
-	 */
-	public Long getCreditLimit() {
-		return creditLimit;
-	}
-	/**
-	 * @param creditLimit the creditLimit to set
-	 */
-	public void setCreditLimit(Long creditLimit) {
-		this.creditLimit = creditLimit;
-	}
-	/**
-	 * @return the amountDue
-	 */
-	public Long getAmountDue() {
-		return amountDue;
-	}
+	
 	/**
 	 * @param amountDue the amountDue to set
 	 */
@@ -168,6 +166,114 @@ public class Customer extends Audit<String> {
 	 */
 	public void setContactName(String contactName) {
 		this.contactName = contactName;
+	}
+	/**
+	 * @return the creditLimit
+	 */
+	public double getCreditLimit() {
+		return creditLimit;
+	}
+	/**
+	 * @param creditLimit the creditLimit to set
+	 */
+	public void setCreditLimit(double creditLimit) {
+		this.creditLimit = creditLimit;
+	}
+	/**
+	 * @return the amountDue
+	 */
+	public double getAmountDue() {
+		return amountDue;
+	}
+	/**
+	 * @param amountDue the amountDue to set
+	 */
+	public void setAmountDue(double amountDue) {
+		this.amountDue = amountDue;
+	}
+	/**
+	 * @return the invoiceLimit
+	 */
+	public double getInvoiceLimit() {
+		return invoiceLimit;
+	}
+	/**
+	 * @param invoiceLimit the invoiceLimit to set
+	 */
+	public void setInvoiceLimit(double invoiceLimit) {
+		this.invoiceLimit = invoiceLimit;
+	}
+	/**
+	 * @return the discountRate
+	 */
+	public double getDiscountRate() {
+		return discountRate;
+	}
+	/**
+	 * @param discountRate the discountRate to set
+	 */
+	public void setDiscountRate(double discountRate) {
+		this.discountRate = discountRate;
+	}
+	/**
+	 * @return the discountStartDate
+	 */
+	public Date getDiscountStartDate() {
+		return discountStartDate;
+	}
+	/**
+	 * @param discountStartDate the discountStartDate to set
+	 */
+	public void setDiscountStartDate(Date discountStartDate) {
+		this.discountStartDate = discountStartDate;
+	}
+	/**
+	 * @return the discountEndDate
+	 */
+	public Date getDiscountEndDate() {
+		return discountEndDate;
+	}
+	/**
+	 * @param discountEndDate the discountEndDate to set
+	 */
+	public void setDiscountEndDate(Date discountEndDate) {
+		this.discountEndDate = discountEndDate;
+	}
+	/**
+	 * @return the priceMargin
+	 */
+	public double getPriceMargin() {
+		return priceMargin;
+	}
+	/**
+	 * @param priceMargin the priceMargin to set
+	 */
+	public void setPriceMargin(double priceMargin) {
+		this.priceMargin = priceMargin;
+	}
+	/**
+	 * @return the priceMarginStartDate
+	 */
+	public Date getPriceMarginStartDate() {
+		return priceMarginStartDate;
+	}
+	/**
+	 * @param priceMarginStartDate the priceMarginStartDate to set
+	 */
+	public void setPriceMarginStartDate(Date priceMarginStartDate) {
+		this.priceMarginStartDate = priceMarginStartDate;
+	}
+	/**
+	 * @return the priceMarginEndDate
+	 */
+	public Date getPriceMarginEndDate() {
+		return priceMarginEndDate;
+	}
+	/**
+	 * @param priceMarginEndDate the priceMarginEndDate to set
+	 */
+	public void setPriceMarginEndDate(Date priceMarginEndDate) {
+		this.priceMarginEndDate = priceMarginEndDate;
 	}
 	
 	

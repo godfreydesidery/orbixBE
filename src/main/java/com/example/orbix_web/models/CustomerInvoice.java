@@ -53,6 +53,9 @@ public class CustomerInvoice {
 	private Date invoiceDate;    
 	private String status;
 	private Long custId;
+	private double invoiceAmount;
+	private double invoiceAmountPayed;
+	private double invoiceAmountDue;
 	
 	@ManyToOne(targetEntity = Customer.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "customer_id", nullable = true , updatable = true)
@@ -192,4 +195,45 @@ public class CustomerInvoice {
 		this.invoiceDetails = invoiceDetails;
 	}
 
+	/**
+	 * @return the invoiceAmount
+	 */
+	public double getInvoiceAmount() {
+		return invoiceAmount;
+	}
+
+	/**
+	 * @param invoiceAmount the invoiceAmount to set
+	 */
+	public void setInvoiceAmount(double invoiceAmount) {
+		this.invoiceAmount = invoiceAmount;
+	}
+
+	/**
+	 * @return the invoiceAmountPayed
+	 */
+	public double getInvoiceAmountPayed() {
+		return invoiceAmountPayed;
+	}
+
+	/**
+	 * @param invoiceAmountPayed the invoiceAmountPayed to set
+	 */
+	public void setInvoiceAmountPayed(double invoiceAmountPayed) {
+		this.invoiceAmountPayed = invoiceAmountPayed;
+	}
+
+	/**
+	 * @return the invoiceAmountDue
+	 */
+	public double getInvoiceAmountDue() {
+		return invoiceAmountDue;
+	}
+
+	/**
+	 * @param invoiceAmountDue the invoiceAmountDue to set
+	 */
+	public void setInvoiceAmountDue(double invoiceAmountDue) {
+		this.invoiceAmountDue = invoiceAmountDue;
+	}
 }

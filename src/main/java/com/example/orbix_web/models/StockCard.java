@@ -58,6 +58,10 @@ public class StockCard {
 	private String reasonRemoveFromStock;
 	private double qtySold;
 	private LocalDateTime dateSold;
+	private double creditSaleQty;
+	@Temporal(TemporalType.DATE)
+	private Date creditSaleDate;
+	private String creditSaleInvoiceNo;
 	private double stockBalance;
 	
 	@ManyToOne(targetEntity = Item.class, fetch = FetchType.LAZY,  optional = true)
@@ -286,6 +290,42 @@ public class StockCard {
 	 */
 	public void setDateSold(LocalDateTime dateSold) {
 		this.dateSold = dateSold;
+	}
+	/**
+	 * @return the creditSaleQty
+	 */
+	public double getCreditSaleQty() {
+		return creditSaleQty;
+	}
+	/**
+	 * @param creditSaleQty the creditSaleQty to set
+	 */
+	public void setCreditSaleQty(double creditSaleQty) {
+		this.creditSaleQty = creditSaleQty;
+	}
+	/**
+	 * @return the creditSaleDate
+	 */
+	public Date getCreditSaleDate() {
+		return creditSaleDate;
+	}
+	/**
+	 * @param creditSaleDate the creditSaleDate to set
+	 */
+	public void setCreditSaleDate(Date creditSaleDate) {
+		this.creditSaleDate = creditSaleDate;
+	}
+	/**
+	 * @return the creditSaleInvoiceNo
+	 */
+	public String getCreditSaleInvoiceNo() {
+		return creditSaleInvoiceNo;
+	}
+	/**
+	 * @param creditSaleInvoiceNo the creditSaleInvoiceNo to set
+	 */
+	public void setCreditSaleInvoiceNo(String creditSaleInvoiceNo) {
+		this.creditSaleInvoiceNo = creditSaleInvoiceNo;
 	}
 	
 	

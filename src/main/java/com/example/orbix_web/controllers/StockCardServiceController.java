@@ -62,5 +62,14 @@ public class StockCardServiceController {
 	public void sellItem() {
 		
 	}
+	public StockCard creditSale(Item item, Date date, double qty, String invoiceNo, double stockBalance) {
+		StockCard stockCard = new StockCard();
+		stockCard.setItem(item);
+		stockCard.setCreditSaleDate(date);
+		stockCard.setCreditSaleQty(qty);
+		stockCard.setCreditSaleInvoiceNo(invoiceNo);
+		stockCard.setStockBalance(stockBalance);
+		return stockCard;
+	}
 
 }
