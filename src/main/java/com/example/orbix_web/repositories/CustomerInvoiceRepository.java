@@ -22,7 +22,5 @@ public interface CustomerInvoiceRepository extends JpaRepository<CustomerInvoice
 	 */
 	CustomerInvoice findByInvoiceNo(String invoiceNo);
 
-	
-	
 
 }

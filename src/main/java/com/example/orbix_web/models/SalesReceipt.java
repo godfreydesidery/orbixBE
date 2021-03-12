@@ -5,6 +5,8 @@ package com.example.orbix_web.models;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -17,10 +19,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.envers.Audited;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.stereotype.Component;
 
@@ -38,18 +42,30 @@ public class SalesReceipt {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+	@NotBlank
+	@Column(unique = true)
+	private String receiptNo;
+	private String creditNoteNo;
+	@NotNull
+	private double receiptAmount;
 	private double credit;
 	private double debit;
 	private String transactionType;
+	@NotBlank
 	private String paymentMode;
+	@Column(unique = true)
 	private String chequeNo;
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
+    private Date chequeDate;
+	private String chequeBank;
+	@Temporal(TemporalType.DATE)
+    private Date receiptDate;
+	@Temporal(TemporalType.DATE)
     private Date date;
 		
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "corporate_customer_id", nullable = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "customer_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
     private Customer customer;
 
 
@@ -177,5 +193,98 @@ public class SalesReceipt {
 	 */
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
+	}
+
+
+	/**
+	 * @return the chequeDate
+	 */
+	public Date getChequeDate() {
+		return chequeDate;
+	}
+
+
+	/**
+	 * @param chequeDate the chequeDate to set
+	 */
+	public void setChequeDate(Date chequeDate) {
+		this.chequeDate = chequeDate;
+	}
+
+	/**
+	 * @return the receiptNo
+	 */
+	public String getReceiptNo() {
+		return receiptNo;
+	}
+
+
+	/**
+	 * @param receiptNo the receiptNo to set
+	 */
+	public void setReceiptNo(String receiptNo) {
+		this.receiptNo = receiptNo;
+	}
+	/**
+	 * @return the receiptDate
+	 */
+	public Date getReceiptDate() {
+		return receiptDate;
+	}
+
+
+	/**
+	 * @param receiptDate the receiptDate to set
+	 */
+	public void setReceiptDate(Date receiptDate) {
+		this.receiptDate = receiptDate;
+	}
+
+
+	/**
+	 * @return the creditNoteNo
+	 */
+	public String getCreditNoteNo() {
+		return creditNoteNo;
+	}
+
+
+	/**
+	 * @param creditNoteNo the creditNoteNo to set
+	 */
+	public void setCreditNoteNo(String creditNoteNo) {
+		this.creditNoteNo = creditNoteNo;
+	}
+
+
+	/**
+	 * @return the receiptAmount
+	 */
+	public double getReceiptAmount() {
+		return receiptAmount;
+	}
+
+
+	/**
+	 * @param receiptAmount the receiptAmount to set
+	 */
+	public void setReceiptAmount(double receiptAmount) {
+		this.receiptAmount = receiptAmount;
+	}
+
+
+	/**
+	 * @return the chequeBank
+	 */
+	public String getChequeBank() {
+		return chequeBank;
+	}
+
+
+	/**
+	 * @param chequeBank the chequeBank to set
+	 */
+	public void setChequeBank(String chequeBank) {
+		this.chequeBank = chequeBank;
 	}	
 }

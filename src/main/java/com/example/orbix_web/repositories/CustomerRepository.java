@@ -35,6 +35,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 	 * @return
 	 */
 	Optional<Customer> findByCustomerNo(String customerNo);
-
 	
 }

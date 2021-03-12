@@ -54,6 +54,7 @@ public class Customer extends Audit<String> {
     private double invoiceLimit;
     private int creditDays;
     private double amountDue;
+    private double amountUnallocated;
     private double discountRate;
     @Temporal(TemporalType.DATE)
 	private Date discountStartDate;
@@ -274,6 +275,18 @@ public class Customer extends Audit<String> {
 	 */
 	public void setPriceMarginEndDate(Date priceMarginEndDate) {
 		this.priceMarginEndDate = priceMarginEndDate;
+	}
+	/**
+	 * @return the amountUnallocated
+	 */
+	public double getAmountUnallocated() {
+		return amountUnallocated;
+	}
+	/**
+	 * @param amountUnallocated the amountUnallocated to set
+	 */
+	public void setAmountUnallocated(double amountUnallocated) {
+		this.amountUnallocated = amountUnallocated;
 	}
 	
 	

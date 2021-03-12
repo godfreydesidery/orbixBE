@@ -104,16 +104,24 @@ public class CustomerInvoiceServiceController {
 		invoice = customerInvoiceRepository.save(invoice);
 		double amount = 0;
 		for(CustomerInvoiceDetail _detail :details) {
+			Item _item =itemRepository.findByItemCode(_detail.getItemCode()).get();
+			
 			CustomerInvoiceDetail detail = new CustomerInvoiceDetail();
 			detail.setCustomerInvoice(invoice);
 			detail.setItemCode(_detail.getItemCode());
 			detail.setDescription(_detail.getDescription());
 			detail.setPrice(_detail.getPrice());
+			if(_item.getUnitRetailPrice() > _detail.getPrice()) {
+				detail.setDiscount(_item.getUnitRetailPrice() - _detail.getPrice());
+			}else {
+				detail.setDiscount(0);
+			}
 			detail.setQty(_detail.getQty());
 			amount = amount + (_detail.getPrice()*_detail.getQty());
 			customerInvoiceDetailRepository.save(detail);
 		}
 		invoice.setInvoiceAmount(amount);
+		invoice.setInvoiceAmountDue(amount);
 		invoice = customerInvoiceRepository.save(invoice);
 		customer.setAmountDue(customer.getAmountDue()+amount);
 		customerRepository.save(customer);
@@ -152,5 +160,25 @@ public class CustomerInvoiceServiceController {
     	}
         return invoice;
     }
+    
+ // Get a Single Customer Invoice by invoice no and customer no
+    @RequestMapping(method = RequestMethod.GET, value = "/customer_invoices/invoice_no={invoice_no}/customer_no={customer_no}")
+    public CustomerInvoice getInvoiceByInvoiceNoAndCustomerNo(@PathVariable(value = "invoice_no") String invoiceNo,@PathVariable(value = "customer_no") String customerNo) {
+    	CustomerInvoice invoice = customerInvoiceRepository.findByInvoiceNo(invoiceNo);
+    	if(invoice == null) {
+    		throw new NotFoundException("Invoice not found");
+    	}
+    	Customer customer;
+    	try {
+    		customer = customerRepository.findByCustomerNo(customerNo).get();
+    	}catch(Exception e) {
+    		throw new NotFoundException("Customer not found");
+    	}
+    	if(customer != invoice.getCustomer()) {
+    		throw new InvalidOperationException("The specified invoice does not match customer");
+    	}
+        return invoice;
+    }
+
 
 }

@@ -45,14 +45,13 @@ public class CustomerInvoiceDetail {
     private String description;
 	@NotNull
 	private double price;
+	private double discount;
 	@NotNull
 	private double qty;
 	
 	@ManyToOne(targetEntity = CustomerInvoice.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "customer_invoice_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-	@Autowired
-	@Embedded
     private CustomerInvoice customerInvoice;
 
 	/**
@@ -137,6 +136,20 @@ public class CustomerInvoiceDetail {
 	 */
 	public void setPrice(double price) {
 		this.price = price;
+	}
+
+	/**
+	 * @return the discount
+	 */
+	public double getDiscount() {
+		return discount;
+	}
+
+	/**
+	 * @param discount the discount to set
+	 */
+	public void setDiscount(double discount) {
+		this.discount = discount;
 	}
 
 	

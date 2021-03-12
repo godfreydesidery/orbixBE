@@ -17,4 +17,10 @@ import com.example.orbix_web.models.Transaction;
 @Repository
 public interface SalesReceiptRepository extends JpaRepository<SalesReceipt, Long> {
 
+	/**
+	 * @param receiptNo
+	 * @return
+	 */
+	SalesReceipt findByReceiptNo(String receiptNo);
+
 }

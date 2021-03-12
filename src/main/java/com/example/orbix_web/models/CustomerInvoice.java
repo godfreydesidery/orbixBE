@@ -50,18 +50,19 @@ public class CustomerInvoice {
 	private String createdBy;
 	private String approvedBy;
 	@Temporal(TemporalType.DATE)
-	private Date invoiceDate;    
-	private String status;
+	private Date invoiceDate;  
+	@Temporal(TemporalType.DATE)
+	private Date invoiceDueDate;
+	private String invoiceStatus;
 	private Long custId;
 	private double invoiceAmount;
 	private double invoiceAmountPayed;
 	private double invoiceAmountDue;
 	
+	
 	@ManyToOne(targetEntity = Customer.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "customer_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-	@Autowired
-	@Embedded
     private Customer customer;
 	
 	@OneToMany(targetEntity = CustomerInvoiceDetail.class, mappedBy = "customerInvoice", fetch = FetchType.EAGER, orphanRemoval = true)
@@ -138,21 +139,6 @@ public class CustomerInvoice {
 	public void setInvoiceDate(Date invoiceDate) {
 		this.invoiceDate = invoiceDate;
 	}
-
-	/**
-	 * @return the status
-	 */
-	public String getStatus() {
-		return status;
-	}
-
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
 	/**
 	 * @return the customer
 	 */
@@ -235,5 +221,33 @@ public class CustomerInvoice {
 	 */
 	public void setInvoiceAmountDue(double invoiceAmountDue) {
 		this.invoiceAmountDue = invoiceAmountDue;
+	}
+
+	/**
+	 * @return the invoiceDueDate
+	 */
+	public Date getInvoiceDueDate() {
+		return invoiceDueDate;
+	}
+
+	/**
+	 * @param invoiceDueDate the invoiceDueDate to set
+	 */
+	public void setInvoiceDueDate(Date invoiceDueDate) {
+		this.invoiceDueDate = invoiceDueDate;
+	}
+
+	/**
+	 * @return the invoiceStatus
+	 */
+	public String getInvoiceStatus() {
+		return invoiceStatus;
+	}
+
+	/**
+	 * @param invoiceStatus the invoiceStatus to set
+	 */
+	public void setInvoiceStatus(String invoiceStatus) {
+		this.invoiceStatus = invoiceStatus;
 	}
 }
