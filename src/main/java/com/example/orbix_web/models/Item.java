@@ -67,6 +67,7 @@ public class Item extends Audit<String>{
 	private String status;
 	private String ingredients;
 	private double quantity;
+	private int returnPeriod;
     private double maximumInventory;
     private double minimumInventory;
     private double defaultReOrderLevel;
@@ -396,6 +397,18 @@ public class Item extends Audit<String>{
 	 */
 	public void setSubClass(SubClass subClass) {
 		this.subClass = subClass;
+	}
+	/**
+	 * @return the returnPeriod
+	 */
+	public int getReturnPeriod() {
+		return returnPeriod;
+	}
+	/**
+	 * @param returnPeriod the returnPeriod to set
+	 */
+	public void setReturnPeriod(int returnPeriod) {
+		this.returnPeriod = returnPeriod;
 	}
 	
 	

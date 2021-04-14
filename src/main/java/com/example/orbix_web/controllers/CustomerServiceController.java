@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.controllers;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.orbix_web.accessories.Formater;
+import com.example.orbix_web.exceptions.InvalidOperationException;
 import com.example.orbix_web.exceptions.ResourceNotFoundException;
 import com.example.orbix_web.models.Customer;
 import com.example.orbix_web.repositories.CustomerRepository;
@@ -57,7 +60,13 @@ public class CustomerServiceController {
     @PostMapping(value="/customers")
     @ResponseBody
     public Customer createCustomer(@Valid @RequestBody Customer customer) {
-    	return customerRepository.save(customer);
+    	customer.setCustomerNo(String.valueOf(Math.random()));
+    	customerRepository.save(customer);
+    	String serial = customer.getId().toString();
+    	String custNo = Formater.formatNine(serial);
+    	customer.setCustomerNo(custNo);
+    	customerRepository.save(customer);
+    	return customer;
     }
 
     // Get a Single Customer
@@ -89,6 +98,9 @@ public class CustomerServiceController {
 
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer", "id", customerId));
+        if(!customerDetails.getCustomerNo().equals(customer.getCustomerNo())) {
+        	throw new InvalidOperationException("Changing customer number not allowed");
+        }
 
         customer = customerDetails;
 

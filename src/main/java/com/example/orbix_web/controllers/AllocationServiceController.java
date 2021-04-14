@@ -85,17 +85,23 @@ public class AllocationServiceController {
     	if(invoice == null) {
     		throw new NotFoundException("Customer invoice not found");
     	}
+    	if(invoice.getInvoiceStatus().equals("PAID")) {
+    		throw new InvalidOperationException("Could not allocate, invoice already paid");
+    	}
+    	if(invoice.getInvoiceStatus().equals("CANCELLED")) {
+    		throw new InvalidOperationException("Could not allocate, invoice cancelled");
+    	}
     	double totalAmountDue = customer.getAmountDue();
     	double amountUnallocated = customer.getAmountUnallocated();
     	double invoiceAmountDue = invoice.getInvoiceAmountDue();
     	if(allocationAmount <= 0) {
-    		throw new InvalidEntryException("Invalid allocation amount, negative values are not allowed");
+    		throw new InvalidEntryException("Invalid entry, negative values not allowed");
     	}
     	if(allocationAmount > amountUnallocated) {
     		throw new InvalidOperationException("Operation failed, allocated amount exceeds the allocation balance");
     	}
-    	if(allocationAmount != invoiceAmountDue) {
-    		throw new InvalidOperationException("Operation failed, allocated amount should be equal to the due balance");
+    	if(allocationAmount > invoiceAmountDue) {
+    		throw new InvalidOperationException("Operation failed, allocated amount exceeds due balance");
     	}
     	
     	/*
@@ -121,29 +127,13 @@ public class AllocationServiceController {
     	 */
     	invoice.setInvoiceAmountDue(invoice.getInvoiceAmountDue() - allocationAmount);
     	invoice.setInvoiceAmountPayed(invoice.getInvoiceAmountPayed() + allocationAmount);
-    	customerInvoiceRepository.save(invoice);
-    	/*
-    	 * Now post invoice to sales
-    	 */
-    	Sale sale = new Sale();
-    	sale.setCustomerInvoice(invoice);
-    	sale.setSaleDate(_allocation.getAllocationDate());
-    	saleRepository.save(sale);
-    	
-    	List<CustomerInvoiceDetail> invoiceDetails;
-    	invoiceDetails = invoice.getInvoiceDetails();
-    	for(CustomerInvoiceDetail invoiceDetail : invoiceDetails) {
-    		SaleDetail saleDetail = new SaleDetail();
-    		saleDetail.setItemCode(invoiceDetail.getItemCode());
-    		saleDetail.setDescription(invoiceDetail.getDescription());
-    		saleDetail.setPrice(invoiceDetail.getPrice());
-    		saleDetail.setQty(invoiceDetail.getQty());
-    		saleDetail.setDiscount(invoiceDetail.getDiscount());
-    		saleDetail.setSale(sale);
-    		
-    		saleDetailRepository.save(saleDetail);
-    		
+    	if(invoice.getInvoiceAmountDue() == 0) {
+    		invoice.setInvoiceStatus("PAID");
+    	}else {
+    		invoice.setInvoiceStatus("PARTIAL");
     	}
+    	customerInvoiceRepository.save(invoice);
+    	
     	
     	
     	

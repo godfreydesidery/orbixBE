@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.orbix_web.accessories.Formater;
 import com.example.orbix_web.exceptions.InvalidOperationException;
 import com.example.orbix_web.exceptions.NotFoundException;
 import com.example.orbix_web.exceptions.ResourceNotFoundException;
@@ -73,7 +74,14 @@ public class LpoServiceController {
     	}
     	lpo.setLpoDate(lpoDate);
     	lpo.setStatus("BLANK");
-        return lpoRepository.save(lpo);
+    	lpo.setLpoNo(String.valueOf(Math.random()));
+    	lpoRepository.save(lpo);
+    	String serial = lpo.getId().toString();
+    	
+    	String lpoNo = "LPO-"+Formater.formatNine(serial);
+    	lpo.setLpoNo(lpoNo);
+    	lpoRepository.save(lpo);
+        return lpo;
     }
     // Get a Single LPO
     @Transactional

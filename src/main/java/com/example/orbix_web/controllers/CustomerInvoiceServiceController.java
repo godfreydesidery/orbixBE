@@ -3,6 +3,8 @@
  */
 package com.example.orbix_web.controllers;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,10 +31,14 @@ import com.example.orbix_web.models.CustomerInvoice;
 import com.example.orbix_web.models.CustomerInvoiceDetail;
 import com.example.orbix_web.models.Grn;
 import com.example.orbix_web.models.Item;
+import com.example.orbix_web.models.Sale;
+import com.example.orbix_web.models.SaleDetail;
 import com.example.orbix_web.repositories.CustomerInvoiceDetailRepository;
 import com.example.orbix_web.repositories.CustomerInvoiceRepository;
 import com.example.orbix_web.repositories.CustomerRepository;
 import com.example.orbix_web.repositories.ItemRepository;
+import com.example.orbix_web.repositories.SaleDetailRepository;
+import com.example.orbix_web.repositories.SaleRepository;
 import com.example.orbix_web.repositories.StockCardRepository;
 
 /**
@@ -53,6 +59,10 @@ public class CustomerInvoiceServiceController {
 	ItemRepository itemRepository;
 	@Autowired
 	StockCardRepository stockCardRepository;
+	@Autowired
+	SaleRepository saleRepository;
+	@Autowired
+	SaleDetailRepository saleDetailRepository;
 	
 	
 	// Create a new Invoice
@@ -85,6 +95,9 @@ public class CustomerInvoiceServiceController {
 		if(invoice != null) {
 			throw new DuplicateEntryException("Could not save invoice, invoice exists");
 		}
+		if(_invoice.getInvoiceDate() == null) {
+			throw new MissingInformationException("Could not process invoice, invoice date required");
+		}
 		for(CustomerInvoiceDetail _detail :details) {
 			if(_detail.getItemCode().equals("")) {
 				
@@ -100,17 +113,26 @@ public class CustomerInvoiceServiceController {
 		invoice = new CustomerInvoice();		
 		invoice.setInvoiceNo(_invoice.getInvoiceNo());
 		invoice.setInvoiceDate(_invoice.getInvoiceDate());
-		invoice.setCustomer(customer);		
+		invoice.setCustomer(customer);	
+		invoice.setInvoiceStatus("SENT");
 		invoice = customerInvoiceRepository.save(invoice);
 		double amount = 0;
 		for(CustomerInvoiceDetail _detail :details) {
 			Item _item =itemRepository.findByItemCode(_detail.getItemCode()).get();
+			Date returnStartDate = _invoice.getInvoiceDate();
+			int returnPeriod = 365;//_detail.getReturnPeriod();  //change this later
+			Calendar c = Calendar.getInstance();
+			c.setTime(returnStartDate);
+			c.add(Calendar.DATE, returnPeriod);			
+			Date returnLastDate = c.getTime();	
 			
 			CustomerInvoiceDetail detail = new CustomerInvoiceDetail();
 			detail.setCustomerInvoice(invoice);
 			detail.setItemCode(_detail.getItemCode());
 			detail.setDescription(_detail.getDescription());
 			detail.setPrice(_detail.getPrice());
+			detail.setReturnPeriod(_detail.getReturnPeriod());
+			detail.setReturnLastDate(returnLastDate);
 			if(_item.getUnitRetailPrice() > _detail.getPrice()) {
 				detail.setDiscount(_item.getUnitRetailPrice() - _detail.getPrice());
 			}else {
@@ -145,6 +167,28 @@ public class CustomerInvoiceServiceController {
 					.creditSale(_item, _invoice.getInvoiceDate(), _detail.getQty(), _invoice.getInvoiceNo(), _stockBalance));	
 		}
 		/*
+    	 * Now post invoice to sales
+    	 */
+    	Sale sale = new Sale();
+    	sale.setCustomerInvoice(invoice);
+    	sale.setSaleDate(invoice.getInvoiceDate());
+    	saleRepository.save(sale);
+    	
+    	//List<CustomerInvoiceDetail> invoiceDetails;
+    	//invoiceDetails = invoice.getInvoiceDetails();
+    	for(CustomerInvoiceDetail _detail :details) {
+    		SaleDetail saleDetail = new SaleDetail();
+    		saleDetail.setItemCode(_detail.getItemCode());
+    		saleDetail.setDescription(_detail.getDescription());
+    		saleDetail.setPrice(_detail.getPrice());
+    		saleDetail.setQty(_detail.getQty());
+    		saleDetail.setDiscount(_detail.getDiscount());
+    		saleDetail.setSale(sale);
+    		
+    		saleDetailRepository.save(saleDetail);
+    		
+    	}
+		/*
 		 * Return invoice with details
 		 */
 		invoice.setInvoiceDetails(details);
@@ -178,6 +222,17 @@ public class CustomerInvoiceServiceController {
     		throw new InvalidOperationException("The specified invoice does not match customer");
     	}
         return invoice;
+    }
+    
+ // Get a Single Customer Invoice by invoice no
+    @RequestMapping(method = RequestMethod.GET, value = "/due_customer_invoices/customer_id={cust_id}")
+    public List<CustomerInvoice> getDueInvoiceByCustomer(@PathVariable(value = "cust_id") Long custId) {
+    	System.out.println("check");
+    	Customer customer = customerRepository.findById(custId).get();
+    	
+    	List<CustomerInvoice> invoices = customerInvoiceRepository.findByCustomerAndInvoiceStatus(customer, "PENDING");
+    	
+        return invoices;
     }
 
 

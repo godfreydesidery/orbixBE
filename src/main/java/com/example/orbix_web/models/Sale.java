@@ -50,19 +50,19 @@ public class Sale extends Audit<String>{
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private CustomerInvoice customerInvoice;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "user_id", nullable = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "till_id", nullable = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Till till;
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "bill_id", nullable = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Bill bill;
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "day_id", nullable = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Day day;

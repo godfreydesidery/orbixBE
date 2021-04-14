@@ -5,7 +5,6 @@ package com.example.orbix_web.models;
 
 import java.util.Date;
 
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -22,7 +21,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.stereotype.Component;
 
@@ -30,11 +28,11 @@ import org.springframework.stereotype.Component;
  * @author GODFREY
  *
  */
-@Component
 @Entity
-@Table(name = "customer_invoice_details")
+@Component
+@Table(name = "bill_details")
 @EntityListeners(AuditingEntityListener.class)
-public class CustomerInvoiceDetail {
+public class BillDetail {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -48,16 +46,16 @@ public class CustomerInvoiceDetail {
 	private double discount;
 	@NotNull
 	private double qty;
+	private double returned;
 	@Temporal(TemporalType.DATE)
 	private Date returnFirstDate;
 	private int returnPeriod;
 	private Date returnLastDate;
 	
-	
-	@ManyToOne(targetEntity = CustomerInvoice.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "customer_invoice_id", nullable = true , updatable = true)
+	@ManyToOne(targetEntity = Bill.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "bill_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private CustomerInvoice customerInvoice;
+    private Bill bill;
 
 	/**
 	 * @return the id
@@ -102,34 +100,6 @@ public class CustomerInvoiceDetail {
 	}
 
 	/**
-	 * @return the qty
-	 */
-	public double getQty() {
-		return qty;
-	}
-
-	/**
-	 * @param qty the qty to set
-	 */
-	public void setQty(double qty) {
-		this.qty = qty;
-	}
-
-	/**
-	 * @return the customerInvoice
-	 */
-	public CustomerInvoice getCustomerInvoice() {
-		return customerInvoice;
-	}
-
-	/**
-	 * @param customerInvoice the customerInvoice to set
-	 */
-	public void setCustomerInvoice(CustomerInvoice customerInvoice) {
-		this.customerInvoice = customerInvoice;
-	}
-
-	/**
 	 * @return the price
 	 */
 	public double getPrice() {
@@ -155,6 +125,34 @@ public class CustomerInvoiceDetail {
 	 */
 	public void setDiscount(double discount) {
 		this.discount = discount;
+	}
+
+	/**
+	 * @return the qty
+	 */
+	public double getQty() {
+		return qty;
+	}
+
+	/**
+	 * @param qty the qty to set
+	 */
+	public void setQty(double qty) {
+		this.qty = qty;
+	}
+
+	/**
+	 * @return the returned
+	 */
+	public double getReturned() {
+		return returned;
+	}
+
+	/**
+	 * @param returned the returned to set
+	 */
+	public void setReturned(double returned) {
+		this.returned = returned;
 	}
 
 	/**
@@ -199,7 +197,18 @@ public class CustomerInvoiceDetail {
 		this.returnLastDate = returnLastDate;
 	}
 
-	
-	
-	
+	/**
+	 * @return the bill
+	 */
+	public Bill getBill() {
+		return bill;
+	}
+
+	/**
+	 * @param bill the bill to set
+	 */
+	public void setBill(Bill bill) {
+		this.bill = bill;
+	}
+
 }

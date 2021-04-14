@@ -5,7 +5,6 @@ package com.example.orbix_web.models;
 
 import java.util.Date;
 
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -22,7 +21,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.stereotype.Component;
 
@@ -32,9 +30,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Entity
-@Table(name = "customer_invoice_details")
+@Table(name = "invoice_details")
 @EntityListeners(AuditingEntityListener.class)
-public class CustomerInvoiceDetail {
+public class InvoiceDetail {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -54,10 +52,11 @@ public class CustomerInvoiceDetail {
 	private Date returnLastDate;
 	
 	
-	@ManyToOne(targetEntity = CustomerInvoice.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "customer_invoice_id", nullable = true , updatable = true)
+	@ManyToOne(targetEntity = Invoice.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "invoice_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private CustomerInvoice customerInvoice;
+    private Invoice invoice;
+
 
 	/**
 	 * @return the id
@@ -66,12 +65,14 @@ public class CustomerInvoiceDetail {
 		return id;
 	}
 
+
 	/**
 	 * @param id the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 
 	/**
 	 * @return the itemCode
@@ -80,12 +81,14 @@ public class CustomerInvoiceDetail {
 		return itemCode;
 	}
 
+
 	/**
 	 * @param itemCode the itemCode to set
 	 */
 	public void setItemCode(String itemCode) {
 		this.itemCode = itemCode;
 	}
+
 
 	/**
 	 * @return the description
@@ -94,6 +97,7 @@ public class CustomerInvoiceDetail {
 		return description;
 	}
 
+
 	/**
 	 * @param description the description to set
 	 */
@@ -101,33 +105,6 @@ public class CustomerInvoiceDetail {
 		this.description = description;
 	}
 
-	/**
-	 * @return the qty
-	 */
-	public double getQty() {
-		return qty;
-	}
-
-	/**
-	 * @param qty the qty to set
-	 */
-	public void setQty(double qty) {
-		this.qty = qty;
-	}
-
-	/**
-	 * @return the customerInvoice
-	 */
-	public CustomerInvoice getCustomerInvoice() {
-		return customerInvoice;
-	}
-
-	/**
-	 * @param customerInvoice the customerInvoice to set
-	 */
-	public void setCustomerInvoice(CustomerInvoice customerInvoice) {
-		this.customerInvoice = customerInvoice;
-	}
 
 	/**
 	 * @return the price
@@ -136,12 +113,14 @@ public class CustomerInvoiceDetail {
 		return price;
 	}
 
+
 	/**
 	 * @param price the price to set
 	 */
 	public void setPrice(double price) {
 		this.price = price;
 	}
+
 
 	/**
 	 * @return the discount
@@ -150,12 +129,30 @@ public class CustomerInvoiceDetail {
 		return discount;
 	}
 
+
 	/**
 	 * @param discount the discount to set
 	 */
 	public void setDiscount(double discount) {
 		this.discount = discount;
 	}
+
+
+	/**
+	 * @return the qty
+	 */
+	public double getQty() {
+		return qty;
+	}
+
+
+	/**
+	 * @param qty the qty to set
+	 */
+	public void setQty(double qty) {
+		this.qty = qty;
+	}
+
 
 	/**
 	 * @return the returnFirstDate
@@ -164,12 +161,14 @@ public class CustomerInvoiceDetail {
 		return returnFirstDate;
 	}
 
+
 	/**
 	 * @param returnFirstDate the returnFirstDate to set
 	 */
 	public void setReturnFirstDate(Date returnFirstDate) {
 		this.returnFirstDate = returnFirstDate;
 	}
+
 
 	/**
 	 * @return the returnPeriod
@@ -178,12 +177,14 @@ public class CustomerInvoiceDetail {
 		return returnPeriod;
 	}
 
+
 	/**
 	 * @param returnPeriod the returnPeriod to set
 	 */
 	public void setReturnPeriod(int returnPeriod) {
 		this.returnPeriod = returnPeriod;
 	}
+
 
 	/**
 	 * @return the returnLastDate
@@ -192,6 +193,7 @@ public class CustomerInvoiceDetail {
 		return returnLastDate;
 	}
 
+
 	/**
 	 * @param returnLastDate the returnLastDate to set
 	 */
@@ -199,7 +201,20 @@ public class CustomerInvoiceDetail {
 		this.returnLastDate = returnLastDate;
 	}
 
-	
-	
-	
+
+	/**
+	 * @return the invoice
+	 */
+	public Invoice getInvoice() {
+		return invoice;
+	}
+
+
+	/**
+	 * @param invoice the invoice to set
+	 */
+	public void setInvoice(Invoice invoice) {
+		this.invoice = invoice;
+	}
+
 }
