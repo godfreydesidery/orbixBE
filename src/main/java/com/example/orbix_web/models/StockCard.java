@@ -39,28 +39,22 @@ public class StockCard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	private double qtyOrdered;
-	@Temporal(TemporalType.DATE)
-	private Date dateOrdered;
+	private LocalDate dateOrdered;
 	private double qtyReceived;
-	@Temporal(TemporalType.DATE)
-	private Date dateReceived;
+	private LocalDate dateReceived;
 	String lotNo;
-	@Temporal(TemporalType.DATE)
-	private Date expiryDate;
+	private LocalDate expiryDate;
 	private double qtyReturnToVendor;
-	@Temporal(TemporalType.DATE)
-	private Date dateReturnToVendor;
+	private LocalDate dateReturnToVendor;
 	private double qtyReturnByCustomer;
-	@Temporal(TemporalType.DATE)
-	private Date dateReturnByCustomer;
+	private LocalDate dateReturnByCustomer;
 	private double qtyRemoveFromStock;
 	private LocalDateTime dateRemoveFromStock;
 	private String reasonRemoveFromStock;
 	private double qtySold;
 	private LocalDateTime dateSold;
 	private double creditSaleQty;
-	@Temporal(TemporalType.DATE)
-	private Date creditSaleDate;
+	private LocalDate creditSaleDate;
 	private String creditSaleInvoiceNo;
 	private double stockBalance;
 	
@@ -109,13 +103,13 @@ public class StockCard {
 	/**
 	 * @return the expiryDate
 	 */
-	public Date getExpiryDate() {
+	public LocalDate getExpiryDate() {
 		return expiryDate;
 	}
 	/**
 	 * @param expiryDate the expiryDate to set
 	 */
-	public void setExpiryDate(Date expiryDate) {
+	public void setExpiryDate(LocalDate expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 	/**
@@ -222,49 +216,49 @@ public class StockCard {
 	/**
 	 * @return the dateOrdered
 	 */
-	public Date getDateOrdered() {
+	public LocalDate getDateOrdered() {
 		return dateOrdered;
 	}
 	/**
-	 * @param dateOrdered the dateOrdered to set
+	 * @param dateOrdered2 the dateOrdered to set
 	 */
-	public void setDateOrdered(Date dateOrdered) {
-		this.dateOrdered = dateOrdered;
+	public void setDateOrdered(LocalDate dateOrdered2) {
+		this.dateOrdered = dateOrdered2;
 	}
 	/**
 	 * @return the dateReceived
 	 */
-	public Date getDateReceived() {
+	public LocalDate getDateReceived() {
 		return dateReceived;
 	}
 	/**
-	 * @param dateReceived the dateReceived to set
+	 * @param _dateReceived the dateReceived to set
 	 */
-	public void setDateReceived(Date dateReceived) {
-		this.dateReceived = dateReceived;
+	public void setDateReceived(LocalDate _dateReceived) {
+		this.dateReceived = _dateReceived;
 	}
 	/**
 	 * @return the dateReturnToVendor
 	 */
-	public Date getDateReturnToVendor() {
+	public LocalDate getDateReturnToVendor() {
 		return dateReturnToVendor;
 	}
 	/**
 	 * @param dateReturnToVendor the dateReturnToVendor to set
 	 */
-	public void setDateReturnToVendor(Date dateReturnToVendor) {
+	public void setDateReturnToVendor(LocalDate dateReturnToVendor) {
 		this.dateReturnToVendor = dateReturnToVendor;
 	}
 	/**
 	 * @return the dateReturnByCustomer
 	 */
-	public Date getDateReturnByCustomer() {
+	public LocalDate getDateReturnByCustomer() {
 		return dateReturnByCustomer;
 	}
 	/**
 	 * @param dateReturnByCustomer the dateReturnByCustomer to set
 	 */
-	public void setDateReturnByCustomer(Date dateReturnByCustomer) {
+	public void setDateReturnByCustomer(LocalDate dateReturnByCustomer) {
 		this.dateReturnByCustomer = dateReturnByCustomer;
 	}
 	/**
@@ -306,13 +300,13 @@ public class StockCard {
 	/**
 	 * @return the creditSaleDate
 	 */
-	public Date getCreditSaleDate() {
+	public LocalDate getCreditSaleDate() {
 		return creditSaleDate;
 	}
 	/**
 	 * @param creditSaleDate the creditSaleDate to set
 	 */
-	public void setCreditSaleDate(Date creditSaleDate) {
+	public void setCreditSaleDate(LocalDate creditSaleDate) {
 		this.creditSaleDate = creditSaleDate;
 	}
 	/**

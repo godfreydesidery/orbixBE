@@ -4,6 +4,7 @@
 package com.example.orbix_web.models;
 
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -34,17 +35,11 @@ public class Day extends Audit<String>{
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-	
-	@NotBlank
-	@Temporal(TemporalType.DATE)
-    private Date date;
-	@NotBlank
+    private LocalDate systemDate;
 	@Temporal(TemporalType.TIMESTAMP)
     private Date startedAt;
-	@NotBlank
 	@Temporal(TemporalType.TIMESTAMP)
     private Date closedAt;
-	@NotBlank
     private String status;
 	/**
 	 * @return the id
@@ -58,18 +53,7 @@ public class Day extends Audit<String>{
 	public void setId(Long id) {
 		this.id = id;
 	}
-	/**
-	 * @return the date
-	 */
-	public Date getDate() {
-		return date;
-	}
-	/**
-	 * @param date the date to set
-	 */
-	public void setDate(Date date) {
-		this.date = date;
-	}
+	
 	/**
 	 * @return the startedAt
 	 */
@@ -105,5 +89,19 @@ public class Day extends Audit<String>{
 	 */
 	public void setStatus(String status) {
 		this.status = status;
-	}	
+	}
+	/**
+	 * @return the systemDate
+	 */
+	public LocalDate getSystemDate() {
+		return systemDate;
+	}
+	/**
+	 * @param systemDate the systemDate to set
+	 */
+	public void setSystemDate(LocalDate systemDate) {
+		this.systemDate = systemDate;
+	}
+	
+	
 }

@@ -1,6 +1,9 @@
 package com.example.orbix_web;
 
 import java.util.Date;
+import java.util.TimeZone;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -17,8 +20,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.example.orbix_web.application.JavaFxApplication;
+import com.example.orbix_web.models.Day;
 import com.example.orbix_web.models.Item;
 import com.example.orbix_web.repositories.CustomerRepository;
+import com.example.orbix_web.repositories.DayRepository;
 import com.example.orbix_web.repositories.ItemRepository;
 
 import javafx.application.Application;
@@ -31,15 +36,18 @@ import javafx.application.Application;
 @EnableJpaRepositories(basePackageClasses = {CustomerRepository.class})
 public class OrbixWebApplication {
 	
-	
 	protected ConfigurableApplicationContext springContext;
+	
+	@PostConstruct
+	void started() {
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+	}
 	
 	public static void main(String[] args) throws Throwable {
 		SpringApplication.run(OrbixWebApplication.class, args);
 		
 		//Application.launch(JavaFxApplication.class,args);
 		
-		System.out.println((new Date()).toString());
 	}
 	
 	

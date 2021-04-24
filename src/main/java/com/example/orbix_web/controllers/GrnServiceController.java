@@ -25,10 +25,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.thymeleaf.util.ArrayUtils;
 
+import com.example.orbix_web.accessories.Formater;
 import com.example.orbix_web.exceptions.InvalidEntryException;
 import com.example.orbix_web.exceptions.InvalidOperationException;
+import com.example.orbix_web.exceptions.MissingInformationException;
 import com.example.orbix_web.exceptions.NotFoundException;
 import com.example.orbix_web.exceptions.OperationFailedException;
+import com.example.orbix_web.models.Day;
 import com.example.orbix_web.models.Grn;
 import com.example.orbix_web.models.GrnDetail;
 import com.example.orbix_web.models.Item;
@@ -37,6 +40,7 @@ import com.example.orbix_web.models.LpoDetail;
 import com.example.orbix_web.models.StockCard;
 import com.example.orbix_web.models.Supplier;
 import com.example.orbix_web.models.User;
+import com.example.orbix_web.repositories.DayRepository;
 import com.example.orbix_web.repositories.GrnDetailRepository;
 import com.example.orbix_web.repositories.GrnRepository;
 import com.example.orbix_web.repositories.ItemRepository;
@@ -68,6 +72,8 @@ public class GrnServiceController {
     ItemRepository itemRepository;
 	@Autowired
     StockCardRepository stockCardRepository;
+	@Autowired
+    DayRepository dayRepository;
 	
 	// Get All GRNs
     @RequestMapping(method = RequestMethod.GET, value = "/grns")
@@ -123,11 +129,28 @@ public class GrnServiceController {
 	    	grn.setCreatedBy(user);
     	}catch(Exception e) {
     		grn.setCreatedBy(null);
-    	}  
+    	} 
+    	
     	
     	//save grn, get grn no and id, create grn detail with grn id
     	grn.setStatus("PENDING");
     	if(grnRepository.existsByOrderNo(orderNo) == false) {
+    		
+    		Day day = dayRepository.findTopByOrderByIdDesc(); 	
+	    	LocalDate systemDate = day.getSystemDate();
+	    	LocalDate grnDate =grn.getGrnDate();
+	    	if(grnDate == null) {
+	    		throw new MissingInformationException("Date required");
+	    	}else if(!grnDate.equals(systemDate)) {
+	    		throw new InvalidEntryException("Date does not match with System date");
+	    	}   	
+	    	grn.setGrnDate(systemDate);
+	    	grn.setGrnNo(String.valueOf(Math.random()));
+	    	grnRepository.save(grn);
+	    	String serial = grn.getId().toString();
+	    	String grnNo = "GRN-"+Formater.formatNine(serial);
+	    	grn.setGrnNo(grnNo);
+	    	
     		_grn = grnRepository.save(grn);
     	}else {
     		_grn = grnRepository.findByOrderNo(orderNo).get();
@@ -174,13 +197,14 @@ public class GrnServiceController {
     	// advice, first check if the items exist, if not throw not found exception if an inexistence item is received:: later to implement this method
     	Grn _grn = null;
     	Lpo _lpo = null;
-    	Date _dateOrdered = null;   	
-    	Date _dateReceived = null;
+    	LocalDate _dateOrdered = null;   	
+    	LocalDate _dateReceived = null;
     	String _orderNo = null;
     	String _orderType = null;
     	
     	//
     	for(GrnDetail grnDetail : grnDetails) {
+    		
     		if(_grn == null) {
     			_grn = grnRepository.findById(grnId).get();
     		}
@@ -208,9 +232,9 @@ public class GrnServiceController {
     		double _clientCostPrice = grnDetail.getClientCostPrice();
     		double _qtyOrdered = grnDetail.getQtyOrdered();
     		double _qtyReceived = grnDetail.getQtyReceived();
-    		Date _expiryDate = grnDetail.getExpiryDate();  // will be used to validate  
+    		LocalDate _expiryDate = grnDetail.getExpiryDate();  // will be used to validate  
     		Date _currentDate = new Date();
-    		if(_expiryDate != null && _expiryDate.compareTo(_currentDate) < 0) {
+    		if(_expiryDate != null && _expiryDate.isBefore(_dateReceived)) {
     			throw new InvalidEntryException("Can not receive goods!\n"+"("+grnDetail.getItemCode()+") "+grnDetail.getDescription()+" has expired");
     		}
     		
@@ -234,15 +258,18 @@ public class GrnServiceController {
     	}
     	// now commit changes
     	_grn.setStatus("RECEIVED");
-    	grnRepository.saveAndFlush(_grn);
+    	grnRepository.save(_grn);
     	
     	_orderNo = _grn.getOrderNo();
     	_orderType = _grn.getOrderType();
     	
     	boolean receivedOne = false;// to mark whether at least one item has been received
+    	double invoiceTotal = 0;
     	for( GrnDetail grnDetail : grnDetails) {
     		String _itemCode = grnDetail.getItemCode();
     		double _qtyReceived = grnDetail.getQtyReceived();
+    		double _supplierCP = grnDetail.getSupplierCostPrice();
+    		
     		
     		if(_orderType.equals("LOCAL PURCHASE ORDER")) {
     			Long id = grnDetailRepository.findByItemCodeAndOrderNo(grnDetail.getItemCode(), _orderNo).get().getId();
@@ -280,7 +307,7 @@ public class GrnServiceController {
     		
     		if(_orderType.equals("LOCAL PURCHASE ORDER")) {
     			
-    			Date _expiryDate = grnDetail.getExpiryDate();
+    			LocalDate _expiryDate = grnDetail.getExpiryDate();
 	    		String _status = grnDetail.getStatus();
 	    		String _lotNo = grnDetail.getLotNo();
 	    		double _supplierCostPrice = grnDetail.getSupplierCostPrice();
@@ -293,7 +320,12 @@ public class GrnServiceController {
     			_lpoDetail.setQtyReceived(_qtyReceived);    			
     			lpoDetailRepository.saveAndFlush(_lpoDetail);
     		}
+    		invoiceTotal = invoiceTotal + (_qtyReceived * _supplierCP);
     	}
+    	
+    	_grn.setInvoiceTotal(invoiceTotal);
+    	grnRepository.save(_grn);
+    	
     	if(_orderType.equals("LOCAL PURCHASE ORDER")) {
     		if(receivedOne == true) {
     			_lpo = lpoRepository.findByLpoNo(_orderNo).get();

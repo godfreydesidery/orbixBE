@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.models;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -37,9 +38,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @Component
 @Entity
-@Table(name = "customer_invoices")
+@Table(name = "sales_invoices")
 @EntityListeners(AuditingEntityListener.class)
-public class CustomerInvoice {
+public class SalesInvoice {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -49,8 +50,12 @@ public class CustomerInvoice {
     private String invoiceNo;
 	private String createdBy;
 	private String approvedBy;
-	@Temporal(TemporalType.DATE)
-	private Date invoiceDate;  
+	private LocalDate invoiceDate;
+	private String terms;
+	private String orderNo;
+	@Column(nullable = true)
+	private LocalDate dateShipped;
+	private String shippedVia;
 	@Temporal(TemporalType.DATE)
 	private Date invoiceDueDate;
 	private String invoiceStatus;
@@ -65,10 +70,10 @@ public class CustomerInvoice {
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Customer customer;
 	
-	@OneToMany(targetEntity = CustomerInvoiceDetail.class, mappedBy = "customerInvoice", fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(targetEntity = SalesInvoiceDetail.class, mappedBy = "salesInvoice", fetch = FetchType.EAGER, orphanRemoval = true)
     @Valid
-    @JsonIgnoreProperties("customerInvoice")
-    private List<CustomerInvoiceDetail> invoiceDetails;
+    @JsonIgnoreProperties("salesInvoice")
+    private List<SalesInvoiceDetail> invoiceDetails;
 	
 	/**
 	 * @return the id
@@ -129,14 +134,14 @@ public class CustomerInvoice {
 	/**
 	 * @return the invoiceDate
 	 */
-	public Date getInvoiceDate() {
+	public LocalDate getInvoiceDate() {
 		return invoiceDate;
 	}
 
 	/**
 	 * @param invoiceDate the invoiceDate to set
 	 */
-	public void setInvoiceDate(Date invoiceDate) {
+	public void setInvoiceDate(LocalDate invoiceDate) {
 		this.invoiceDate = invoiceDate;
 	}
 	/**
@@ -167,19 +172,7 @@ public class CustomerInvoice {
 		this.custId = custId;
 	}
 
-	/**
-	 * @return the invoiceDetails
-	 */
-	public List<CustomerInvoiceDetail> getInvoiceDetails() {
-		return invoiceDetails;
-	}
-
-	/**
-	 * @param invoiceDetails the invoiceDetails to set
-	 */
-	public void setInvoiceDetails(List<CustomerInvoiceDetail> invoiceDetails) {
-		this.invoiceDetails = invoiceDetails;
-	}
+	
 
 	/**
 	 * @return the invoiceAmount
@@ -249,5 +242,75 @@ public class CustomerInvoice {
 	 */
 	public void setInvoiceStatus(String invoiceStatus) {
 		this.invoiceStatus = invoiceStatus;
+	}
+
+	/**
+	 * @return the terms
+	 */
+	public String getTerms() {
+		return terms;
+	}
+
+	/**
+	 * @param terms the terms to set
+	 */
+	public void setTerms(String terms) {
+		this.terms = terms;
+	}
+
+	/**
+	 * @return the orderNo
+	 */
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	/**
+	 * @param orderNo the orderNo to set
+	 */
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
+	}
+
+	/**
+	 * @return the dateShipped
+	 */
+	public LocalDate getDateShipped() {
+		return dateShipped;
+	}
+
+	/**
+	 * @param dateShipped the dateShipped to set
+	 */
+	public void setDateShipped(LocalDate dateShipped) {
+		this.dateShipped = dateShipped;
+	}
+
+	/**
+	 * @return the shippedVia
+	 */
+	public String getShippedVia() {
+		return shippedVia;
+	}
+
+	/**
+	 * @param shippedVia the shippedVia to set
+	 */
+	public void setShippedVia(String shippedVia) {
+		this.shippedVia = shippedVia;
+	}
+
+	/**
+	 * @return the invoiceDetails
+	 */
+	public List<SalesInvoiceDetail> getInvoiceDetails() {
+		return invoiceDetails;
+	}
+
+	/**
+	 * @param invoiceDetails the invoiceDetails to set
+	 */
+	public void setInvoiceDetails(List<SalesInvoiceDetail> invoiceDetails) {
+		this.invoiceDetails = invoiceDetails;
 	}
 }

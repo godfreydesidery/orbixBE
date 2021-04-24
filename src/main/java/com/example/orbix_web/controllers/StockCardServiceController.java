@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.controllers;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,13 @@ public class StockCardServiceController {
 	
 	
 	
-	public StockCard receiveItem(Item item, double qtyOrdered, Date dateOrdered, double qtyReceived, Date dateReceived, double stockBalance, String lotNo, Date expiryDate) {
+	public StockCard receiveItem(Item item, double qtyOrdered, LocalDate dateOrdered, double qtyReceived, LocalDate _dateReceived, double stockBalance, String lotNo, LocalDate expiryDate) {
 		StockCard stockCard = new StockCard();
 		stockCard.setItem(item);
 		stockCard.setQtyOrdered(qtyOrdered);
 		stockCard.setDateOrdered(dateOrdered);
 		stockCard.setQtyReceived(qtyReceived);
-		stockCard.setDateReceived(dateReceived);
+		stockCard.setDateReceived(_dateReceived);
 		stockCard.setStockBalance(stockBalance);
 		stockCard.setLotNo(lotNo);
 		stockCard.setExpiryDate(expiryDate);
@@ -38,7 +39,7 @@ public class StockCardServiceController {
 		StockCard stockCard = new StockCard();
 		
 	}
-	public StockCard returnToVendor(Item item, double qty, Date date, double stockBalance) {
+	public StockCard returnToVendor(Item item, double qty, LocalDate date, double stockBalance) {
 		StockCard stockCard = new StockCard();
 		stockCard.setItem(item);
 		stockCard.setQtyReturnToVendor(qty);
@@ -62,10 +63,10 @@ public class StockCardServiceController {
 	public void sellItem() {
 		
 	}
-	public StockCard creditSale(Item item, Date date, double qty, String invoiceNo, double stockBalance) {
+	public StockCard creditSale(Item item, LocalDate localDate, double qty, String invoiceNo, double stockBalance) {
 		StockCard stockCard = new StockCard();
 		stockCard.setItem(item);
-		stockCard.setCreditSaleDate(date);
+		stockCard.setCreditSaleDate(localDate);
 		stockCard.setCreditSaleQty(qty);
 		stockCard.setCreditSaleInvoiceNo(invoiceNo);
 		stockCard.setStockBalance(stockBalance);

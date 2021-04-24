@@ -28,11 +28,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.orbix_web.accessories.Formater;
+import com.example.orbix_web.exceptions.InvalidEntryException;
 import com.example.orbix_web.exceptions.InvalidOperationException;
+import com.example.orbix_web.exceptions.MissingInformationException;
 import com.example.orbix_web.exceptions.NotFoundException;
 import com.example.orbix_web.exceptions.ResourceNotFoundException;
+import com.example.orbix_web.models.Day;
 import com.example.orbix_web.models.Lpo;
 import com.example.orbix_web.models.Supplier;
+import com.example.orbix_web.repositories.DayRepository;
 import com.example.orbix_web.repositories.LpoRepository;
 import com.example.orbix_web.repositories.SupplierRepository;
 
@@ -48,6 +52,8 @@ public class LpoServiceController {
     @Autowired
     LpoRepository lpoRepository;
     @Autowired
+    DayRepository dayRepository;
+    @Autowired
     SupplierRepository supplierRepository;
     
     // Get All LPOs
@@ -60,7 +66,7 @@ public class LpoServiceController {
     @ResponseBody
     @Transactional
     public Lpo createLpo(@Valid @RequestBody Lpo lpo) {
-    	Date lpoDate = lpo.getLpoDate();
+    	LocalDate lpoDate = lpo.getLpoDate();
     	
     	Supplier supplier;
     	try {
@@ -71,13 +77,19 @@ public class LpoServiceController {
 	    	lpo.setSupplier(supplier);
     	}catch(Exception e) {
     		lpo.setSupplier(null);
-    	}
-    	lpo.setLpoDate(lpoDate);
+    	}    	
+    	Day day = dayRepository.findTopByOrderByIdDesc(); 	
+    	LocalDate systemDate = day.getSystemDate();
+    	if(lpoDate == null) {
+    		throw new MissingInformationException("Date required");
+    	}else if(!lpoDate.equals(systemDate)) {
+    		throw new InvalidEntryException("Date does not match with System date");
+    	}   	
+    	lpo.setLpoDate(systemDate);
     	lpo.setStatus("BLANK");
     	lpo.setLpoNo(String.valueOf(Math.random()));
     	lpoRepository.save(lpo);
     	String serial = lpo.getId().toString();
-    	
     	String lpoNo = "LPO-"+Formater.formatNine(serial);
     	lpo.setLpoNo(lpoNo);
     	lpoRepository.save(lpo);

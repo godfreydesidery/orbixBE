@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.models;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -50,8 +51,8 @@ public class Grn {
 	private String orderType;
 	private String orderNo;
 	private String invoiceNo;
-	@Temporal(TemporalType.DATE)
-	private Date grnDate;
+	private double invoiceTotal;
+	private LocalDate grnDate;
 	private String status;
 	
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = true)
@@ -110,19 +111,7 @@ public class Grn {
 		this.invoiceNo = invoiceNo;
 	}
 
-	/**
-	 * @return the grnDate
-	 */
-	public Date getGrnDate() {
-		return grnDate;
-	}
-
-	/**
-	 * @param grnDate the grnDate to set
-	 */
-	public void setGrnDate(Date grnDate) {
-		this.grnDate = grnDate;
-	}
+	
 
 	/**
 	 * @return the status
@@ -194,6 +183,35 @@ public class Grn {
 		this.orderNo = orderNo;
 	}
 
+	/**
+	 * @return the invoiceTotal
+	 */
+	public double getInvoiceTotal() {
+		return invoiceTotal;
+	}
+
+	/**
+	 * @param invoiceTotal the invoiceTotal to set
+	 */
+	public void setInvoiceTotal(double invoiceTotal) {
+		this.invoiceTotal = invoiceTotal;
+	}
+
+	/**
+	 * @return the grnDate
+	 */
+	public LocalDate getGrnDate() {
+		return grnDate;
+	}
+
+	/**
+	 * @param grnDate the grnDate to set
+	 */
+	public void setGrnDate(LocalDate grnDate) {
+		this.grnDate = grnDate;
+	}
+
+	
 	
 	
 	

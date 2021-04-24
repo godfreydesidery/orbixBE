@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.models;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -46,8 +47,7 @@ public class Rtv {
 	@NotBlank
 	@Column(unique = true)
     private String rtvNo;
-	@Temporal(TemporalType.DATE)
-	private Date rtvDate;
+	private LocalDate rtvDate;
 	private String status;
 
 	@ManyToOne(targetEntity = Supplier.class, fetch = FetchType.EAGER,  optional = true)
@@ -93,14 +93,14 @@ public class Rtv {
 	/**
 	 * @return the rtvDate
 	 */
-	public Date getRtvDate() {
+	public LocalDate getRtvDate() {
 		return rtvDate;
 	}
 
 	/**
 	 * @param rtvDate the rtvDate to set
 	 */
-	public void setRtvDate(Date rtvDate) {
+	public void setRtvDate(LocalDate rtvDate) {
 		this.rtvDate = rtvDate;
 	}
 

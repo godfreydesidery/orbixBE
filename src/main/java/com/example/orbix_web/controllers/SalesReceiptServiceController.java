@@ -3,36 +3,25 @@
  */
 package com.example.orbix_web.controllers;
 
-import java.util.Date;
-import java.util.List;
-
+import java.time.LocalDate;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.orbix_web.accessories.Formater;
 import com.example.orbix_web.exceptions.InvalidOperationException;
 import com.example.orbix_web.exceptions.MissingInformationException;
-import com.example.orbix_web.exceptions.ResourceNotFoundException;
 import com.example.orbix_web.models.Customer;
-import com.example.orbix_web.models.CustomerInvoice;
-import com.example.orbix_web.models.Receipt;
 import com.example.orbix_web.models.SalesReceipt;
 import com.example.orbix_web.repositories.CustomerRepository;
-import com.example.orbix_web.repositories.ReceiptRepository;
 import com.example.orbix_web.repositories.SalesReceiptRepository;
 
 /**
@@ -60,11 +49,11 @@ public class SalesReceiptServiceController {
     	SalesReceipt _receipt = rec;
     	SalesReceipt receipt = null;
     	String receiptNo = _receipt.getReceiptNo();
-    	Date receiptDate = _receipt.getReceiptDate();
+    	LocalDate receiptDate = _receipt.getReceiptDate();
     	double amount = _receipt.getReceiptAmount();
     	String paymentMode = _receipt.getPaymentMode();
     	String chequeNo = _receipt.getChequeNo();
-    	Date chequeDate = _receipt.getChequeDate();
+    	LocalDate chequeDate = _receipt.getChequeDate();
     	String bank = _receipt.getChequeBank();
     	String creditNoteNo = _receipt.getCreditNoteNo();
     	String custNo = _receipt.getCustomer().getCustomerNo();
@@ -98,7 +87,7 @@ public class SalesReceiptServiceController {
     	 */
     	receipt = new SalesReceipt();
     	receipt.setCustomer(customer);
-    	receipt.setReceiptNo(receiptNo);
+    	receipt.setReceiptNo(String.valueOf(Math.random()));
     	receipt.setReceiptDate(receiptDate);
     	receipt.setReceiptAmount(amount);
     	receipt.setPaymentMode(paymentMode);
@@ -107,6 +96,11 @@ public class SalesReceiptServiceController {
     	receipt.setChequeBank(bank);
     	receipt.setCreditNoteNo(creditNoteNo);
     	salesReceiptRepository.save(receipt);
+    	String serial = receipt.getId().toString();
+    	receiptNo = "RCT-"+Formater.formatNine(serial);
+    	receipt.setReceiptNo(receiptNo);
+    	salesReceiptRepository.save(receipt);
+    	
     	/*
     	 * Update customer unallocated amount
     	 */

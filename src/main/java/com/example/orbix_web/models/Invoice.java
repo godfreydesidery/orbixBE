@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.models;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -47,10 +48,8 @@ public class Invoice {
     private String invoiceNo;
 	private String createdBy;
 	private String approvedBy;
-	@Temporal(TemporalType.DATE)
-	private Date invoiceDate;  
-	@Temporal(TemporalType.DATE)
-	private Date invoiceDueDate;
+	private LocalDate invoiceDate;  
+	private LocalDate invoiceDueDate;
 	private String invoiceStatus;
 	private double invoiceAmount;
 	private double invoiceAmountPayed;
@@ -120,28 +119,28 @@ public class Invoice {
 	/**
 	 * @return the invoiceDate
 	 */
-	public Date getInvoiceDate() {
+	public LocalDate getInvoiceDate() {
 		return invoiceDate;
 	}
 
 	/**
 	 * @param invoiceDate the invoiceDate to set
 	 */
-	public void setInvoiceDate(Date invoiceDate) {
+	public void setInvoiceDate(LocalDate invoiceDate) {
 		this.invoiceDate = invoiceDate;
 	}
 
 	/**
 	 * @return the invoiceDueDate
 	 */
-	public Date getInvoiceDueDate() {
+	public LocalDate getInvoiceDueDate() {
 		return invoiceDueDate;
 	}
 
 	/**
 	 * @param invoiceDueDate the invoiceDueDate to set
 	 */
-	public void setInvoiceDueDate(Date invoiceDueDate) {
+	public void setInvoiceDueDate(LocalDate invoiceDueDate) {
 		this.invoiceDueDate = invoiceDueDate;
 	}
 

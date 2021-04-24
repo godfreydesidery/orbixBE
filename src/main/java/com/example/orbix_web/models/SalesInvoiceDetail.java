@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.models;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import javax.persistence.Embedded;
@@ -32,9 +33,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Entity
-@Table(name = "customer_invoice_details")
+@Table(name = "sales_invoice_details")
 @EntityListeners(AuditingEntityListener.class)
-public class CustomerInvoiceDetail {
+public class SalesInvoiceDetail {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -48,16 +49,15 @@ public class CustomerInvoiceDetail {
 	private double discount;
 	@NotNull
 	private double qty;
-	@Temporal(TemporalType.DATE)
 	private Date returnFirstDate;
 	private int returnPeriod;
-	private Date returnLastDate;
+	private LocalDate returnLastDate;
 	
 	
-	@ManyToOne(targetEntity = CustomerInvoice.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "customer_invoice_id", nullable = true , updatable = true)
+	@ManyToOne(targetEntity = SalesInvoice.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "sales_invoice_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private CustomerInvoice customerInvoice;
+    private SalesInvoice salesInvoice;
 
 	/**
 	 * @return the id
@@ -115,19 +115,7 @@ public class CustomerInvoiceDetail {
 		this.qty = qty;
 	}
 
-	/**
-	 * @return the customerInvoice
-	 */
-	public CustomerInvoice getCustomerInvoice() {
-		return customerInvoice;
-	}
-
-	/**
-	 * @param customerInvoice the customerInvoice to set
-	 */
-	public void setCustomerInvoice(CustomerInvoice customerInvoice) {
-		this.customerInvoice = customerInvoice;
-	}
+	
 
 	/**
 	 * @return the price
@@ -188,15 +176,29 @@ public class CustomerInvoiceDetail {
 	/**
 	 * @return the returnLastDate
 	 */
-	public Date getReturnLastDate() {
+	public LocalDate getReturnLastDate() {
 		return returnLastDate;
 	}
 
 	/**
-	 * @param returnLastDate the returnLastDate to set
+	 * @param returnLastDate2 the returnLastDate to set
 	 */
-	public void setReturnLastDate(Date returnLastDate) {
-		this.returnLastDate = returnLastDate;
+	public void setReturnLastDate(LocalDate returnLastDate2) {
+		this.returnLastDate = returnLastDate2;
+	}
+
+	/**
+	 * @return the salesInvoice
+	 */
+	public SalesInvoice getSalesInvoice() {
+		return salesInvoice;
+	}
+
+	/**
+	 * @param salesInvoice the salesInvoice to set
+	 */
+	public void setSalesInvoice(SalesInvoice salesInvoice) {
+		this.salesInvoice = salesInvoice;
 	}
 
 	

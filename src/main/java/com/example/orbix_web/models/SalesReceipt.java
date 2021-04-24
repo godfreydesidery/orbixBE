@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.models;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -53,15 +54,11 @@ public class SalesReceipt {
 	private String transactionType;
 	@NotBlank
 	private String paymentMode;
-	@Column(unique = true)
 	private String chequeNo;
-	@Temporal(TemporalType.DATE)
-    private Date chequeDate;
+    private LocalDate chequeDate;
 	private String chequeBank;
-	@Temporal(TemporalType.DATE)
-    private Date receiptDate;
-	@Temporal(TemporalType.DATE)
-    private Date date;
+    private LocalDate receiptDate;
+    private LocalDate date;
 		
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "customer_id", nullable = false)
@@ -136,7 +133,7 @@ public class SalesReceipt {
 	/**
 	 * @return the date
 	 */
-	public Date getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 
@@ -144,7 +141,7 @@ public class SalesReceipt {
 	/**
 	 * @param date the date to set
 	 */
-	public void setDate(Date date) {
+	public void setDate(LocalDate date) {
 		this.date = date;
 	}
 
@@ -199,7 +196,7 @@ public class SalesReceipt {
 	/**
 	 * @return the chequeDate
 	 */
-	public Date getChequeDate() {
+	public LocalDate getChequeDate() {
 		return chequeDate;
 	}
 
@@ -207,7 +204,7 @@ public class SalesReceipt {
 	/**
 	 * @param chequeDate the chequeDate to set
 	 */
-	public void setChequeDate(Date chequeDate) {
+	public void setChequeDate(LocalDate chequeDate) {
 		this.chequeDate = chequeDate;
 	}
 
@@ -228,7 +225,7 @@ public class SalesReceipt {
 	/**
 	 * @return the receiptDate
 	 */
-	public Date getReceiptDate() {
+	public LocalDate getReceiptDate() {
 		return receiptDate;
 	}
 
@@ -236,7 +233,7 @@ public class SalesReceipt {
 	/**
 	 * @param receiptDate the receiptDate to set
 	 */
-	public void setReceiptDate(Date receiptDate) {
+	public void setReceiptDate(LocalDate receiptDate) {
 		this.receiptDate = receiptDate;
 	}
 

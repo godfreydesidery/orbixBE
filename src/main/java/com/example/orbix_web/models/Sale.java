@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.models;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -42,13 +43,12 @@ public class Sale extends Audit<String>{
     private Long id;
 	@Temporal(TemporalType.TIMESTAMP)
     private Date dateTime;
-	@Temporal(TemporalType.DATE)
-    private Date saleDate;
+    private LocalDate saleDate;
 	
-	@ManyToOne(targetEntity = CustomerInvoice.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "customer_invoice_id", nullable = true , updatable = true)
+	@ManyToOne(targetEntity = SalesInvoice.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "sales_invoice_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private CustomerInvoice customerInvoice;
+    private SalesInvoice salesInvoice;
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "user_id", nullable = true)
@@ -90,18 +90,7 @@ public class Sale extends Audit<String>{
 	public void setDateTime(Date dateTime) {
 		this.dateTime = dateTime;
 	}
-	/**
-	 * @return the customerInvoice
-	 */
-	public CustomerInvoice getCustomerInvoice() {
-		return customerInvoice;
-	}
-	/**
-	 * @param customerInvoice the customerInvoice to set
-	 */
-	public void setCustomerInvoice(CustomerInvoice customerInvoice) {
-		this.customerInvoice = customerInvoice;
-	}
+	
 	/**
 	 * @return the user
 	 */
@@ -153,13 +142,13 @@ public class Sale extends Audit<String>{
 	/**
 	 * @return the saleDate
 	 */
-	public Date getSaleDate() {
+	public LocalDate getSaleDate() {
 		return saleDate;
 	}
 	/**
 	 * @param saleDate the saleDate to set
 	 */
-	public void setSaleDate(Date saleDate) {
+	public void setSaleDate(LocalDate saleDate) {
 		this.saleDate = saleDate;
 	}
 }

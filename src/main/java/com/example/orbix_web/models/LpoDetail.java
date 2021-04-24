@@ -4,6 +4,7 @@
 package com.example.orbix_web.models;
 
 import java.beans.Transient;
+import java.time.LocalDate;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -50,8 +51,7 @@ public class LpoDetail {
 	private double qtyOrdered;
 	private double qtyReceived;
 	private String status;
-	@Temporal(TemporalType.DATE)
-	private Date expiryDate;
+	private LocalDate expiryDate;
     private String lotNo;
     private String orderNo;
 	
@@ -210,14 +210,14 @@ public class LpoDetail {
 	/**
 	 * @return the expiryDate
 	 */
-	public Date getExpiryDate() {
+	public LocalDate getExpiryDate() {
 		return expiryDate;
 	}
 
 	/**
 	 * @param expiryDate the expiryDate to set
 	 */
-	public void setExpiryDate(Date expiryDate) {
+	public void setExpiryDate(LocalDate expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 

@@ -3,9 +3,7 @@
  */
 package com.example.orbix_web.controllers;
 
-import java.util.Date;
-import java.util.List;
-
+import java.time.LocalDate;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +20,12 @@ import com.example.orbix_web.exceptions.InvalidOperationException;
 import com.example.orbix_web.exceptions.NotFoundException;
 import com.example.orbix_web.models.Allocation;
 import com.example.orbix_web.models.Customer;
-import com.example.orbix_web.models.CustomerInvoice;
-import com.example.orbix_web.models.CustomerInvoiceDetail;
-import com.example.orbix_web.models.Sale;
-import com.example.orbix_web.models.SaleDetail;
+import com.example.orbix_web.models.SalesInvoice;
 import com.example.orbix_web.repositories.AllocationRepository;
-import com.example.orbix_web.repositories.CustomerInvoiceRepository;
 import com.example.orbix_web.repositories.CustomerRepository;
 import com.example.orbix_web.repositories.SaleDetailRepository;
 import com.example.orbix_web.repositories.SaleRepository;
+import com.example.orbix_web.repositories.SalesInvoiceRepository;
 
 /**
  * @author GODFREY
@@ -46,7 +41,7 @@ public class AllocationServiceController {
 	@Autowired
 	CustomerRepository customerRepository;
 	@Autowired
-	CustomerInvoiceRepository customerInvoiceRepository;
+	SalesInvoiceRepository salesInvoiceRepository;
 	@Autowired
 	SaleRepository saleRepository;
 	@Autowired
@@ -63,16 +58,16 @@ public class AllocationServiceController {
     	 */
     	Allocation _allocation = alloc;
     	String allocationNo = _allocation.getAllocationNo();
-    	Date allocationDate =_allocation.getAllocationDate();
+    	LocalDate allocationDate =_allocation.getAllocationDate();
     	double allocationAmount = _allocation.getAllocationAmount();
     	String customerNo = _allocation.getCustomer().getCustomerNo();
-    	String invoiceNo = _allocation.getCustomerInvoice().getInvoiceNo();
+    	String invoiceNo = _allocation.getSalesInvoice().getInvoiceNo();
     	
     	/*
     	 * Validate data
     	 */
     	Customer customer = null;
-    	CustomerInvoice invoice;
+    	SalesInvoice invoice;
     	try {
     		customer = customerRepository.findByCustomerNo(customerNo).get();
     	}catch(Exception e) {
@@ -81,7 +76,7 @@ public class AllocationServiceController {
     	if(customer == null) {
     		throw new NotFoundException("Customer not found");
     	}
-    	invoice = customerInvoiceRepository.findByInvoiceNo(invoiceNo);
+    	invoice = salesInvoiceRepository.findByInvoiceNo(invoiceNo);
     	if(invoice == null) {
     		throw new NotFoundException("Customer invoice not found");
     	}
@@ -91,7 +86,7 @@ public class AllocationServiceController {
     	if(invoice.getInvoiceStatus().equals("CANCELLED")) {
     		throw new InvalidOperationException("Could not allocate, invoice cancelled");
     	}
-    	double totalAmountDue = customer.getAmountDue();
+    	double totalAmountDue = customer.getOutstandingBalance();
     	double amountUnallocated = customer.getAmountUnallocated();
     	double invoiceAmountDue = invoice.getInvoiceAmountDue();
     	if(allocationAmount <= 0) {
@@ -112,13 +107,13 @@ public class AllocationServiceController {
     	allocation.setAllocationDate(allocationDate);
     	allocation.setAllocationAmount(allocationAmount);
     	allocation.setCustomer(customer);
-    	allocation.setCustomerInvoice(invoice);
+    	allocation.setSalesInvoice(invoice);
     	allocationRepository.save(allocation);
     	
     	/*
     	 * Update amount due and amount unallocated in customer
     	 */
-    	customer.setAmountDue(customer.getAmountDue() - allocationAmount);
+    	customer.setOutstandingBalance(customer.getOutstandingBalance() - allocationAmount);
     	customer.setAmountUnallocated(customer.getAmountUnallocated() - allocationAmount);
     	customerRepository.save(customer);
     	
@@ -132,7 +127,7 @@ public class AllocationServiceController {
     	}else {
     		invoice.setInvoiceStatus("PARTIAL");
     	}
-    	customerInvoiceRepository.save(invoice);
+    	salesInvoiceRepository.save(invoice);
     	
     	
     	

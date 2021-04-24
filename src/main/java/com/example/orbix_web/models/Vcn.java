@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.models;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -43,11 +44,9 @@ public class Vcn {
     private String vcnNo;
 	private String createdBy;
 	private String approvedBy;
-	@Temporal(TemporalType.DATE)
-	private Date vcnDate;
+	private LocalDate vcnDate;
 	private double amount;
-	@Temporal(TemporalType.DATE)
-	private Date expiryDate;
+	private LocalDate expiryDate;
 	private String status;
 	@ManyToOne(targetEntity = Supplier.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "supplier_id", nullable = true , updatable = true)
@@ -106,13 +105,13 @@ public class Vcn {
 	/**
 	 * @return the vcnDate
 	 */
-	public Date getVcnDate() {
+	public LocalDate getVcnDate() {
 		return vcnDate;
 	}
 	/**
 	 * @param vcnDate the vcnDate to set
 	 */
-	public void setVcnDate(Date vcnDate) {
+	public void setVcnDate(LocalDate vcnDate) {
 		this.vcnDate = vcnDate;
 	}
 	/**
@@ -130,13 +129,13 @@ public class Vcn {
 	/**
 	 * @return the expiryDate
 	 */
-	public Date getExpiryDate() {
+	public LocalDate getExpiryDate() {
 		return expiryDate;
 	}
 	/**
 	 * @param expiryDate the expiryDate to set
 	 */
-	public void setExpiryDate(Date expiryDate) {
+	public void setExpiryDate(LocalDate expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 	/**

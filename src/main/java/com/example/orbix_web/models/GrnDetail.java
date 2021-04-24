@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.models;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -47,8 +48,7 @@ public class GrnDetail {
     private double clientCostPrice;
     private double qtyOrdered;
     private double qtyReceived;
-    @Temporal(TemporalType.DATE)
-	private Date expiryDate;
+	private LocalDate expiryDate;
     private String status;
     private String lotNo;
     private String orderNo;
@@ -183,13 +183,13 @@ public class GrnDetail {
 	/**
 	 * @return the expiryDate
 	 */
-	public Date getExpiryDate() {
+	public LocalDate getExpiryDate() {
 		return expiryDate;
 	}
 	/**
 	 * @param expiryDate the expiryDate to set
 	 */
-	public void setExpiryDate(Date expiryDate) {
+	public void setExpiryDate(LocalDate expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 	/**

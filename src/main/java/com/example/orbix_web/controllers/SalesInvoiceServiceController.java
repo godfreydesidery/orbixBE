@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.controllers;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -21,24 +22,25 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.orbix_web.accessories.Formater;
 import com.example.orbix_web.exceptions.DuplicateEntryException;
 import com.example.orbix_web.exceptions.InvalidOperationException;
 import com.example.orbix_web.exceptions.MissingInformationException;
 import com.example.orbix_web.exceptions.NotFoundException;
 import com.example.orbix_web.exceptions.ResourceNotFoundException;
 import com.example.orbix_web.models.Customer;
-import com.example.orbix_web.models.CustomerInvoice;
-import com.example.orbix_web.models.CustomerInvoiceDetail;
 import com.example.orbix_web.models.Grn;
 import com.example.orbix_web.models.Item;
 import com.example.orbix_web.models.Sale;
 import com.example.orbix_web.models.SaleDetail;
-import com.example.orbix_web.repositories.CustomerInvoiceDetailRepository;
-import com.example.orbix_web.repositories.CustomerInvoiceRepository;
+import com.example.orbix_web.models.SalesInvoice;
+import com.example.orbix_web.models.SalesInvoiceDetail;
 import com.example.orbix_web.repositories.CustomerRepository;
 import com.example.orbix_web.repositories.ItemRepository;
 import com.example.orbix_web.repositories.SaleDetailRepository;
 import com.example.orbix_web.repositories.SaleRepository;
+import com.example.orbix_web.repositories.SalesInvoiceDetailRepository;
+import com.example.orbix_web.repositories.SalesInvoiceRepository;
 import com.example.orbix_web.repositories.StockCardRepository;
 
 /**
@@ -48,13 +50,13 @@ import com.example.orbix_web.repositories.StockCardRepository;
 @RestController
 @Service
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class CustomerInvoiceServiceController {
+public class SalesInvoiceServiceController {
 	@Autowired
 	CustomerRepository customerRepository;
 	@Autowired
-	CustomerInvoiceRepository customerInvoiceRepository;
+	SalesInvoiceRepository salesInvoiceRepository;
 	@Autowired
-	CustomerInvoiceDetailRepository customerInvoiceDetailRepository;
+	SalesInvoiceDetailRepository salesInvoiceDetailRepository;
 	@Autowired
 	ItemRepository itemRepository;
 	@Autowired
@@ -66,16 +68,16 @@ public class CustomerInvoiceServiceController {
 	
 	
 	// Create a new Invoice
-    @RequestMapping(method = RequestMethod.POST, value = "/customer_invoices")
+    @RequestMapping(method = RequestMethod.POST, value = "/sales_invoices")
     @ResponseBody
     @Transactional
-	public CustomerInvoice createCustomerInvoice(@Valid @RequestBody CustomerInvoice inv ) {
+	public SalesInvoice createCustomerInvoice(@Valid @RequestBody SalesInvoice inv ) {
     	/*
     	 * Define field variables
     	 */
-    	CustomerInvoice invoice;
-    	CustomerInvoice _invoice;
-    	List<CustomerInvoiceDetail> details;
+    	SalesInvoice invoice;
+    	SalesInvoice _invoice;
+    	List<SalesInvoiceDetail> details;
     	Customer customer;
     	/*
     	 * Capture invoice data
@@ -91,14 +93,14 @@ public class CustomerInvoiceServiceController {
     	if(customer == null) {
 			throw new MissingInformationException("Could not process invoice, missing customer information");
 		}
-		invoice = customerInvoiceRepository.findByInvoiceNo(_invoice.getInvoiceNo());
+		invoice = salesInvoiceRepository.findByInvoiceNo(_invoice.getInvoiceNo());
 		if(invoice != null) {
 			throw new DuplicateEntryException("Could not save invoice, invoice exists");
 		}
 		if(_invoice.getInvoiceDate() == null) {
 			throw new MissingInformationException("Could not process invoice, invoice date required");
 		}
-		for(CustomerInvoiceDetail _detail :details) {
+		for(SalesInvoiceDetail _detail :details) {
 			if(_detail.getItemCode().equals("")) {
 				
 			}
@@ -110,24 +112,33 @@ public class CustomerInvoiceServiceController {
 		/*
 		 * Save invoice data
 		 */
-		invoice = new CustomerInvoice();		
-		invoice.setInvoiceNo(_invoice.getInvoiceNo());
+		invoice = new SalesInvoice();		
+		invoice.setInvoiceNo(String.valueOf(Math.random()));
 		invoice.setInvoiceDate(_invoice.getInvoiceDate());
+		invoice.setTerms(_invoice.getTerms());
+		invoice.setOrderNo(_invoice.getOrderNo());
+		invoice.setDateShipped(_invoice.getDateShipped());
+		invoice.setShippedVia(_invoice.getShippedVia());
 		invoice.setCustomer(customer);	
 		invoice.setInvoiceStatus("SENT");
-		invoice = customerInvoiceRepository.save(invoice);
+		invoice = salesInvoiceRepository.save(invoice);
+		String serial = invoice.getId().toString();
+    	String invoiceNo = "CINV-"+Formater.formatNine(serial);
+    	invoice.setInvoiceNo(invoiceNo);
+    	salesInvoiceRepository.save(invoice);
+		
+		
+		
 		double amount = 0;
-		for(CustomerInvoiceDetail _detail :details) {
+		for(SalesInvoiceDetail _detail :details) {
 			Item _item =itemRepository.findByItemCode(_detail.getItemCode()).get();
-			Date returnStartDate = _invoice.getInvoiceDate();
+			LocalDate returnStartDate = _invoice.getInvoiceDate();
 			int returnPeriod = 365;//_detail.getReturnPeriod();  //change this later
-			Calendar c = Calendar.getInstance();
-			c.setTime(returnStartDate);
-			c.add(Calendar.DATE, returnPeriod);			
-			Date returnLastDate = c.getTime();	
+						
+			LocalDate returnLastDate = returnStartDate.plusDays(returnPeriod);
 			
-			CustomerInvoiceDetail detail = new CustomerInvoiceDetail();
-			detail.setCustomerInvoice(invoice);
+			SalesInvoiceDetail detail = new SalesInvoiceDetail();
+			detail.setSalesInvoice(invoice);
 			detail.setItemCode(_detail.getItemCode());
 			detail.setDescription(_detail.getDescription());
 			detail.setPrice(_detail.getPrice());
@@ -140,17 +151,17 @@ public class CustomerInvoiceServiceController {
 			}
 			detail.setQty(_detail.getQty());
 			amount = amount + (_detail.getPrice()*_detail.getQty());
-			customerInvoiceDetailRepository.save(detail);
+			salesInvoiceDetailRepository.save(detail);
 		}
 		invoice.setInvoiceAmount(amount);
 		invoice.setInvoiceAmountDue(amount);
-		invoice = customerInvoiceRepository.save(invoice);
-		customer.setAmountDue(customer.getAmountDue()+amount);
+		invoice = salesInvoiceRepository.save(invoice);
+		customer.setOutstandingBalance(customer.getOutstandingBalance()+amount);
 		customerRepository.save(customer);
 		/*
 		 * Update stock
 		 */
-		for(CustomerInvoiceDetail _detail :details) {
+		for(SalesInvoiceDetail _detail :details) {
 			Item _item =itemRepository.findByItemCode(_detail.getItemCode()).get();
 			itemRepository.saveAndFlush(
 					new ItemServiceController()
@@ -159,24 +170,24 @@ public class CustomerInvoiceServiceController {
 		/*
 		 * Update stock cards
 		 */
-		for(CustomerInvoiceDetail _detail :details) {
+		for(SalesInvoiceDetail _detail :details) {
 			Item _item =itemRepository.findByItemCode(_detail.getItemCode()).get();
 			double _stockBalance =_item.getQuantity();
 			stockCardRepository.save(
 					new StockCardServiceController()
-					.creditSale(_item, _invoice.getInvoiceDate(), _detail.getQty(), _invoice.getInvoiceNo(), _stockBalance));	
+					.creditSale(_item, _invoice.getInvoiceDate(), _detail.getQty(), invoiceNo, _stockBalance));	
 		}
 		/*
     	 * Now post invoice to sales
     	 */
     	Sale sale = new Sale();
-    	sale.setCustomerInvoice(invoice);
+    	//sale.setCustomerInvoice(invoice);
     	sale.setSaleDate(invoice.getInvoiceDate());
     	saleRepository.save(sale);
     	
     	//List<CustomerInvoiceDetail> invoiceDetails;
     	//invoiceDetails = invoice.getInvoiceDetails();
-    	for(CustomerInvoiceDetail _detail :details) {
+    	for(SalesInvoiceDetail _detail :details) {
     		SaleDetail saleDetail = new SaleDetail();
     		saleDetail.setItemCode(_detail.getItemCode());
     		saleDetail.setDescription(_detail.getDescription());
@@ -196,9 +207,9 @@ public class CustomerInvoiceServiceController {
 	}
     
  // Get a Single Customer Invoice by invoice no
-    @RequestMapping(method = RequestMethod.GET, value = "/customer_invoices/invoice_no={invoice_no}")
-    public CustomerInvoice getInvoiceByInvoiceNo(@PathVariable(value = "invoice_no") String invoiceNo) {
-    	CustomerInvoice invoice = customerInvoiceRepository.findByInvoiceNo(invoiceNo);
+    @RequestMapping(method = RequestMethod.GET, value = "/sales_invoices/invoice_no={invoice_no}")
+    public SalesInvoice getInvoiceByInvoiceNo(@PathVariable(value = "invoice_no") String invoiceNo) {
+    	SalesInvoice invoice = salesInvoiceRepository.findByInvoiceNo(invoiceNo);
     	if(invoice == null) {
     		throw new NotFoundException("Invoice not found");
     	}
@@ -206,9 +217,9 @@ public class CustomerInvoiceServiceController {
     }
     
  // Get a Single Customer Invoice by invoice no and customer no
-    @RequestMapping(method = RequestMethod.GET, value = "/customer_invoices/invoice_no={invoice_no}/customer_no={customer_no}")
-    public CustomerInvoice getInvoiceByInvoiceNoAndCustomerNo(@PathVariable(value = "invoice_no") String invoiceNo,@PathVariable(value = "customer_no") String customerNo) {
-    	CustomerInvoice invoice = customerInvoiceRepository.findByInvoiceNo(invoiceNo);
+    @RequestMapping(method = RequestMethod.GET, value = "/sales_invoices/invoice_no={invoice_no}/customer_no={customer_no}")
+    public SalesInvoice getInvoiceByInvoiceNoAndCustomerNo(@PathVariable(value = "invoice_no") String invoiceNo,@PathVariable(value = "customer_no") String customerNo) {
+    	SalesInvoice invoice = salesInvoiceRepository.findByInvoiceNo(invoiceNo);
     	if(invoice == null) {
     		throw new NotFoundException("Invoice not found");
     	}
@@ -225,12 +236,12 @@ public class CustomerInvoiceServiceController {
     }
     
  // Get a Single Customer Invoice by invoice no
-    @RequestMapping(method = RequestMethod.GET, value = "/due_customer_invoices/customer_id={cust_id}")
-    public List<CustomerInvoice> getDueInvoiceByCustomer(@PathVariable(value = "cust_id") Long custId) {
+    @RequestMapping(method = RequestMethod.GET, value = "/due_sales_invoices/customer_id={cust_id}")
+    public List<SalesInvoice> getDueInvoiceByCustomer(@PathVariable(value = "cust_id") Long custId) {
     	System.out.println("check");
     	Customer customer = customerRepository.findById(custId).get();
     	
-    	List<CustomerInvoice> invoices = customerInvoiceRepository.findByCustomerAndInvoiceStatus(customer, "PENDING");
+    	List<SalesInvoice> invoices = salesInvoiceRepository.findByCustomerAndInvoiceStatus(customer, "PENDING");
     	
         return invoices;
     }

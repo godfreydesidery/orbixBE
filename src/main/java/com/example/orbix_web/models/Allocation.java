@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.models;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -42,8 +43,7 @@ public class Allocation {
 	@NotBlank
 	@Column(unique = true)
     private String allocationNo;
-	@Temporal(TemporalType.DATE)
-	private Date allocationDate;
+	private LocalDate allocationDate;
 	private double allocationAmount;
 	
 	
@@ -52,10 +52,10 @@ public class Allocation {
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Customer customer;
 	
-	@ManyToOne(targetEntity = CustomerInvoice.class, fetch = FetchType.LAZY,  optional = true)
-    @JoinColumn(name = "customer_invoice_id", nullable = true , updatable = true)
+	@ManyToOne(targetEntity = SalesInvoice.class, fetch = FetchType.LAZY,  optional = true)
+    @JoinColumn(name = "sales_invoice_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private CustomerInvoice customerInvoice;
+    private SalesInvoice salesInvoice;
 
 
 	/**
@@ -90,20 +90,6 @@ public class Allocation {
 	}
 
 
-	/**
-	 * @return the customerInvoice
-	 */
-	public CustomerInvoice getCustomerInvoice() {
-		return customerInvoice;
-	}
-
-
-	/**
-	 * @param customerInvoice the customerInvoice to set
-	 */
-	public void setCustomerInvoice(CustomerInvoice customerInvoice) {
-		this.customerInvoice = customerInvoice;
-	}
 
 
 	/**
@@ -125,7 +111,7 @@ public class Allocation {
 	/**
 	 * @return the allocationDate
 	 */
-	public Date getAllocationDate() {
+	public LocalDate getAllocationDate() {
 		return allocationDate;
 	}
 
@@ -133,7 +119,7 @@ public class Allocation {
 	/**
 	 * @param allocationDate the allocationDate to set
 	 */
-	public void setAllocationDate(Date allocationDate) {
+	public void setAllocationDate(LocalDate allocationDate) {
 		this.allocationDate = allocationDate;
 	}
 
@@ -151,6 +137,22 @@ public class Allocation {
 	 */
 	public void setAllocationAmount(double allocationAmount) {
 		this.allocationAmount = allocationAmount;
+	}
+
+
+	/**
+	 * @return the salesInvoice
+	 */
+	public SalesInvoice getSalesInvoice() {
+		return salesInvoice;
+	}
+
+
+	/**
+	 * @param salesInvoice the salesInvoice to set
+	 */
+	public void setSalesInvoice(SalesInvoice salesInvoice) {
+		this.salesInvoice = salesInvoice;
 	}
 
 

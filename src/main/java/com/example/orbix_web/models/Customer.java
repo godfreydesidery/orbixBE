@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.models;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -53,18 +54,14 @@ public class Customer extends Audit<String> {
     private double creditLimit;
     private double invoiceLimit;
     private int creditDays;
-    private double amountDue;
+    private double outstandingBalance;
     private double amountUnallocated;
     private double discountRate;
-    @Temporal(TemporalType.DATE)
-	private Date discountStartDate;
-    @Temporal(TemporalType.DATE)
-	private Date discountEndDate;
+	private LocalDate discountStartDate;
+	private LocalDate discountEndDate;
     private double priceMargin;
-    @Temporal(TemporalType.DATE)
-	private Date priceMarginStartDate;
-    @Temporal(TemporalType.DATE)
-	private Date priceMarginEndDate;
+	private LocalDate priceMarginStartDate;
+	private LocalDate priceMarginEndDate;
 	/**
 	 * @return the id
 	 */
@@ -138,12 +135,7 @@ public class Customer extends Audit<String> {
 		this.vatNo = vatNo;
 	}
 	
-	/**
-	 * @param amountDue the amountDue to set
-	 */
-	public void setAmountDue(Long amountDue) {
-		this.amountDue = amountDue;
-	}
+	
 	/**
 	 * @return the creditDays
 	 */
@@ -180,18 +172,7 @@ public class Customer extends Audit<String> {
 	public void setCreditLimit(double creditLimit) {
 		this.creditLimit = creditLimit;
 	}
-	/**
-	 * @return the amountDue
-	 */
-	public double getAmountDue() {
-		return amountDue;
-	}
-	/**
-	 * @param amountDue the amountDue to set
-	 */
-	public void setAmountDue(double amountDue) {
-		this.amountDue = amountDue;
-	}
+	
 	/**
 	 * @return the invoiceLimit
 	 */
@@ -219,25 +200,25 @@ public class Customer extends Audit<String> {
 	/**
 	 * @return the discountStartDate
 	 */
-	public Date getDiscountStartDate() {
+	public LocalDate getDiscountStartDate() {
 		return discountStartDate;
 	}
 	/**
 	 * @param discountStartDate the discountStartDate to set
 	 */
-	public void setDiscountStartDate(Date discountStartDate) {
+	public void setDiscountStartDate(LocalDate discountStartDate) {
 		this.discountStartDate = discountStartDate;
 	}
 	/**
 	 * @return the discountEndDate
 	 */
-	public Date getDiscountEndDate() {
+	public LocalDate getDiscountEndDate() {
 		return discountEndDate;
 	}
 	/**
 	 * @param discountEndDate the discountEndDate to set
 	 */
-	public void setDiscountEndDate(Date discountEndDate) {
+	public void setDiscountEndDate(LocalDate discountEndDate) {
 		this.discountEndDate = discountEndDate;
 	}
 	/**
@@ -255,25 +236,25 @@ public class Customer extends Audit<String> {
 	/**
 	 * @return the priceMarginStartDate
 	 */
-	public Date getPriceMarginStartDate() {
+	public LocalDate getPriceMarginStartDate() {
 		return priceMarginStartDate;
 	}
 	/**
 	 * @param priceMarginStartDate the priceMarginStartDate to set
 	 */
-	public void setPriceMarginStartDate(Date priceMarginStartDate) {
+	public void setPriceMarginStartDate(LocalDate priceMarginStartDate) {
 		this.priceMarginStartDate = priceMarginStartDate;
 	}
 	/**
 	 * @return the priceMarginEndDate
 	 */
-	public Date getPriceMarginEndDate() {
+	public LocalDate getPriceMarginEndDate() {
 		return priceMarginEndDate;
 	}
 	/**
 	 * @param priceMarginEndDate the priceMarginEndDate to set
 	 */
-	public void setPriceMarginEndDate(Date priceMarginEndDate) {
+	public void setPriceMarginEndDate(LocalDate priceMarginEndDate) {
 		this.priceMarginEndDate = priceMarginEndDate;
 	}
 	/**
@@ -287,6 +268,18 @@ public class Customer extends Audit<String> {
 	 */
 	public void setAmountUnallocated(double amountUnallocated) {
 		this.amountUnallocated = amountUnallocated;
+	}
+	/**
+	 * @return the outstandingBalance
+	 */
+	public double getOutstandingBalance() {
+		return outstandingBalance;
+	}
+	/**
+	 * @param outstandingBalance the outstandingBalance to set
+	 */
+	public void setOutstandingBalance(double outstandingBalance) {
+		this.outstandingBalance = outstandingBalance;
 	}
 	
 	

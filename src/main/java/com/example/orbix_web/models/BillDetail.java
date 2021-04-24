@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.models;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -47,10 +48,9 @@ public class BillDetail {
 	@NotNull
 	private double qty;
 	private double returned;
-	@Temporal(TemporalType.DATE)
-	private Date returnFirstDate;
+	private LocalDate returnFirstDate;
 	private int returnPeriod;
-	private Date returnLastDate;
+	private LocalDate returnLastDate;
 	
 	@ManyToOne(targetEntity = Bill.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "bill_id", nullable = true , updatable = true)
@@ -158,14 +158,14 @@ public class BillDetail {
 	/**
 	 * @return the returnFirstDate
 	 */
-	public Date getReturnFirstDate() {
+	public LocalDate getReturnFirstDate() {
 		return returnFirstDate;
 	}
 
 	/**
 	 * @param returnFirstDate the returnFirstDate to set
 	 */
-	public void setReturnFirstDate(Date returnFirstDate) {
+	public void setReturnFirstDate(LocalDate returnFirstDate) {
 		this.returnFirstDate = returnFirstDate;
 	}
 
@@ -186,14 +186,14 @@ public class BillDetail {
 	/**
 	 * @return the returnLastDate
 	 */
-	public Date getReturnLastDate() {
+	public LocalDate getReturnLastDate() {
 		return returnLastDate;
 	}
 
 	/**
 	 * @param returnLastDate the returnLastDate to set
 	 */
-	public void setReturnLastDate(Date returnLastDate) {
+	public void setReturnLastDate(LocalDate returnLastDate) {
 		this.returnLastDate = returnLastDate;
 	}
 
