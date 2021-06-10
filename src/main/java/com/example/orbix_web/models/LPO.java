@@ -61,8 +61,7 @@ public class Lpo extends Audit<String>{
 	private String approvedBy;
 	private LocalDate lpoDate;
     private int validityPeriod;
-	@Temporal(TemporalType.DATE)
-	private Date validUntil;
+	private LocalDate validUntil;
 	private String status;
 	@ManyToOne(targetEntity = Supplier.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "supplier_id", nullable = true , updatable = true)
@@ -75,13 +74,13 @@ public class Lpo extends Audit<String>{
     @OneToMany(targetEntity = LpoDetail.class, mappedBy = "lpo", fetch = FetchType.EAGER, orphanRemoval = true)
     @Valid
     @JsonIgnoreProperties("lpo")
-    private List<LpoDetail> lpoDetail;
+    private List<LpoDetail> lpoDetails;
 	
 	
 
     @Transient
     public int getNumberOfProducts() {
-        return this.lpoDetail.size();
+        return this.lpoDetails.size();
     }
 	
 	
@@ -124,18 +123,7 @@ public class Lpo extends Audit<String>{
 	public void setValidityPeriod(int validityPeriod) {
 		this.validityPeriod = validityPeriod;
 	}
-	/**
-	 * @return the validUntil
-	 */
-	public Date getValidUntil() {
-		return validUntil;
-	}
-	/**
-	 * @param validUntil the validUntil to set
-	 */
-	public void setValidUntil(Date validUntil) {
-		this.validUntil = validUntil;
-	}
+	
 	/**
 	 * @return the status
 	 */
@@ -185,20 +173,7 @@ public class Lpo extends Audit<String>{
 		this.supplier = supplier;
 	}
 
-	/**
-	 * @return the lpoDetail
-	 */
-	public List<LpoDetail> getLpoDetail() {
-		return lpoDetail;
-	}
-
-	/**
-	 * @param lpoDetail the lpoDetail to set
-	 */
-	public void setLpoDetail(List<LpoDetail> lpoDetail) {
-		this.lpoDetail = lpoDetail;
-	}
-
+	
 	/**
 	 * @return the sum
 	 */
@@ -220,6 +195,46 @@ public class Lpo extends Audit<String>{
 	 */
 	public void setLpoDate(LocalDate systemDate) {
 		this.lpoDate = systemDate;
+	}
+
+
+	/**
+	 * @return the validUntil
+	 */
+	public LocalDate getValidUntil() {
+		return validUntil;
+	}
+
+
+	/**
+	 * @param validUntil the validUntil to set
+	 */
+	public void setValidUntil(LocalDate validUntil) {
+		this.validUntil = validUntil;
+	}
+
+
+	/**
+	 * @param sum the sum to set
+	 */
+	public void setSum(double sum) {
+		this.sum = sum;
+	}
+
+
+	/**
+	 * @return the lpoDetails
+	 */
+	public List<LpoDetail> getLpoDetails() {
+		return lpoDetails;
+	}
+
+
+	/**
+	 * @param lpoDetails the lpoDetails to set
+	 */
+	public void setLpoDetails(List<LpoDetail> lpoDetails) {
+		this.lpoDetails = lpoDetails;
 	}
 
 }

@@ -58,6 +58,7 @@ public class User extends Audit<String> {
     private String lastName;
     private String password;
     private String fingerPrint;
+    private String accessToken;
     private String status;
     
     @ManyToOne(targetEntity = Role.class, fetch = FetchType.EAGER,  optional = true)
@@ -205,6 +206,20 @@ public class User extends Audit<String> {
 	 */
 	public void setRole(Role role) {
 		this.role = role;
+	}
+
+	/**
+	 * @return the accessToken
+	 */
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+	/**
+	 * @param accessToken the accessToken to set
+	 */
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
 	}
 	
 }

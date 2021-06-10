@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -73,15 +74,16 @@ public class DayServiceController {
     	}
     	if(day == null) {
     		day = new Day();
-    		day.setStartedAt(new Date());
+    		LocalDateTime currentTime = LocalDateTime.now();
+    		LocalDate currentDate = LocalDate.now();
+    		day.setStartedAt(currentTime);
     		day.setStatus("OPENED");
-    		day.setSystemDate(LocalDate.now());
+    		day.setSystemDate(currentDate);
     		
     		dayRepository.save(day);
     		day = dayRepository.findTopByOrderByIdDesc();
     	}
     	//date = day.getDate();
-    	System.out.println(LocalDate.now());
         return dayRepository.save(day);
     }
     
@@ -98,9 +100,11 @@ public class DayServiceController {
     	}
     	if(day == null) {
     		day = new Day();
-    		day.setStartedAt(new Date());
+    		LocalDateTime currentTime = LocalDateTime.now();
+    		LocalDate currentDate = LocalDate.now();
+    		day.setStartedAt(currentTime);
     		day.setStatus("OPENED");
-    		day.setSystemDate(LocalDate.now());
+    		day.setSystemDate(currentDate);
     		dayRepository.save(day);
     		day = dayRepository.findTopByOrderByIdDesc();
     	}
@@ -112,6 +116,8 @@ public class DayServiceController {
     public Day endCurrentDay(@Valid @RequestBody Day _currentDay) {
     	
     	Day day = new Day();
+    	LocalDateTime currentTime = LocalDateTime.now();
+		LocalDate currentDate = LocalDate.now();
     	try {
     		day = dayRepository.findTopByOrderByIdDesc();
     	}catch(NullPointerException e) {
@@ -119,9 +125,10 @@ public class DayServiceController {
     	}
     	if(day == null) {
     		day = new Day();
-    		day.setStartedAt(new Date());
+    		
+    		day.setStartedAt(currentTime);
     		day.setStatus("OPENED");
-    		day.setSystemDate(LocalDate.now());
+    		day.setSystemDate(currentDate);
     		dayRepository.save(day);
     		day = dayRepository.findTopByOrderByIdDesc();
     	}
@@ -152,14 +159,14 @@ public class DayServiceController {
     	
     	
 		day.setStatus("CLOSED");
-		day.setClosedAt(new Date());
+		day.setClosedAt(currentTime);
 		dayRepository.save(day);
 		day = dayRepository.findTopByOrderByIdDesc();
 		
 		
 				
 		day = new Day();
-		day.setStartedAt(new Date());
+		day.setStartedAt(currentTime);
 		day.setStatus("OPENED");
 		day.setSystemDate(newSystemDate);
 		dayRepository.save(day);
@@ -203,6 +210,7 @@ public class DayServiceController {
     public LocalDate getDate() {
     	LocalDate date = null;
     	Day day = new Day();
+    	LocalDateTime currentTime = LocalDateTime.now();
     	try {
     		day = dayRepository.findTopByOrderByIdDesc();
     	}catch(NullPointerException e) {
@@ -210,7 +218,7 @@ public class DayServiceController {
     	}
     	if(day == null) {
     		day = new Day();
-    		day.setStartedAt(new Date());
+    		day.setStartedAt(currentTime);
     		day.setStatus("OPENED");
     		day.setSystemDate(LocalDate.now());
     		dayRepository.save(day);

@@ -3,6 +3,7 @@
  */
 package com.example.orbix_web.controllers;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -158,8 +159,14 @@ public class ItemServiceController {
     	itemRepository.save(item);
     	
     	stockCardRepository.saveAndFlush(
-    			new StockCardServiceController()
-    			.initialStock(item,  item.getQuantity()));
+				new StockCardServiceController()
+				.qtyIn(
+						LocalDate.now(), 
+						item, 
+						item.getQuantity(), 
+						item.getQuantity(), 
+						"Opening Balance"));
+    	
     	
     	return item;
     }
@@ -199,6 +206,7 @@ public class ItemServiceController {
      * @param primaryBarcode
      * @return
      */
+    
     @RequestMapping(method = RequestMethod.GET, value = "/items/**/long_description")
     @Transactional
     public Item getItemByLongDescription(HttpServletRequest request) {
@@ -212,7 +220,6 @@ public class ItemServiceController {
         return itemRepository.findByLongDescription(longDescription)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
     }
-    
     
     //this is a template to allow slash in item description
     @RequestMapping(value = "items/**/receipt", method = RequestMethod.GET)

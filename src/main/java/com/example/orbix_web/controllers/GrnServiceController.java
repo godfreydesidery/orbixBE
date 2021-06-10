@@ -295,15 +295,12 @@ public class GrnServiceController {
     		double _stockBalance =_item.getQuantity();
     		stockCardRepository.saveAndFlush(
     				new StockCardServiceController()
-    				.receiveItem(
+    				.qtyIn(
+    						LocalDate.now(), 
     						_item, 
-    						grnDetail.getQtyOrdered(), 
-    						_dateOrdered, 
     						_qtyReceived, 
-    						_dateReceived, 
     						_stockBalance, 
-    						grnDetail.getLotNo(),
-    						grnDetail.getExpiryDate()));
+    						"Received goods"));
     		
     		if(_orderType.equals("LOCAL PURCHASE ORDER")) {
     			

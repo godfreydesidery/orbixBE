@@ -6,7 +6,6 @@ package com.example.orbix_web.models;
 import java.time.LocalDate;
 import java.util.Date;
 
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -16,14 +15,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.stereotype.Component;
 
@@ -33,9 +29,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Entity
-@Table(name = "sales_invoice_details")
+@Table(name = "sales_return_details")
 @EntityListeners(AuditingEntityListener.class)
-public class SalesInvoiceDetail {
+public class SalesReturnDetail {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -48,17 +44,17 @@ public class SalesInvoiceDetail {
 	private double price;
 	private double discount;
 	@NotNull
-	private double qty;
 	private double qtyReturned;
-	private Date returnFirstDate;
-	private int returnPeriod;
-	private LocalDate returnLastDate;
+	private String reason;
+	
 	
 	
 	@ManyToOne(targetEntity = SalesInvoice.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "sales_invoice_id", nullable = true , updatable = true)
+    @JoinColumn(name = "sales_return_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private SalesInvoice salesInvoice;
+    private SalesReturn salesReturn;
+
+
 
 	/**
 	 * @return the id
@@ -67,12 +63,16 @@ public class SalesInvoiceDetail {
 		return id;
 	}
 
+
+
 	/**
 	 * @param id the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
+
+
 
 	/**
 	 * @return the itemCode
@@ -81,12 +81,16 @@ public class SalesInvoiceDetail {
 		return itemCode;
 	}
 
+
+
 	/**
 	 * @param itemCode the itemCode to set
 	 */
 	public void setItemCode(String itemCode) {
 		this.itemCode = itemCode;
 	}
+
+
 
 	/**
 	 * @return the description
@@ -95,6 +99,8 @@ public class SalesInvoiceDetail {
 		return description;
 	}
 
+
+
 	/**
 	 * @param description the description to set
 	 */
@@ -102,21 +108,7 @@ public class SalesInvoiceDetail {
 		this.description = description;
 	}
 
-	/**
-	 * @return the qty
-	 */
-	public double getQty() {
-		return qty;
-	}
 
-	/**
-	 * @param qty the qty to set
-	 */
-	public void setQty(double qty) {
-		this.qty = qty;
-	}
-
-	
 
 	/**
 	 * @return the price
@@ -125,12 +117,16 @@ public class SalesInvoiceDetail {
 		return price;
 	}
 
+
+
 	/**
 	 * @param price the price to set
 	 */
 	public void setPrice(double price) {
 		this.price = price;
 	}
+
+
 
 	/**
 	 * @return the discount
@@ -139,6 +135,8 @@ public class SalesInvoiceDetail {
 		return discount;
 	}
 
+
+
 	/**
 	 * @param discount the discount to set
 	 */
@@ -146,61 +144,7 @@ public class SalesInvoiceDetail {
 		this.discount = discount;
 	}
 
-	/**
-	 * @return the returnFirstDate
-	 */
-	public Date getReturnFirstDate() {
-		return returnFirstDate;
-	}
 
-	/**
-	 * @param returnFirstDate the returnFirstDate to set
-	 */
-	public void setReturnFirstDate(Date returnFirstDate) {
-		this.returnFirstDate = returnFirstDate;
-	}
-
-	/**
-	 * @return the returnPeriod
-	 */
-	public int getReturnPeriod() {
-		return returnPeriod;
-	}
-
-	/**
-	 * @param returnPeriod the returnPeriod to set
-	 */
-	public void setReturnPeriod(int returnPeriod) {
-		this.returnPeriod = returnPeriod;
-	}
-
-	/**
-	 * @return the returnLastDate
-	 */
-	public LocalDate getReturnLastDate() {
-		return returnLastDate;
-	}
-
-	/**
-	 * @param returnLastDate2 the returnLastDate to set
-	 */
-	public void setReturnLastDate(LocalDate returnLastDate2) {
-		this.returnLastDate = returnLastDate2;
-	}
-
-	/**
-	 * @return the salesInvoice
-	 */
-	public SalesInvoice getSalesInvoice() {
-		return salesInvoice;
-	}
-
-	/**
-	 * @param salesInvoice the salesInvoice to set
-	 */
-	public void setSalesInvoice(SalesInvoice salesInvoice) {
-		this.salesInvoice = salesInvoice;
-	}
 
 	/**
 	 * @return the qtyReturned
@@ -209,6 +153,8 @@ public class SalesInvoiceDetail {
 		return qtyReturned;
 	}
 
+
+
 	/**
 	 * @param qtyReturned the qtyReturned to set
 	 */
@@ -216,7 +162,40 @@ public class SalesInvoiceDetail {
 		this.qtyReturned = qtyReturned;
 	}
 
-	
-	
-	
+
+
+	/**
+	 * @return the reason
+	 */
+	public String getReason() {
+		return reason;
+	}
+
+
+
+	/**
+	 * @param reason the reason to set
+	 */
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+
+
+	/**
+	 * @return the salesReturn
+	 */
+	public SalesReturn getSalesReturn() {
+		return salesReturn;
+	}
+
+
+
+	/**
+	 * @param salesReturn the salesReturn to set
+	 */
+	public void setSalesReturn(SalesReturn salesReturn) {
+		this.salesReturn = salesReturn;
+	}
+
 }

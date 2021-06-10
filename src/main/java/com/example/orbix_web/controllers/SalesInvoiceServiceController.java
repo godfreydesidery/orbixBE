@@ -4,6 +4,7 @@
 package com.example.orbix_web.controllers;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -174,8 +175,14 @@ public class SalesInvoiceServiceController {
 			Item _item =itemRepository.findByItemCode(_detail.getItemCode()).get();
 			double _stockBalance =_item.getQuantity();
 			stockCardRepository.save(
-					new StockCardServiceController()
-					.creditSale(_item, _invoice.getInvoiceDate(), _detail.getQty(), invoiceNo, _stockBalance));	
+				new StockCardServiceController()
+				.qtyOut(
+						LocalDate.now(), 
+						_item, 
+						_detail.getQty(), 
+						_stockBalance, 
+						"Credit Sales"));
+			
 		}
 		/*
     	 * Now post invoice to sales
@@ -215,6 +222,20 @@ public class SalesInvoiceServiceController {
     	}
         return invoice;
     }
+ // Get partial or sent invoices by customer
+    @RequestMapping(method = RequestMethod.GET, value = "/sales_invoices/customer_id={customer_id}")
+    public List<SalesInvoice> getInvoicesByCustomerId(@PathVariable(value = "customer_id") Long customerId) {
+    	Customer customer = customerRepository.findById(customerId).get();
+    	if(customer == null) {
+    		throw new NotFoundException("Customer not found");
+    	}
+    	List<String> status = new ArrayList<String>();
+    	status.add("SENT");
+    	status.add("PARTIAL");
+    	List<SalesInvoice> invoices = salesInvoiceRepository.findByCustomerAndInvoiceStatusIn(customer, status);
+    	
+        return invoices;
+    }
     
  // Get a Single Customer Invoice by invoice no and customer no
     @RequestMapping(method = RequestMethod.GET, value = "/sales_invoices/invoice_no={invoice_no}/customer_no={customer_no}")
@@ -240,8 +261,10 @@ public class SalesInvoiceServiceController {
     public List<SalesInvoice> getDueInvoiceByCustomer(@PathVariable(value = "cust_id") Long custId) {
     	System.out.println("check");
     	Customer customer = customerRepository.findById(custId).get();
-    	
-    	List<SalesInvoice> invoices = salesInvoiceRepository.findByCustomerAndInvoiceStatus(customer, "PENDING");
+    	List<String> status = new ArrayList<String>();
+    	status.add("SENT");
+    	status.add("PARTIAL");
+    	List<SalesInvoice> invoices = salesInvoiceRepository.findByCustomerAndInvoiceStatusIn(customer, status);
     	
         return invoices;
     }

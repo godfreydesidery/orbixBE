@@ -3,9 +3,12 @@
  */
 package com.example.orbix_web.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.example.orbix_web.models.Customer;
 import com.example.orbix_web.models.Receipt;
 import com.example.orbix_web.models.SalesReceipt;
 import com.example.orbix_web.models.Transaction;
@@ -22,5 +25,14 @@ public interface SalesReceiptRepository extends JpaRepository<SalesReceipt, Long
 	 * @return
 	 */
 	SalesReceipt findByReceiptNo(String receiptNo);
+
+	/**
+	 * @param customer
+	 * @return
+	 */
+	List<SalesReceipt> findByCustomer(Customer customer);
+
+	
+
 
 }

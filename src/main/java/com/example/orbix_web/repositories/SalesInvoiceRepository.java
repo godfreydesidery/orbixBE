@@ -34,7 +34,9 @@ public interface SalesInvoiceRepository extends JpaRepository<SalesInvoice, Long
 	 * @param string
 	 * @return
 	 */
-	List<SalesInvoice> findByCustomerAndInvoiceStatus(Customer customer, String string);
+	List<SalesInvoice> findByCustomerAndInvoiceStatusIn(Customer customer, List<String> status);
+
+	
 
 
 }

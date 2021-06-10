@@ -60,7 +60,7 @@ public class Rtv {
 	@OneToMany(targetEntity = RtvDetail.class, mappedBy = "rtv", fetch = FetchType.EAGER, orphanRemoval = true)
     @Valid
     @JsonIgnoreProperties("rtv")
-    private List<RtvDetail> rtvDetail;
+    private List<RtvDetail> rtvDetails;
 
 	/**
 	 * @return the id
@@ -133,17 +133,19 @@ public class Rtv {
 	}
 
 	/**
-	 * @return the rtvDetail
+	 * @return the rtvDetails
 	 */
-	public List<RtvDetail> getRtvDetail() {
-		return rtvDetail;
+	public List<RtvDetail> getRtvDetails() {
+		return rtvDetails;
 	}
 
 	/**
-	 * @param rtvDetail the rtvDetail to set
+	 * @param rtvDetails the rtvDetails to set
 	 */
-	public void setRtvDetail(List<RtvDetail> rtvDetail) {
-		this.rtvDetail = rtvDetail;
+	public void setRtvDetails(List<RtvDetail> rtvDetails) {
+		this.rtvDetails = rtvDetails;
 	}
+
+	
 	
 }

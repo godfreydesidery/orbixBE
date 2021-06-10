@@ -38,25 +38,13 @@ public class StockCard {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-	private double qtyOrdered;
-	private LocalDate dateOrdered;
-	private double qtyReceived;
-	private LocalDate dateReceived;
-	String lotNo;
-	private LocalDate expiryDate;
-	private double qtyReturnToVendor;
-	private LocalDate dateReturnToVendor;
-	private double qtyReturnByCustomer;
-	private LocalDate dateReturnByCustomer;
-	private double qtyRemoveFromStock;
-	private LocalDateTime dateRemoveFromStock;
-	private String reasonRemoveFromStock;
-	private double qtySold;
-	private LocalDateTime dateSold;
-	private double creditSaleQty;
-	private LocalDate creditSaleDate;
-	private String creditSaleInvoiceNo;
-	private double stockBalance;
+	
+	private LocalDate date;
+	private Date dateTime;
+	private String reference;
+	double qtyIn;
+	double qtyOut;
+	double balance;
 	
 	@ManyToOne(targetEntity = Item.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "item_id", nullable = true , updatable = true)
@@ -76,54 +64,57 @@ public class StockCard {
 	public void setId(Long id) {
 		this.id = id;
 	}
+	
+	
 	/**
-	 * @return the qtyReceived
+	 * @return the reference
 	 */
-	public double getQtyReceived() {
-		return qtyReceived;
+	public String getReference() {
+		return reference;
 	}
 	/**
-	 * @param qtyReceived the qtyReceived to set
+	 * @param reference the reference to set
 	 */
-	public void setQtyReceived(double qtyReceived) {
-		this.qtyReceived = qtyReceived;
+	public void setReference(String reference) {
+		this.reference = reference;
 	}
 	/**
-	 * @return the lotNo
+	 * @return the qtyIn
 	 */
-	public String getLotNo() {
-		return lotNo;
+	public double getQtyIn() {
+		return qtyIn;
 	}
 	/**
-	 * @param lotNo the lotNo to set
+	 * @param qtyIn the qtyIn to set
 	 */
-	public void setLotNo(String lotNo) {
-		this.lotNo = lotNo;
+	public void setQtyIn(double qtyIn) {
+		this.qtyIn = qtyIn;
 	}
 	/**
-	 * @return the expiryDate
+	 * @return the qtyOut
 	 */
-	public LocalDate getExpiryDate() {
-		return expiryDate;
+	public double getQtyOut() {
+		return qtyOut;
 	}
 	/**
-	 * @param expiryDate the expiryDate to set
+	 * @param qtyOut the qtyOut to set
 	 */
-	public void setExpiryDate(LocalDate expiryDate) {
-		this.expiryDate = expiryDate;
+	public void setQtyOut(double qtyOut) {
+		this.qtyOut = qtyOut;
 	}
 	/**
-	 * @return the stockBalance
+	 * @return the balance
 	 */
-	public double getStockBalance() {
-		return stockBalance;
+	public double getBalance() {
+		return balance;
 	}
 	/**
-	 * @param stockBalance the stockBalance to set
+	 * @param balance the balance to set
 	 */
-	public void setStockBalance(double stockBalance) {
-		this.stockBalance = stockBalance;
+	public void setBalance(double balance) {
+		this.balance = balance;
 	}
+	
 	/**
 	 * @return the item
 	 */
@@ -137,190 +128,33 @@ public class StockCard {
 		this.item = item;
 	}
 	/**
-	 * @return the qtyOrdered
+	 * @return the date
 	 */
-	public double getQtyOrdered() {
-		return qtyOrdered;
+	public LocalDate getDate() {
+		return date;
 	}
 	/**
-	 * @param qtyOrdered the qtyOrdered to set
+	 * @param date the date to set
 	 */
-	public void setQtyOrdered(double qtyOrdered) {
-		this.qtyOrdered = qtyOrdered;
+	public void setDate(LocalDate date) {
+		this.date = date;
 	}
 	/**
-	 * @return the qtyReturnToVendor
+	 * @return the dateTime
 	 */
-	public double getQtyReturnToVendor() {
-		return qtyReturnToVendor;
+	/**
+	 * @return the dateTime
+	 */
+	public Date getDateTime() {
+		return dateTime;
 	}
 	/**
-	 * @param qtyReturnToVendor the qtyReturnToVendor to set
+	 * @param dateTime the dateTime to set
 	 */
-	public void setQtyReturnToVendor(double qtyReturnToVendor) {
-		this.qtyReturnToVendor = qtyReturnToVendor;
+	public void setDateTime(Date dateTime) {
+		this.dateTime = dateTime;
 	}
 	
-	/**
-	 * @return the qtyReturnByCustomer
-	 */
-	public double getQtyReturnByCustomer() {
-		return qtyReturnByCustomer;
-	}
-	/**
-	 * @param qtyReturnByCustomer the qtyReturnByCustomer to set
-	 */
-	public void setQtyReturnByCustomer(double qtyReturnByCustomer) {
-		this.qtyReturnByCustomer = qtyReturnByCustomer;
-	}
-	
-	
-	/**
-	 * @return the qtyRemoveFromStock
-	 */
-	public double getQtyRemoveFromStock() {
-		return qtyRemoveFromStock;
-	}
-	/**
-	 * @param qtyRemoveFromStock the qtyRemoveFromStock to set
-	 */
-	public void setQtyRemoveFromStock(double qtyRemoveFromStock) {
-		this.qtyRemoveFromStock = qtyRemoveFromStock;
-	}
-	
-	
-	/**
-	 * @return the reasonRemoveFromStock
-	 */
-	public String getReasonRemoveFromStock() {
-		return reasonRemoveFromStock;
-	}
-	/**
-	 * @param reasonRemoveFromStock the reasonRemoveFromStock to set
-	 */
-	public void setReasonRemoveFromStock(String reasonRemoveFromStock) {
-		this.reasonRemoveFromStock = reasonRemoveFromStock;
-	}
-	/**
-	 * @return the qtySold
-	 */
-	public double getQtySold() {
-		return qtySold;
-	}
-	/**
-	 * @param qtySold the qtySold to set
-	 */
-	public void setQtySold(double qtySold) {
-		this.qtySold = qtySold;
-	}
-	/**
-	 * @return the dateOrdered
-	 */
-	public LocalDate getDateOrdered() {
-		return dateOrdered;
-	}
-	/**
-	 * @param dateOrdered2 the dateOrdered to set
-	 */
-	public void setDateOrdered(LocalDate dateOrdered2) {
-		this.dateOrdered = dateOrdered2;
-	}
-	/**
-	 * @return the dateReceived
-	 */
-	public LocalDate getDateReceived() {
-		return dateReceived;
-	}
-	/**
-	 * @param _dateReceived the dateReceived to set
-	 */
-	public void setDateReceived(LocalDate _dateReceived) {
-		this.dateReceived = _dateReceived;
-	}
-	/**
-	 * @return the dateReturnToVendor
-	 */
-	public LocalDate getDateReturnToVendor() {
-		return dateReturnToVendor;
-	}
-	/**
-	 * @param dateReturnToVendor the dateReturnToVendor to set
-	 */
-	public void setDateReturnToVendor(LocalDate dateReturnToVendor) {
-		this.dateReturnToVendor = dateReturnToVendor;
-	}
-	/**
-	 * @return the dateReturnByCustomer
-	 */
-	public LocalDate getDateReturnByCustomer() {
-		return dateReturnByCustomer;
-	}
-	/**
-	 * @param dateReturnByCustomer the dateReturnByCustomer to set
-	 */
-	public void setDateReturnByCustomer(LocalDate dateReturnByCustomer) {
-		this.dateReturnByCustomer = dateReturnByCustomer;
-	}
-	/**
-	 * @return the dateRemoveFromStock
-	 */
-	public LocalDateTime getDateRemoveFromStock() {
-		return dateRemoveFromStock;
-	}
-	/**
-	 * @param dateRemoveFromStock the dateRemoveFromStock to set
-	 */
-	public void setDateRemoveFromStock(LocalDateTime dateRemoveFromStock) {
-		this.dateRemoveFromStock = dateRemoveFromStock;
-	}
-	/**
-	 * @return the dateSold
-	 */
-	public LocalDateTime getDateSold() {
-		return dateSold;
-	}
-	/**
-	 * @param dateSold the dateSold to set
-	 */
-	public void setDateSold(LocalDateTime dateSold) {
-		this.dateSold = dateSold;
-	}
-	/**
-	 * @return the creditSaleQty
-	 */
-	public double getCreditSaleQty() {
-		return creditSaleQty;
-	}
-	/**
-	 * @param creditSaleQty the creditSaleQty to set
-	 */
-	public void setCreditSaleQty(double creditSaleQty) {
-		this.creditSaleQty = creditSaleQty;
-	}
-	/**
-	 * @return the creditSaleDate
-	 */
-	public LocalDate getCreditSaleDate() {
-		return creditSaleDate;
-	}
-	/**
-	 * @param creditSaleDate the creditSaleDate to set
-	 */
-	public void setCreditSaleDate(LocalDate creditSaleDate) {
-		this.creditSaleDate = creditSaleDate;
-	}
-	/**
-	 * @return the creditSaleInvoiceNo
-	 */
-	public String getCreditSaleInvoiceNo() {
-		return creditSaleInvoiceNo;
-	}
-	/**
-	 * @param creditSaleInvoiceNo the creditSaleInvoiceNo to set
-	 */
-	public void setCreditSaleInvoiceNo(String creditSaleInvoiceNo) {
-		this.creditSaleInvoiceNo = creditSaleInvoiceNo;
-	}
 	
 	
 }

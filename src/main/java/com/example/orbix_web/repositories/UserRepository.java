@@ -23,4 +23,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	 */
 	Optional<User> findByPayRollNo(String payRollNo);
 
+	/**
+	 * @param username
+	 * @return
+	 */
+	User findByUsername(String username);
+
 }

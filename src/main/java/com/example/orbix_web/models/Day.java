@@ -5,6 +5,7 @@ package com.example.orbix_web.models;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -36,10 +37,10 @@ public class Day extends Audit<String>{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDate systemDate;
-	@Temporal(TemporalType.TIMESTAMP)
-    private Date startedAt;
-	@Temporal(TemporalType.TIMESTAMP)
-    private Date closedAt;
+	//@Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime startedAt;
+	//@Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime closedAt;
     private String status;
 	/**
 	 * @return the id
@@ -52,31 +53,6 @@ public class Day extends Audit<String>{
 	 */
 	public void setId(Long id) {
 		this.id = id;
-	}
-	
-	/**
-	 * @return the startedAt
-	 */
-	public Date getStartedAt() {
-		return startedAt;
-	}
-	/**
-	 * @param startedAt the startedAt to set
-	 */
-	public void setStartedAt(Date startedAt) {
-		this.startedAt = startedAt;
-	}
-	/**
-	 * @return the closedAt
-	 */
-	public Date getClosedAt() {
-		return closedAt;
-	}
-	/**
-	 * @param closedAt the closedAt to set
-	 */
-	public void setClosedAt(Date closedAt) {
-		this.closedAt = closedAt;
 	}
 	/**
 	 * @return the status
@@ -101,6 +77,30 @@ public class Day extends Audit<String>{
 	 */
 	public void setSystemDate(LocalDate systemDate) {
 		this.systemDate = systemDate;
+	}
+	/**
+	 * @return the startedAt
+	 */
+	public LocalDateTime getStartedAt() {
+		return startedAt;
+	}
+	/**
+	 * @param startedAt the startedAt to set
+	 */
+	public void setStartedAt(LocalDateTime startedAt) {
+		this.startedAt = startedAt;
+	}
+	/**
+	 * @return the closedAt
+	 */
+	public LocalDateTime getClosedAt() {
+		return closedAt;
+	}
+	/**
+	 * @param closedAt the closedAt to set
+	 */
+	public void setClosedAt(LocalDateTime closedAt) {
+		this.closedAt = closedAt;
 	}
 	
 	

@@ -6,7 +6,6 @@ package com.example.orbix_web.models;
 import java.time.LocalDate;
 import java.util.Date;
 
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -16,14 +15,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.stereotype.Component;
 
@@ -33,13 +29,14 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Entity
-@Table(name = "sales_invoice_details")
+@Table(name = "quotation_details")
 @EntityListeners(AuditingEntityListener.class)
-public class SalesInvoiceDetail {
+public class QuotationDetail {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	
+	private String barcode;
 	@NotBlank
     private String itemCode;
 	@NotBlank
@@ -47,18 +44,14 @@ public class SalesInvoiceDetail {
 	@NotNull
 	private double price;
 	private double discount;
+	private double tax;
 	@NotNull
 	private double qty;
-	private double qtyReturned;
-	private Date returnFirstDate;
-	private int returnPeriod;
-	private LocalDate returnLastDate;
 	
-	
-	@ManyToOne(targetEntity = SalesInvoice.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "sales_invoice_id", nullable = true , updatable = true)
+	@ManyToOne(targetEntity = Quotation.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "quotation_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private SalesInvoice salesInvoice;
+    private Quotation quotation;
 
 	/**
 	 * @return the id
@@ -103,22 +96,6 @@ public class SalesInvoiceDetail {
 	}
 
 	/**
-	 * @return the qty
-	 */
-	public double getQty() {
-		return qty;
-	}
-
-	/**
-	 * @param qty the qty to set
-	 */
-	public void setQty(double qty) {
-		this.qty = qty;
-	}
-
-	
-
-	/**
 	 * @return the price
 	 */
 	public double getPrice() {
@@ -147,76 +124,59 @@ public class SalesInvoiceDetail {
 	}
 
 	/**
-	 * @return the returnFirstDate
+	 * @return the tax
 	 */
-	public Date getReturnFirstDate() {
-		return returnFirstDate;
+	public double getTax() {
+		return tax;
 	}
 
 	/**
-	 * @param returnFirstDate the returnFirstDate to set
+	 * @param tax the tax to set
 	 */
-	public void setReturnFirstDate(Date returnFirstDate) {
-		this.returnFirstDate = returnFirstDate;
+	public void setTax(double tax) {
+		this.tax = tax;
 	}
 
 	/**
-	 * @return the returnPeriod
+	 * @return the qty
 	 */
-	public int getReturnPeriod() {
-		return returnPeriod;
+	public double getQty() {
+		return qty;
 	}
 
 	/**
-	 * @param returnPeriod the returnPeriod to set
+	 * @param qty the qty to set
 	 */
-	public void setReturnPeriod(int returnPeriod) {
-		this.returnPeriod = returnPeriod;
+	public void setQty(double qty) {
+		this.qty = qty;
 	}
 
 	/**
-	 * @return the returnLastDate
+	 * @return the quotation
 	 */
-	public LocalDate getReturnLastDate() {
-		return returnLastDate;
+	public Quotation getQuotation() {
+		return quotation;
 	}
 
 	/**
-	 * @param returnLastDate2 the returnLastDate to set
+	 * @param quotation the quotation to set
 	 */
-	public void setReturnLastDate(LocalDate returnLastDate2) {
-		this.returnLastDate = returnLastDate2;
+	public void setQuotation(Quotation quotation) {
+		this.quotation = quotation;
 	}
 
 	/**
-	 * @return the salesInvoice
+	 * @return the barcode
 	 */
-	public SalesInvoice getSalesInvoice() {
-		return salesInvoice;
+	public String getBarcode() {
+		return barcode;
 	}
 
 	/**
-	 * @param salesInvoice the salesInvoice to set
+	 * @param barcode the barcode to set
 	 */
-	public void setSalesInvoice(SalesInvoice salesInvoice) {
-		this.salesInvoice = salesInvoice;
+	public void setBarcode(String barcode) {
+		this.barcode = barcode;
 	}
 
-	/**
-	 * @return the qtyReturned
-	 */
-	public double getQtyReturned() {
-		return qtyReturned;
-	}
-
-	/**
-	 * @param qtyReturned the qtyReturned to set
-	 */
-	public void setQtyReturned(double qtyReturned) {
-		this.qtyReturned = qtyReturned;
-	}
-
-	
-	
-	
 }

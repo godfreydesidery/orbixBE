@@ -23,7 +23,7 @@ public class StockCardServiceController {
 	
 	
 	
-	public StockCard receiveItem(Item item, double qtyOrdered, LocalDate dateOrdered, double qtyReceived, LocalDate _dateReceived, double stockBalance, String lotNo, LocalDate expiryDate) {
+	/*public StockCard receiveItem(Item item, double qtyOrdered, LocalDate dateOrdered, double qtyReceived, LocalDate _dateReceived, double stockBalance, String lotNo, LocalDate expiryDate) {
 		StockCard stockCard = new StockCard();
 		stockCard.setItem(item);
 		stockCard.setQtyOrdered(qtyOrdered);
@@ -44,6 +44,15 @@ public class StockCardServiceController {
 		stockCard.setItem(item);
 		stockCard.setQtyReturnToVendor(qty);
 		stockCard.setDateReturnToVendor(date);
+		stockCard.setStockBalance(stockBalance);
+		
+		return stockCard;
+	}
+	public StockCard salesReturn(Item item, double qty, LocalDate date, double stockBalance) {
+		StockCard stockCard = new StockCard();
+		stockCard.setItem(item);
+		stockCard.setQtySalesReturn(qty);
+		stockCard.setDateSalesReturn(date);
 		stockCard.setStockBalance(stockBalance);
 		
 		return stockCard;
@@ -70,6 +79,25 @@ public class StockCardServiceController {
 		stockCard.setCreditSaleQty(qty);
 		stockCard.setCreditSaleInvoiceNo(invoiceNo);
 		stockCard.setStockBalance(stockBalance);
+		return stockCard;
+	}*/
+	
+	public StockCard qtyIn(LocalDate date, Item item, double qtyIn, double balance, String reference) {
+		StockCard stockCard = new StockCard();
+		stockCard.setDate(date);
+		stockCard.setItem(item);
+		stockCard.setQtyIn(qtyIn);
+		stockCard.setBalance(balance);
+		stockCard.setReference(reference);
+		return stockCard;
+	}
+	public StockCard qtyOut(LocalDate date, Item item, double qtyOut, double balance, String reference) {
+		StockCard stockCard = new StockCard();
+		stockCard.setDate(date);
+		stockCard.setItem(item);
+		stockCard.setQtyOut(qtyOut);
+		stockCard.setBalance(balance);
+		stockCard.setReference(reference);
 		return stockCard;
 	}
 
